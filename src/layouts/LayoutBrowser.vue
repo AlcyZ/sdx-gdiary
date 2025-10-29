@@ -1,14 +1,12 @@
 <template>
-  <div>
-    <p v-if="isMobile">
+  <div class="bg-emerald-950 text-neutral-200 w-screen h-screen text-2xl flex items-center justify-center text-center">
+    <h1 v-if="isMobile">
       Um die App verwenden zu können, musst du sie auf deinen Home-Bildschrim installieren.
-    </p>
+    </h1>
 
-    <p v-else>
+    <h1 v-else>
       Bitte verwende dein Mobiles Gerät.
-    </p>
-
-    <button @click="dev">Dev</button>
+    </h1>
   </div>
 </template>
 
