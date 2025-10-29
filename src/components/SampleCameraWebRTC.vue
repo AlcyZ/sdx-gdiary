@@ -2,43 +2,51 @@
   <div>
     <div class="my-2">
       <h1 class="text-xl text-center">
-        WebRTC def
+        WebRTCa
       </h1>
 
       <p>Beispiel für die Verwendung der WebRTC Kamera.</p>
     </div>
 
+    <!-- camera toolbar -->
     <div>
-      <button
-        class="btn btn-primary"
-        @click="startCamera"
-      >
-        Kamera öffnen
-      </button>
-
-      <div v-if="camera !== null">
+      <template v-if="camera === null">
+        <button
+          class="btn btn-primary"
+          @click="startCamera"
+        >
+          <IconCamera />
+        </button>
+      </template>
+      <template v-else>
         <button class="btn btn-secondary" @click="stopCamera">
-          Kamera schließen
+          <IconCameraOff />
         </button>
-        <button class="btn btn-secondary" @click="camera.changeFacingMode('front')">
-          Front Kamera
+        <button class="btn btn-secondary flex" @click="toggle">
+          <IconCameraSwitch />
         </button>
-        <button class="btn btn-secondary" @click="camera.changeFacingMode('back')">
-          Back Kamera
-        </button>
-        <button class="btn btn-secondary" @click="camera.toggleFacingMode">
-          Toggle Kamera
-        </button>
-      </div>
+      </template>
     </div>
 
+    <div v-if="cameraError">
+      <p class="text-red-600">
+        {{ cameraError.message }}
+      </p>
+    </div>
+
+    <!-- camera content -->
     <div ref="videoContainer" class="max-w-[200px] max-h-[200px]" />
   </div>
 </template>
 
 <script lang="ts" setup>
+import {
+  Camera as IconCamera,
+  CameraOff as IconCameraOff,
+  SwitchCamera as IconCameraSwitch,
+} from 'lucide-vue-next'
 import { ref } from 'vue'
-import { WebRTCCamera } from '../modules/camera'
+import { useCamera } from '../composables/useCamera.ts'
 
 interface Props {
 
@@ -53,30 +61,28 @@ defineEmits<Emits>()
 
 const videoContainer = ref<HTMLDivElement | null>(null)
 
-const camera = ref<WebRTCCamera | null>(null)
-const cameraError = ref<OpenStreamError | null>(null)
+const {
+  camera,
+  cameraError,
+  start,
+  stop,
+  toggle,
+} = useCamera()
 
 async function startCamera() {
-  const result = await WebRTCCamera.open('front')
-
-  if (result.ok) {
-    camera.value = result.value
-    cameraError.value = null
-
-    if (videoContainer.value) {
-      videoContainer.value.appendChild(camera.value.element)
-    }
+  if (videoContainer.value === null) {
+    console.error('[SampleCameraWebRTC:startCamera] - Could not start camera, video element not found!')
+    return
   }
-  else {
-    camera.value = null
-    cameraError.value = result.error
-  }
+
+  await start(videoContainer.value)
 }
 
-function stopCamera() {
-  if (camera.value) {
-    camera.value.close()
-    camera.value = null
+async function stopCamera() {
+  if (videoContainer.value !== null) {
+    videoContainer.value.innerHTML = ''
   }
+
+  await stop()
 }
 </script>

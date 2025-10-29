@@ -8,7 +8,7 @@ export class WebRTCCamera {
   private _stream: MediaStream
   private _facingMode: FacingMode
 
-  private constructor(stream: MediaStream, element: HTMLVideoElement, facingMode: FacingMode) {
+  constructor(stream: MediaStream, element: HTMLVideoElement, facingMode: FacingMode) {
     this.element = element
     this._stream = stream
     this._facingMode = facingMode
