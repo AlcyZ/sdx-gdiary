@@ -7,6 +7,8 @@
     <p v-else>
       Bitte verwende dein Mobiles Gerät.
     </p>
+
+    <button @click="dev">Dev</button>
   </div>
 </template>
 
@@ -20,5 +22,9 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
+
+function dev() {
+  console.error('oh no!')
+}
 </script>
 
