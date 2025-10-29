@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="px-0.5">
     <div class="flex items-center justify-center mt-6">
       <div class="toggle">
         <button
