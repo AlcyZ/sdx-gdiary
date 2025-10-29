@@ -1,5 +1,7 @@
 <template>
-  <div />
+  <div>
+    <h1>Nativ</h1>
+  </div>
 </template>
 
 <script lang="ts" setup>

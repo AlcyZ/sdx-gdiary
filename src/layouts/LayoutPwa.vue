@@ -1,11 +1,11 @@
 <template>
   <div>
-    <span>Modus:</span>
+    <SampleCamera />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import SampleCamera from '../components/SampleCamera.vue'
 
 interface Props {
 
@@ -17,6 +17,4 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
-
-const _sampleCamMode = ref<'webRTC' | 'native'>('webRTC')
 </script>
