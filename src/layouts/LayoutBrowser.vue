@@ -20,9 +20,4 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
-
-function dev() {
-  console.error('oh no!')
-}
 </script>
-

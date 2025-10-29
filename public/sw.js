@@ -1,14 +1,16 @@
-self.addEventListener("install", (event) => {
-    console.log("Service Worker installiert");
-    self.skipWaiting();
-});
+/* eslint-disable no-console */
 
-self.addEventListener("activate", (event) => {
-    console.log("Service Worker aktiviert");
-    return self.clients.claim();
-});
+globalThis.addEventListener('install', (_event) => {
+  console.log('Service Worker installiert')
+  globalThis.skipWaiting()
+})
 
-self.addEventListener("fetch", (event) => {
-    // Einfacher Durchleitungsmodus: alles normal übers Netz laden
-    event.respondWith(fetch(event.request));
-});
+globalThis.addEventListener('activate', (_event) => {
+  console.log('Service Worker aktiviert')
+  return globalThis.clients.claim()
+})
+
+globalThis.addEventListener('fetch', (event) => {
+  // Einfacher Durchleitungsmodus: alles normal übers Netz laden
+  event.respondWith(fetch(event.request))
+})

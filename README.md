@@ -1,6 +1,6 @@
 # 🌱 GrowDiary PWA
 
-A progressive web app for tracking your plant grows.  
+A progressive web app for tracking your plant grows.
 Built with Vue 3, Vite, and Tailwind CSS.
 
 > ⚙️ **Build in progress** – core features and layout are still under development.
