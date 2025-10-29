@@ -40,6 +40,4 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
-
-const asd = ref(true)
 </script>
