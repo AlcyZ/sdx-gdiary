@@ -2,7 +2,7 @@
   <div>
     <div class="my-2">
       <h1 class="text-xl text-center">
-        WebRTC as
+        WebRTC def
       </h1>
 
       <p>Beispiel für die Verwendung der WebRTC Kamera.</p>
@@ -16,25 +16,23 @@
         Kamera öffnen
       </button>
 
-      <button
-        v-if="camera !== null"
-        class="btn btn-secondary"
-        @click="stopCamera"
-      >
-        Kamera stoppen
-      </button>
-
-      <div
-        v-if="cameraError !== null"
-        class="text-red-500"
-      >
-        {{ cameraError.message }}
+      <div v-if="camera !== null">
+        <button class="btn btn-secondary" @click="stopCamera">
+          Kamera schließen
+        </button>
+        <button class="btn btn-secondary" @click="camera.changeFacingMode('front')">
+          Front Kamera
+        </button>
+        <button class="btn btn-secondary" @click="camera.changeFacingMode('back')">
+          Back Kamera
+        </button>
+        <button class="btn btn-secondary" @click="camera.toggleFacingMode">
+          Toggle Kamera
+        </button>
       </div>
     </div>
 
-    <div class="max-w-[200px] max-h-[200px]">
-      <video ref="videoElement" autoplay playsinline />
-    </div>
+    <div ref="videoContainer" class="max-w-[200px] max-h-[200px]" />
   </div>
 </template>
 
@@ -53,20 +51,20 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-const videoElement = ref<HTMLVideoElement | null>(null)
+const videoContainer = ref<HTMLDivElement | null>(null)
 
 const camera = ref<WebRTCCamera | null>(null)
-const cameraError = ref<OpenCameraError | null>(null)
+const cameraError = ref<OpenStreamError | null>(null)
 
 async function startCamera() {
-  const result = await WebRTCCamera.open()
+  const result = await WebRTCCamera.open('front')
 
   if (result.ok) {
     camera.value = result.value
     cameraError.value = null
 
-    if (videoElement.value) {
-      videoElement.value.srcObject = camera.value.stream
+    if (videoContainer.value) {
+      videoContainer.value.appendChild(camera.value.element)
     }
   }
   else {
@@ -77,10 +75,6 @@ async function startCamera() {
 
 function stopCamera() {
   if (camera.value) {
-    if (videoElement.value) {
-      videoElement.value.srcObject = null
-    }
-
     camera.value.close()
     camera.value = null
   }
