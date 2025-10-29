@@ -1,20 +1,15 @@
+import type { WebRTCCameraOpts } from '../modules/camera/webRTCCamera.ts'
 import { ref } from 'vue'
-import { WebRTCCamera } from '../modules/camera'
+import { WebRTCCamera } from '../modules/camera/webRTCCamera.ts'
 
 type WebRTCCameraInstance = InstanceType<typeof WebRTCCamera>
 
-interface CameraOpts {
-  facingMode?: FacingMode
-}
-
-export function useCamera(opts?: CameraOpts) {
-  const facingMode = opts?.facingMode ?? 'front'
-
+export function useWebRTCCamera() {
   const camera = ref<WebRTCCameraInstance | null>(null)
   const cameraError = ref<OpenStreamError | null>(null)
 
-  const start = async (videoContainer: Node) => {
-    const result = await WebRTCCamera.open(facingMode)
+  const start = async (videoContainer: Node, opts?: WebRTCCameraOpts) => {
+    const result = await WebRTCCamera.open(opts)
 
     if (result.ok) {
       camera.value = result.value
