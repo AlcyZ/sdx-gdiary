@@ -1,6 +1,6 @@
 <template>
   <LayoutPwa v-if="isInPwa" />
-  <LayoutBrowser v-else :is-mobile />
+  <LayoutBrowser v-else :is-mobile="isMobile" />
 </template>
 
 <script setup lang="ts">
@@ -9,7 +9,7 @@ import LayoutBrowser from './layouts/LayoutBrowser.vue'
 import LayoutPwa from './layouts/LayoutPwa.vue'
 
 const isInPwa = computed(() => isInStandaloneModeCheck())
-const _isMobile = computed(() => isMobileCheck())
+const isMobile = computed(() => isMobileCheck())
 
 function isInStandaloneModeCheck(): boolean {
   return (
