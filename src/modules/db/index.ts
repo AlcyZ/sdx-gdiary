@@ -4,9 +4,9 @@ const DB_NAME = 'GrowDiary'
 
 export const TABLE_PLANTS = 'plants'
 export const TABLE_PLANT_IMAGES = 'plantImages'
+export const INDEX_PLANT_ID = 'plantId'
 
 const DEFAULT_KEY_PATH = 'id'
-const INDEX_PLANT_ID = 'plantId'
 const TYPE_PNG = 'image/png'
 
 export async function getDb() {
@@ -23,7 +23,7 @@ export async function getDb() {
           keyPath: DEFAULT_KEY_PATH,
           autoIncrement: true,
         })
-        store.createIndex(INDEX_PLANT_ID, INDEX_PLANT_ID)
+        store.createIndex(INDEX_PLANT_ID, INDEX_PLANT_ID, { unique: false })
       }
     },
   })
