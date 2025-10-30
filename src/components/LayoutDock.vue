@@ -4,7 +4,7 @@
       v-for="(item, i) in items"
       :key="i"
       :class="{ 'dock-active': item.active }"
-      @click="$emit('changePage', item)"
+      @click="$emit('changePage', item.label)"
     >
       <component :is="item.icon" />
       <span class="dock-label">{{ item.label }}</span>
@@ -13,14 +13,14 @@
 </template>
 
 <script lang="ts" setup>
-import type { DockItem } from '../types'
+import type { DockItem, Page } from '../types'
 
 interface Props {
   items: Array<DockItem>
 }
 
 interface Emits {
-  changePage: [item: DockItem]
+  changePage: [item: Page]
 }
 
 defineProps<Props>()

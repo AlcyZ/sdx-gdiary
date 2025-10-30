@@ -6,19 +6,15 @@
       Dev
     </button>
 
-    <div class="border">
-      <div v-for="(plant, i) in plants" :key="i">
-        {{ plant.strain }}
-        <br>
-        <img :src="plant.image" :alt="plant.strain" />
-      </div>
-    </div>
+    <PlantList
+      :plants="plants"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { getDb, TABLE_PLANT_IMAGES } from '../modules/db'
+import {onMounted, ref} from 'vue'
+import PlantList from '../components/PlantList.vue'
 import { fetchPlants } from '../modules/plants'
 
 interface Props {
@@ -39,4 +35,6 @@ async function dev() {
   if (result.ok)
     plants.value = result.value
 }
+
+onMounted(dev)
 </script>

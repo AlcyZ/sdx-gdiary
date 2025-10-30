@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-neutral-200 w-screen h-screen">
+  <LayoutBase
+    :docks="docks"
+    @change-page="changePage"
+  >
     <PageHome
       v-if="currentPage === 'Home'"
     />
@@ -9,12 +12,7 @@
     <PageTodo
       v-else-if="currentPage === 'Todo'"
     />
-
-    <LayoutDock
-      :items="docks"
-      @change-page="changePage"
-    />
-  </div>
+  </LayoutBase>
 </template>
 
 <script setup lang="ts">
@@ -25,7 +23,7 @@ import {
   LayoutList as IconTodo,
 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
-import LayoutDock from './components/LayoutDock.vue'
+import LayoutBase from './layouts/LayoutBase.vue'
 import PageHome from './pages/PageHome.vue'
 import PagePlant from './pages/PagePlant.vue'
 import PageTodo from './pages/PageTodo.vue'
@@ -65,8 +63,8 @@ function isMobileCheck(): boolean {
   return /iPhone|iPad|iPod|Android/i.test(ua)
 }
 
-function changePage(newPage: DockItem) {
+function changePage(newPage: Page) {
   docks.value.forEach(dock => dock.active = false)
-  docks.value.filter(dock => dock.label === newPage.label).forEach(dock => dock.active = true)
+  docks.value.filter(dock => dock.label === newPage).forEach(dock => dock.active = true)
 }
 </script>
