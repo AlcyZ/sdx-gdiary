@@ -35,12 +35,12 @@ const docks = ref<Array<DockItem>>([
   {
     label: 'Home',
     icon: IconHouse,
-    active: true,
+    active: false,
   },
   {
     label: 'Pflanzen',
     icon: IconPlant,
-    active: false,
+    active: true,
   },
   {
     label: 'Todo',

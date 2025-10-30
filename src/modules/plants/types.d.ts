@@ -8,6 +8,13 @@ interface Plant {
   updatedAt: string
 }
 
+interface NewPlant {
+  strain: string
+  name: string
+  poppedAt: string
+  image: string
+}
+
 interface Timestamps {
   createdAt: string
   updatedAt: string
@@ -24,4 +31,10 @@ interface PlantImageRow {
   id: number
   plantId: number
   image: Blob
+}
+
+interface SavePlantError {
+  image?: string
+  strain?: string
+  poppedAt?: string
 }

@@ -1,7 +1,7 @@
 import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
 import { err, ok } from '../../util.ts'
-import { getDb, INDEX_PLANT_ID, TABLE_PLANT_IMAGES, TABLE_PLANTS } from '../db'
+import {base64ToBlob, getDb, INDEX_PLANT_ID, isBase64String, TABLE_PLANT_IMAGES, TABLE_PLANTS} from '../db'
 
 const THRESHOLD_IMAGE_ROWS: number = 30
 
@@ -18,6 +18,59 @@ export async function fetchPlants(): Promise<Result<Array<Plant>, string>> {
   catch (error) {
     console.error('[plants/index.ts:fetchPlants] - Failed to fetch Plants', error)
     return err('Pflanzen konnten aufgrund eines Fehlers nicht geladen werden!')
+  }
+}
+
+function validateNewPlant(plant: NewPlant): Result<undefined, SavePlantError> {
+  const image = !isBase64String(plant.image) ? 'Es muss ein Bild für die Pflanze ausgewählt werden!' : undefined
+  const strain = plant.strain === '' ? 'Es muss eine Sorte für die Pflanze ausgewählt werden!' : undefined
+  const poppedAt = plant.strain === '' ? 'Es muss das Datum der Einpflanzung angegeben werden!' : undefined
+
+  if (image !== undefined || strain !== undefined || poppedAt !== undefined) {
+    return err({ image, strain, poppedAt })
+  }
+
+  return ok(undefined)
+}
+
+export async function savePlant(plant: NewPlant): Promise<Result<undefined, SavePlantError>> {
+  const validationResult = validateNewPlant(plant)
+  if (!validationResult.ok) {
+    console.error('[plants/index.ts:savePlant] - Invalid plant data', plant, validationResult)
+    return err(validationResult.error)
+  }
+
+  try {
+    const db = await getDb()
+    const tx = db.transaction([TABLE_PLANTS, TABLE_PLANT_IMAGES], 'readwrite')
+
+    const plantStore = tx.objectStore(TABLE_PLANTS)
+    const imageStore = tx.objectStore(TABLE_PLANT_IMAGES)
+
+    const now = (): string => (new Date()).toISOString()
+    const timestamps = { createdAt: now(), updatedAt: now() }
+
+    const plantData = {
+      strain: plant.strain,
+      name: plant.name,
+      poppedAt: plant.poppedAt,
+      ...timestamps,
+    }
+    const plantId = await plantStore.add(plantData)
+
+    const imageData = {
+      plantId,
+      image: base64ToBlob(plant.image),
+    }
+
+    await imageStore.add(imageData)
+    await tx.done
+
+    return ok(undefined)
+  }
+  catch (error) {
+    console.error('[plants/index.ts:savePlant] - Failed to save plant', error, plant)
+    return err('Pflanze konnte aufgrund eines Fehlers nicht gespeichert werden!')
   }
 }
 

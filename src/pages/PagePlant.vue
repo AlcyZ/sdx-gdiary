@@ -1,11 +1,16 @@
 <template>
-  <div class="h-full flex items-center justify-center">
-    <PlantForm />
+  <div class="">
+    <PlantList
+      :plants="plants"
+      @delete="removePlant"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import PlantForm from "../components/Plant/PlantForm.vue";
+import { onMounted, ref } from 'vue'
+import PlantList from '../components/PlantList.vue'
+import { deletePlant, fetchPlants } from '../modules/plants'
 
 interface Props {
 
@@ -16,4 +21,20 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
+
+const plants = ref<Array<Plant>>([])
+
+async function syncPlants() {
+  const result = await fetchPlants()
+
+  if (result.ok)
+    plants.value = result.value
+}
+
+async function removePlant(plantId: number) {
+  await deletePlant(plantId)
+  await syncPlants()
+}
+
+onMounted(syncPlants)
 </script>

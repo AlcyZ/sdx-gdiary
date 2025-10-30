@@ -5,8 +5,15 @@
     <InputText
       v-model="form.strain"
       label="Name der Sorte"
+      :error="errorMessage?.strain"
       required
     />
+
+    <label class="floating-label">
+      <input type="text" placeholder="Medium" class="input input-md" />
+      <span>Medium</span>
+      <span>as</span>
+    </label>
 
     <InputText
       v-model="form.name"
@@ -16,6 +23,7 @@
     <InputDate
       v-model="form.poppedAt"
       label="Datum an dem der Samen sprießt"
+      :error="errorMessage?.poppedAt"
     />
 
     <InputPhoto
@@ -23,9 +31,13 @@
       label="Bild der Pflanze"
     />
 
+    <div v-if="errorMessage?.image" class="text-xs text-red-400 my-2">
+      {{ errorMessage.image }}
+    </div>
+
     <div>
       <BtnPrimary
-        @click="savePlant"
+        @click="save"
       >
         Speichern
       </BtnPrimary>
@@ -34,10 +46,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { ToastOptions } from 'vue3-toastify'
-import { ref, toRaw } from 'vue'
+import { computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
-import { base64ToBlob, getDb, isBase64String, TABLE_PLANT_IMAGES, TABLE_PLANTS } from '../../modules/db'
+import { savePlant } from '../../modules/plants'
 import BtnPrimary from '../BtnPrimary.vue'
 import ICard from '../ICard.vue'
 import InputDate from '../InputDate.vue'
@@ -68,40 +79,26 @@ const form = ref<FormData>({
   image: '',
 })
 
-async function savePlant() {
-  const db = await getDb()
+const errorMessage = ref<SavePlantError | null>(null)
+const hasError = computed((): boolean => errorMessage.value !== null)
 
-  const now = (): string => (new Date()).toISOString()
-  const timestamps = { createdAt: now(), updatedAt: now() }
+async function save() {
+  const result = await savePlant(form.value)
+  errorMessage.value = null
 
-  const plant = {
-    strain: form.value.strain,
-    name: form.value.name,
-    poppedAt: form.value.poppedAt,
-    ...timestamps,
-  }
-
-  const plantId = await db.add(TABLE_PLANTS, plant)
-
-  if (!isBase64String(form.value.image)) {
-    console.warn('[PlantForm:savePlant][Cant save plant image due to invalid base64 string]', toRaw(form))
+  if (result.ok) {
+    toast('Pflanze gespeichert!', {
+      position: toast.POSITION.BOTTOM_CENTER,
+    })
+    form.value = {
+      strain: '',
+      image: '',
+      poppedAt: '',
+      name: '',
+    }
     return
   }
 
-  const plantImage = {
-    plantId,
-    image: base64ToBlob(form.value.image),
-  }
-  await db.add(TABLE_PLANT_IMAGES, plantImage)
-
-  toast('Pflanze gespeichert!', {
-    position: toast.POSITION.BOTTOM_CENTER,
-  })
-  form.value = {
-    strain: '',
-    image: '',
-    poppedAt: '',
-    name: '',
-  }
+  errorMessage.value = result.error
 }
 </script>
