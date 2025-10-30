@@ -1,45 +1,4 @@
 @import "tailwindcss";
-
-@layer components {
-    /* Button styles */
-    .btn {
-        @apply border border-emerald-900 rounded px-4 py-1 cursor-pointer transition-colors;
-    }
-
-    .btn-primary {
-        @apply bg-emerald-700 text-white hover:bg-emerald-800;
-    }
-
-    .btn-secondary {
-        @apply border-emerald-700 text-emerald-700 hover:bg-emerald-700 hover:text-white;
-    }
-
-    /* Toggle styles */
-    .toggle {
-        @apply divide-x;
-    }
-
-    .toggle-item {
-        @apply border-emerald-600 border-t border-b rounded-xs py-1 px-4 cursor-pointer divide-y;
-    }
-
-    .toggle-item:first-of-type {
-        @apply border-s;
-    }
-
-    .toggle-item:not(:first-of-type) {
-        @apply rounded-s-none;
-    }
-
-    .toggle-item:not(:last-of-type) {
-        @apply rounded-e-none;
-    }
-
-    .toggle-item:last-of-type {
-        @apply border-e;
-    }
-
-    .toggle-item.active {
-        @apply bg-emerald-900 text-neutral-100;
-    }
+@plugin "daisyui" {
+    themes: emerald --default, emerald --prefersdark, emerald;
 }
