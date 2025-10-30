@@ -11,7 +11,6 @@ import {
   Trash as IconTrash,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
-import { deletePlant } from '../modules/plants'
 import IList from './IList.vue'
 
 interface Props {
@@ -33,9 +32,7 @@ const listItems = computed(
       actions: [
         {
           icon: IconTrash,
-          onClick: async () => {
-            await deletePlant(plant.id)
-          },
+          onClick: () => emit('delete', plant.id),
         },
       ],
     }

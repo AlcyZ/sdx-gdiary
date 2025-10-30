@@ -23,5 +23,5 @@ type PlantRow = {
 interface PlantImageRow {
   id: number
   plantId: number
-  blob: Blob
+  image: Blob
 }

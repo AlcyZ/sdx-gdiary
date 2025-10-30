@@ -2,20 +2,21 @@
   <div>
     Home
 
-    <button class="btn" @click="dev">
+    <button class="btn" @click="syncPlants">
       Dev
     </button>
 
     <PlantList
       :plants="plants"
+      @delete="removePlant"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import {onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
 import PlantList from '../components/PlantList.vue'
-import { fetchPlants } from '../modules/plants'
+import { deletePlant, fetchPlants } from '../modules/plants'
 
 interface Props {
 
@@ -29,12 +30,17 @@ defineEmits<Emits>()
 
 const plants = ref<Array<Plant>>([])
 
-async function dev() {
+async function syncPlants() {
   const result = await fetchPlants()
 
   if (result.ok)
     plants.value = result.value
 }
 
-onMounted(dev)
+async function removePlant(plantId: number) {
+  await deletePlant(plantId)
+  await syncPlants()
+}
+
+onMounted(syncPlants)
 </script>

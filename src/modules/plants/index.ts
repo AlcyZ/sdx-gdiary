@@ -1,7 +1,7 @@
-import type {IDBPDatabase} from 'idb'
-import type {Result} from '../../types'
-import {err, ok} from '../../util.ts'
-import {getDb, INDEX_PLANT_ID, TABLE_PLANT_IMAGES, TABLE_PLANTS} from '../db'
+import type { IDBPDatabase } from 'idb'
+import type { Result } from '../../types'
+import { err, ok } from '../../util.ts'
+import { getDb, INDEX_PLANT_ID, TABLE_PLANT_IMAGES, TABLE_PLANTS } from '../db'
 
 const THRESHOLD_IMAGE_ROWS: number = 30
 
@@ -40,7 +40,7 @@ export async function deletePlant(plantId: number): Promise<Result<undefined, st
     await tx.done
     return ok(undefined)
   }
- catch (error) {
+  catch (error) {
     console.error('[plants/index.ts:deletePlant] - Failed to delete plant', error, plantId)
     return err('Pflanze konnte aufgrund eines Fehlers nicht gelöscht werden!')
   }
@@ -59,7 +59,8 @@ async function mapOneByOne(rows: Array<PlantRow>, db: IDBPDatabase): Promise<Arr
     const index = store.index(INDEX_PLANT_ID)
 
     const imageRow = await index.get(row.id)
-    const image = isPlantImageRow(imageRow) ? URL.createObjectURL(imageRow.blob) : ''
+    console.info('mapOneByOne', imageRow)
+    const image = isPlantImageRow(imageRow) ? URL.createObjectURL(imageRow.image) : ''
 
     return {
       ...row,
@@ -76,11 +77,11 @@ async function mapSimultaneously(rows: Array<PlantRow>, db: IDBPDatabase): Promi
   const tx = db.transaction(TABLE_PLANT_IMAGES)
   const store = tx.objectStore(TABLE_PLANT_IMAGES)
   const imageRows = (await store.getAll()).filter(isPlantImageRow) as Array<PlantImageRow>
-
+  console.info('ROWWOWS', imageRows)
   const getPlantImage = (plantRow: PlantRow): string => {
     const imageRow = imageRows.find(imageRow => imageRow.plantId === plantRow.id)
     return imageRow !== undefined
-      ? URL.createObjectURL(imageRow.blob)
+      ? URL.createObjectURL(imageRow.image)
       : ''
   }
 
@@ -103,7 +104,7 @@ function isPlantImageRow(value: any): value is PlantImageRow {
   return typeof value === 'object'
     && hasNumKey(value, 'id')
     && hasNumKey(value, 'plantId')
-    && hasBlobKey(value, 'blob')
+    && hasBlobKey(value, 'image')
 }
 
 function hasTimestamps(value: any): boolean {

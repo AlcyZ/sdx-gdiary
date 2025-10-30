@@ -90,7 +90,7 @@ async function savePlant() {
 
   const plantImage = {
     plantId,
-    blob: base64ToBlob(form.value.image),
+    image: base64ToBlob(form.value.image),
   }
   await db.add(TABLE_PLANT_IMAGES, plantImage)
 
