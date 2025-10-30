@@ -1,5 +1,5 @@
 interface Plant {
-  id: string
+  id: number
   strain: string
   name: string
   poppedAt: string
@@ -14,7 +14,7 @@ interface Timestamps {
 }
 
 type PlantRow = {
-  id: string
+  id: number
   name: string
   strain: string
   poppedAt: string
