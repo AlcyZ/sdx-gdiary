@@ -1,17 +1,14 @@
 <template>
-  <div class="bg-neutral-200 text-neutral-800 w-screen h-screen">
-    <div class="text-2xl flex items-center justify-center text-center">
-      <SampleCamera v-if="!isMobile" />
+  <div>
+    <PlantForm />
 
-      <h1 v-else>
-        Bitte verwende dein Mobiles Gerät.
-      </h1>
-    </div>
+    <LayoutNavigation />
   </div>
 </template>
 
 <script lang="ts" setup>
-import SampleCamera from '../components/SampleCamera.vue'
+import PlantForm from '../components/Plant/PlantForm.vue'
+import LayoutNavigation from "../components/LayoutNavigation.vue";
 
 interface Props {
   isMobile: boolean

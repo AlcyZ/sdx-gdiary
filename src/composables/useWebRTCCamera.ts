@@ -2,10 +2,8 @@ import type { WebRTCCameraOpts } from '../modules/camera/webRTCCamera.ts'
 import { ref } from 'vue'
 import { WebRTCCamera } from '../modules/camera/webRTCCamera.ts'
 
-type WebRTCCameraInstance = InstanceType<typeof WebRTCCamera>
-
 export function useWebRTCCamera() {
-  const camera = ref<WebRTCCameraInstance | null>(null)
+  const camera = ref<WebRTCCamera | null>(null)
   const cameraError = ref<OpenStreamError | null>(null)
 
   const start = async (videoContainer: Node, opts?: WebRTCCameraOpts) => {

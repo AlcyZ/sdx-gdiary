@@ -1,11 +1,14 @@
 <template>
   <div>
-    <SampleCamera />
+    <PlantForm />
+
+    <LayoutNavigation />
   </div>
 </template>
 
 <script lang="ts" setup>
-import SampleCamera from '../components/SampleCamera.vue'
+import PlantForm from '../components/Plant/PlantForm.vue'
+import LayoutNavigation from "../components/LayoutNavigation.vue";
 
 interface Props {
 

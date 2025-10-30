@@ -44,6 +44,8 @@ export class WebRTCCamera {
           opts.video.classList.forEach(className => element.classList.add(className))
       }
 
+      element.classList.add('rounded-xs')
+
       return ok(new WebRTCCamera(result.value, element, facingMode))
     }
 
