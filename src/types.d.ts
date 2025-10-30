@@ -29,3 +29,15 @@ interface DockItem {
   label: Page
   active?: boolean
 }
+
+interface ListItem {
+  title: string
+  text: string
+  image: string
+  actions: Array<ListItemAction>
+}
+
+interface ListItemAction {
+  icon: Component
+  onClick?: () => void | Promise<void>
+}

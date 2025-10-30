@@ -1,7 +1,7 @@
-import type { IDBPDatabase } from 'idb'
-import type { Result } from '../../types'
-import { err, ok } from '../../util.ts'
-import { getDb, INDEX_PLANT_ID, TABLE_PLANT_IMAGES, TABLE_PLANTS } from '../db'
+import type {IDBPDatabase} from 'idb'
+import type {Result} from '../../types'
+import {err, ok} from '../../util.ts'
+import {getDb, INDEX_PLANT_ID, TABLE_PLANT_IMAGES, TABLE_PLANTS} from '../db'
 
 const THRESHOLD_IMAGE_ROWS: number = 30
 
@@ -17,8 +17,32 @@ export async function fetchPlants(): Promise<Result<Array<Plant>, string>> {
   }
   catch (error) {
     console.error('[plants/index.ts:fetchPlants] - Failed to fetch Plants', error)
-
     return err('Pflanzen konnten aufgrund eines Fehlers nicht geladen werden!')
+  }
+}
+
+export async function deletePlant(plantId: number): Promise<Result<undefined, string>> {
+  try {
+    const db = await getDb()
+    const tx = db.transaction([TABLE_PLANTS, TABLE_PLANT_IMAGES], 'readwrite')
+
+    const plantsStore = tx.objectStore(TABLE_PLANTS)
+    const plantsImageStore = tx.objectStore(TABLE_PLANT_IMAGES)
+
+    const indexPlantId = plantsImageStore.index(INDEX_PLANT_ID)
+    const imagesKeys = await indexPlantId.getAllKeys(plantId)
+
+    for (const key of imagesKeys) {
+      await plantsImageStore.delete(key)
+    }
+    await plantsStore.delete(plantId)
+
+    await tx.done
+    return ok(undefined)
+  }
+ catch (error) {
+    console.error('[plants/index.ts:deletePlant] - Failed to delete plant', error, plantId)
+    return err('Pflanze konnte aufgrund eines Fehlers nicht gelöscht werden!')
   }
 }
 
