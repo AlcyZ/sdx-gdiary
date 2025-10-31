@@ -1,10 +1,12 @@
 import type { WebRTCCameraOpts } from '../modules/camera/webRTCCamera.ts'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { WebRTCCamera } from '../modules/camera/webRTCCamera.ts'
 
 export function useWebRTCCamera() {
   const camera = ref<WebRTCCamera | null>(null)
   const cameraError = ref<OpenStreamError | null>(null)
+
+  const isCameraActive = computed((): boolean => camera.value !== null)
 
   const start = async (videoContainer: Node, opts?: WebRTCCameraOpts) => {
     const result = await WebRTCCamera.open(opts)
@@ -13,7 +15,7 @@ export function useWebRTCCamera() {
       camera.value = result.value
       cameraError.value = null
 
-      videoContainer.appendChild(camera.value.element)
+      videoContainer.appendChild(result.value.element)
     }
     else {
       camera.value = null
@@ -38,11 +40,17 @@ export function useWebRTCCamera() {
     await camera.value.toggleFacingMode()
   }
 
+  const capture = (): string => {
+    return camera.value?.captureBase64() || ''
+  }
+
   return {
     camera,
     cameraError,
+    isCameraActive,
     start,
     stop,
     toggle,
+    capture,
   }
 }

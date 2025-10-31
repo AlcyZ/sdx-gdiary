@@ -1,7 +1,7 @@
 import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
 import { err, ok } from '../../util.ts'
-import {base64ToBlob, getDb, INDEX_PLANT_ID, isBase64String, TABLE_PLANT_IMAGES, TABLE_PLANTS} from '../db'
+import { base64ToBlob, getDb, INDEX_PLANT_ID, isBase64String, TABLE_PLANT_IMAGES, TABLE_PLANTS } from '../db'
 
 const THRESHOLD_IMAGE_ROWS: number = 30
 
@@ -112,7 +112,6 @@ async function mapOneByOne(rows: Array<PlantRow>, db: IDBPDatabase): Promise<Arr
     const index = store.index(INDEX_PLANT_ID)
 
     const imageRow = await index.get(row.id)
-    console.info('mapOneByOne', imageRow)
     const image = isPlantImageRow(imageRow) ? URL.createObjectURL(imageRow.image) : ''
 
     return {
@@ -130,7 +129,7 @@ async function mapSimultaneously(rows: Array<PlantRow>, db: IDBPDatabase): Promi
   const tx = db.transaction(TABLE_PLANT_IMAGES)
   const store = tx.objectStore(TABLE_PLANT_IMAGES)
   const imageRows = (await store.getAll()).filter(isPlantImageRow) as Array<PlantImageRow>
-  console.info('ROWWOWS', imageRows)
+
   const getPlantImage = (plantRow: PlantRow): string => {
     const imageRow = imageRows.find(imageRow => imageRow.plantId === plantRow.id)
     return imageRow !== undefined

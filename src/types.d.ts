@@ -41,3 +41,8 @@ interface ListItemAction {
   icon: Component
   onClick?: () => void | Promise<void>
 }
+
+interface FabAction {
+  icon: Component
+  onClick?: () => void | Promise<void>
+}

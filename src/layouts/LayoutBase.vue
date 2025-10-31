@@ -1,6 +1,7 @@
 <template>
-  <div class="bg-neutral-200 w-screen min-h-screen">
+  <div class="bg-neutral-200 w-full min-h-screen pb-16 overflow-x-hidden">
     <slot />
+
     <LayoutDock
       :items="docks"
       @change-page="$emit('changePage', $event)"

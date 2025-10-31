@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'vue'
+import type { Result } from '../../types'
 import { err, ok } from '../../util.ts'
 
 const DEFAULT_FACING_MODE: FacingMode = 'front'
