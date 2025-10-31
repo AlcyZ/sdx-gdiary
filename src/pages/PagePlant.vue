@@ -11,7 +11,7 @@
       :plants="plants"
       @delete="removePlant"
     />
-    <PlantFormNew
+    <PlantFormAdd
       v-else-if="page === 'add'"
       @back="page = 'list'"
     />
@@ -27,7 +27,7 @@ import {
 } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import IFab from '../components/IFab.vue'
-import PlantFormNew from '../components/PlantFormNew.vue'
+import PlantFormAdd from '../components/PlantFormAdd.vue'
 import PlantList from '../components/PlantList.vue'
 import { deletePlant, fetchPlants } from '../modules/plants'
 
