@@ -28,9 +28,6 @@ import PageHome from './pages/PageHome.vue'
 import PagePlant from './pages/PagePlant.vue'
 import PageTodo from './pages/PageTodo.vue'
 
-const _isInPwa = computed(() => isInStandaloneModeCheck())
-const _isMobile = computed(() => isMobileCheck())
-
 const docks = ref<Array<DockItem>>([
   {
     label: 'Home',
@@ -50,18 +47,6 @@ const docks = ref<Array<DockItem>>([
 ])
 
 const currentPage = computed((): Page => docks.value.find(dock => dock.active)?.label || 'Home')
-
-function isInStandaloneModeCheck(): boolean {
-  return (
-    window.matchMedia('(display-mode: standalone)').matches
-    || window.navigator.standalone === true
-  )
-}
-
-function isMobileCheck(): boolean {
-  const ua = navigator.userAgent
-  return /iPhone|iPad|iPod|Android/i.test(ua)
-}
 
 function changePage(newPage: Page) {
   docks.value.forEach(dock => dock.active = false)

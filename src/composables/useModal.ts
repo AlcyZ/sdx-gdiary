@@ -1,8 +1,6 @@
-import type {ShowConfirmationModalProps} from '../types'
+import type { ShowConfirmationModalProps } from '../types'
 import { createApp, h } from 'vue'
 import IModalConfirmation from '../components/IModalConfirmation.vue'
-
-
 
 export function useModal() {
   const showConfirmationModal = (props: ShowConfirmationModalProps) => {

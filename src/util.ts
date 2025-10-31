@@ -1,3 +1,5 @@
+import type { Err, Ok } from './types'
+
 /**
  * Creates a successful result object with the given value.
  *

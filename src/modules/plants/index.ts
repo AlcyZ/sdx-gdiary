@@ -70,7 +70,7 @@ export async function savePlant(plant: NewPlant): Promise<Result<undefined, Save
   }
   catch (error) {
     console.error('[plants/index.ts:savePlant] - Failed to save plant', error, plant)
-    return err('Pflanze konnte aufgrund eines Fehlers nicht gespeichert werden!')
+    return err({ unknown: 'Pflanze konnte aufgrund eines Fehlers nicht gespeichert werden!' })
   }
 }
 

@@ -30,8 +30,8 @@ import IFab from '../components/IFab.vue'
 import PlantFormAdd from '../components/PlantFormAdd.vue'
 import PlantList from '../components/PlantList.vue'
 import { useModal } from '../composables/useModal.ts'
-import {deletePlant, fetchPlants} from '../modules/plants'
-import {useToast} from "../composables/useToast.ts";
+import { useToast } from '../composables/useToast.ts'
+import { deletePlant, fetchPlants } from '../modules/plants'
 
 interface Props {
 

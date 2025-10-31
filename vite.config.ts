@@ -10,6 +10,8 @@ export default defineConfig({
     tailwindcss(),
   ],
 
+  base: './',
+
   server: {
     https: {
       key: fs.readFileSync('./.cert/key.pem'),

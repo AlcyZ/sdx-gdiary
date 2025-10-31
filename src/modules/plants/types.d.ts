@@ -37,4 +37,5 @@ interface SavePlantError {
   image?: string
   strain?: string
   poppedAt?: string
+  unknown?: string
 }

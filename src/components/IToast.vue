@@ -58,7 +58,7 @@ const toastClassList = computed(
 )
 const alertClassList = computed(() => [
   variant !== undefined ? alertClassMap[variant] : undefined,
-    variant === 'error' || variant === 'warning' ? 'text-base-100' : undefined,
+  variant === 'error' || variant === 'warning' ? 'text-base-100' : undefined,
 ])
 const btnClassList = computed(() => variant !== undefined ? btnClassMap[variant] : undefined)
 
