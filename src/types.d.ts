@@ -46,3 +46,17 @@ interface FabAction {
   icon: Component
   onClick?: () => void | Promise<void>
 }
+
+type ComponentCssClass = string | Record<string, boolean> | Array<ComponentCssClass>
+
+interface ToastProps {
+  message: string
+  variant?: ToastVariant
+  position?: ToastPosition
+  duration?: number | undefined
+  class: ComponentCssClass
+}
+type ToastPosition = 'ts' | 'tc' | 'te' | 'ms' | 'mc' | 'me' | 'bs' | 'bc' | 'be'
+type ToastVariant = 'info' | 'warning' | 'success' | 'error'
+
+type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
