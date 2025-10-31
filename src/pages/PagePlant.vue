@@ -29,7 +29,9 @@ import { onMounted, ref } from 'vue'
 import IFab from '../components/IFab.vue'
 import PlantFormAdd from '../components/PlantFormAdd.vue'
 import PlantList from '../components/PlantList.vue'
-import { deletePlant, fetchPlants } from '../modules/plants'
+import { useModal } from '../composables/useModal.ts'
+import {deletePlant, fetchPlants} from '../modules/plants'
+import {useToast} from "../composables/useToast.ts";
 
 interface Props {
 
@@ -40,6 +42,9 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
+
+const { showConfirmationModal } = useModal()
+const { showToast } = useToast()
 
 type PlantPage = 'list' | 'add' | 'edit'
 const page = ref<PlantPage>('list')
@@ -68,9 +73,40 @@ async function syncPlants() {
     plants.value = result.value
 }
 
-async function removePlant(plantId: number) {
-  await deletePlant(plantId)
-  await syncPlants()
+async function removePlant(plant: Plant) {
+  const name = plant.name !== ''
+    ? `${plant.name} (${plant.strain})`
+    : plant.strain
+  const text = `Bist du sicher, dass die Pflanze '${name}' gelöscht werden soll? Diese Aktion kann nicht rückgängig gemacht werden.`
+
+  const deleteAndSync = async () => {
+    const result = await deletePlant(plant.id)
+    if (result.ok) {
+      showToast({
+        message: 'Löschen hat geklappt!',
+        duration: 2000,
+        variant: 'success',
+      })
+      await syncPlants()
+      return
+    }
+
+    showToast({
+      message: result.error,
+      duration: 2000,
+      variant: 'error',
+    })
+  }
+
+  showConfirmationModal({
+    title: 'Pflanze löschen',
+    text,
+    actions: [{
+      label: 'Löschen',
+      onClick: async () => await deleteAndSync(),
+      class: 'btn-error text-base-100',
+    }],
+  })
 }
 
 onMounted(syncPlants)

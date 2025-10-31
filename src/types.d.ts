@@ -54,7 +54,7 @@ interface ToastProps {
   variant?: ToastVariant
   position?: ToastPosition
   duration?: number | undefined
-  class: ComponentCssClass
+  class?: ComponentCssClass
 }
 type ToastPosition = 'ts' | 'tc' | 'te' | 'ms' | 'mc' | 'me' | 'bs' | 'bc' | 'be'
 type ToastVariant = 'info' | 'warning' | 'success' | 'error'
@@ -63,4 +63,17 @@ type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
 
 type FormError<T extends object> = {
   [K in keyof T]?: string
+}
+
+interface ShowConfirmationModalAction {
+  label: string
+  onClick: () => void
+  class?: ComponentCssClass
+  type?: 'button' | 'submit'
+}
+
+interface ShowConfirmationModalProps {
+  title: string
+  text?: string
+  actions: Array<ShowConfirmationModalAction>
 }

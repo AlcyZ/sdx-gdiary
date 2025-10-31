@@ -56,7 +56,10 @@ const toastClassList = computed(
     ...getPositionClasses(positionMobile),
   ],
 )
-const alertClassList = computed(() => variant !== undefined ? alertClassMap[variant] : undefined)
+const alertClassList = computed(() => [
+  variant !== undefined ? alertClassMap[variant] : undefined,
+    variant === 'error' || variant === 'warning' ? 'text-base-100' : undefined,
+])
 const btnClassList = computed(() => variant !== undefined ? btnClassMap[variant] : undefined)
 
 function getPositionClasses(pos: ToastPosition, responsive?: ResponsiveBreakpoint): Array<string> {

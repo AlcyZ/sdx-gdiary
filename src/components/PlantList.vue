@@ -17,7 +17,7 @@ interface Props {
   plants: Array<Plant>
 }
 interface Emits {
-  delete: [plant: number]
+  delete: [plant: Plant]
 }
 
 const { plants } = defineProps<Props>()
@@ -32,7 +32,7 @@ const listItems = computed(
       actions: [
         {
           icon: IconTrash,
-          onClick: () => emit('delete', plant.id),
+          onClick: () => emit('delete', plant),
         },
       ],
     }
