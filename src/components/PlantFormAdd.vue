@@ -10,29 +10,29 @@
 
         <div class="space-y-3">
           <InputTextFloat
-            v-model="form.strain"
+            v-model="strain"
             label="Welche Sorte ist die Pflanze?"
-            :error="form.error?.strain"
+            :error="errors.strain"
             required
           />
 
           <InputTextFloat
-            v-model="form.name"
+            v-model="name"
             label="Wie heißt deine Pflanze?"
-            :error="form.error?.name"
+            :error="errors?.name"
           />
 
           <InputTextFloat
-            v-model="form.poppedAt"
+            v-model="poppedAt"
             label="Wann ist sie eingepflanzt worden?"
             type="date"
-            :error="form.error?.poppedAt"
+            :error="errors?.poppedAt"
           />
 
           <InputPhoto
-            v-model="form.image"
+            v-model="image"
             label="Füg ein Bild deiner Pflanze hinzu"
-            :error="form.error?.image"
+            :error="errors?.image"
           />
         </div>
 
@@ -45,19 +45,16 @@
             Speichern
           </button>
         </div>
-
-        <!--        <IToast -->
-        <!--          message="Foo bar" -->
-        <!--          variant="info" -->
-        <!--        /> -->
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { FormError } from '../types'
+import { toTypedSchema } from '@vee-validate/yup'
+import { useForm } from 'vee-validate'
 import { ref } from 'vue'
+import * as yup from 'yup'
 import { useToast } from '../composables/useToast.ts'
 import { isBase64String } from '../modules/db'
 import { savePlant } from '../modules/plants'
@@ -71,58 +68,41 @@ interface Emits {
   back: []
 }
 
-interface FormData {
-  strain: string
-  name: string
-  poppedAt: string
-  image: string
-}
-interface FormData {
-  strain: string
-  name: string
-  poppedAt: string
-  image: string
-}
-
-interface Form extends FormData {
-  error?: FormError<FormData>
-}
-
 defineProps<Props>()
 const emit = defineEmits<Emits>()
-
-const form = ref<Form>({
-  strain: '',
-  name: '',
-  poppedAt: '',
-  image: '',
-  error: {},
-})
 
 const loading = ref<boolean>(false)
 
 const { showToast } = useToast()
 
-function validateForm(): boolean {
-  form.value.error = {}
+const imgError = 'Bitte mache ein Bild von der Pflanze. Es kann später noch verändert werden!'
+const validationSchema = toTypedSchema(
+  yup.object({
+    strain: yup.string().required('Die Sorte muss angegeben werden!'),
+    name: yup.string().optional(),
+    poppedAt: yup.string().required('Das Anpflanzungsdatum muss mit angegeben werden! Du kannst einfach schätzen falls du dir unsicher bist.'),
+    image: yup.string().required(imgError).test(
+      'is-base-64-image',
+      imgError,
+      value => isBase64String(value || ''),
+    ),
+  }),
+)
+const { defineField, errors, validate } = useForm({
+  validationSchema,
+})
 
-  if (form.value.strain === '') {
-    form.value.error.strain = 'Die Sorte muss angegeben werden!'
-  }
-  if (form.value.poppedAt === '') {
-    form.value.error.poppedAt = 'Das Anpflanzungsdatum muss mit angegeben werden! Du kannst einfach schätzen falls du dir unsicher bist.'
-  }
-  if (!isBase64String(form.value.image)) {
-    form.value.error.image = 'Bitte mache ein Bild von der Pflanze. Es kann später noch verändert werden!'
-  }
-
-  return Object.keys(form.value.error).length === 0
-}
+const [strain] = defineField('strain')
+const [name] = defineField('name')
+const [poppedAt] = defineField('poppedAt')
+const [image] = defineField('image')
 
 async function save() {
   loading.value = true
 
-  if (!validateForm()) {
+  const result = await validate()
+
+  if (!result.valid || result.values === undefined) {
     showToast({
       message: 'Pflanze konnte nicht gespeichert werden.',
       variant: 'error',
@@ -134,7 +114,12 @@ async function save() {
     return
   }
 
-  await savePlant(form.value)
+  await savePlant({
+    strain: strain.value || '',
+    name: name.value,
+    image: image.value || '',
+    poppedAt: poppedAt.value || '',
+  })
 
   showToast({
     message: 'Pflanze erfolgreich gespeichert.',

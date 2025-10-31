@@ -83,7 +83,7 @@ import { isBase64String } from '../modules/db'
 
 interface Props {
   label: string
-  modelValue: string
+  modelValue?: string
   error?: string | undefined
 }
 interface Emits {
@@ -103,7 +103,7 @@ const {
 } = useWebRTCCamera()
 
 const cameraContainer = ref<HTMLDivElement | null>(null)
-const showPreview = computed((): boolean => isBase64String(modelValue))
+const showPreview = computed((): boolean => isBase64String(modelValue || ''))
 
 const errorMessage = computed(
   () =>

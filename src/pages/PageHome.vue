@@ -31,14 +31,12 @@ async function seedPlants() {
   const seeder = PlantSeeder.create()
 
   for (let i = 0; i < count; i++) {
-    const result = await seeder.seed()
-    if (result.ok) {
-      showToast({
-        message: `${count} Pflanzen erstellt`,
-        variant: 'success',
-        duration: 5,
-      })
-    }
+    await seeder.seed()
   }
+  showToast({
+    message: `${count} Pflanzen erstellt`,
+    variant: 'success',
+    duration: 1500,
+  })
 }
 </script>

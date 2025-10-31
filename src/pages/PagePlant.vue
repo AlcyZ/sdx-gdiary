@@ -74,16 +74,16 @@ async function syncPlants() {
 }
 
 async function removePlant(plant: Plant) {
-  const name = plant.name !== ''
+  const plantName = plant.name !== ''
     ? `${plant.name} (${plant.strain})`
     : plant.strain
-  const text = `Bist du sicher, dass die Pflanze '${name}' gelöscht werden soll? Diese Aktion kann nicht rückgängig gemacht werden.`
+  const text = `Bist du sicher, dass die Pflanze '${plantName}' gelöscht werden soll? Diese Aktion kann nicht rückgängig gemacht werden.`
 
   const deleteAndSync = async () => {
     const result = await deletePlant(plant.id)
     if (result.ok) {
       showToast({
-        message: 'Löschen hat geklappt!',
+        message: `${plantName} ist gelöscht worden.`,
         duration: 2000,
         variant: 'success',
       })

@@ -10,7 +10,7 @@ interface Plant {
 
 interface NewPlant {
   strain: string
-  name: string
+  name?: string
   poppedAt: string
   image: string
 }
