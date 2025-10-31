@@ -41,7 +41,7 @@ export function base64ToBlob(base64: string, type = TYPE_PNG): Blob {
   return new Blob([buffer], { type })
 }
 
-export function isBase64String(base64: string, type = TYPE_PNG): boolean {
-  const prefix = `data:${type};base64,`
-  return base64.startsWith(prefix)
+export function isBase64String(base64: string): boolean {
+  const pattern = /^data:image\/(?:png|jpeg|jpg|webp|gif|svg\+xml);base64,/
+  return pattern.test(base64)
 }

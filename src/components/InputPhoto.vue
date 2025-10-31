@@ -55,10 +55,10 @@
     </div>
 
     <div
-      v-if="cameraError"
-      class="mb-0"
+      v-if="errorMessage"
+      class="mb-0 px-4"
     >
-      <span class="text-xs text-red-400">{{ cameraError.message }}</span>
+      <span class="text-xs text-error ">{{ errorMessage }}</span>
     </div>
 
     <div
@@ -84,12 +84,13 @@ import { isBase64String } from '../modules/db'
 interface Props {
   label: string
   modelValue: string
+  error?: string | undefined
 }
 interface Emits {
   'update:modelValue': [value: string]
 }
 
-const { modelValue } = defineProps<Props>()
+const { modelValue, error } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const {
@@ -103,6 +104,15 @@ const {
 
 const cameraContainer = ref<HTMLDivElement | null>(null)
 const showPreview = computed((): boolean => isBase64String(modelValue))
+
+const errorMessage = computed(
+  () =>
+    cameraError.value !== null
+      ? cameraError.value.message
+      : error !== undefined
+        ? error
+        : undefined,
+)
 
 async function startCamera() {
   if (cameraContainer.value === null) {

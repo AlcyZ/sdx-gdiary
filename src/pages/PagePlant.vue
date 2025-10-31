@@ -42,18 +42,18 @@ defineProps<Props>()
 defineEmits<Emits>()
 
 type PlantPage = 'list' | 'add' | 'edit'
-const page = ref<PlantPage>('add')
+const page = ref<PlantPage>('list')
 
 const plants = ref<Array<Plant>>([])
 
 const fabActions = ref<Array<FabAction>>([
   {
-    icon: IconList,
-    onClick: () => changePage('list'),
-  },
-  {
     icon: IconNew,
     onClick: () => changePage('add'),
+  },
+  {
+    icon: IconList,
+    onClick: () => changePage('list'),
   },
 ])
 

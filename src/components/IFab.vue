@@ -1,6 +1,6 @@
 <template>
   <div class="fab">
-    <div tabindex="0" role="button" class="btn btn-lg btn-circle btn-primary">
+    <div tabindex="0" role="button" class="btn btn-lg btn-circle btn-primary text-base-100">
       <component :is="icon" />
     </div>
 

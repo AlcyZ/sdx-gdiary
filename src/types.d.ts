@@ -60,3 +60,7 @@ type ToastPosition = 'ts' | 'tc' | 'te' | 'ms' | 'mc' | 'me' | 'bs' | 'bc' | 'be
 type ToastVariant = 'info' | 'warning' | 'success' | 'error'
 
 type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
+
+type FormError<T extends object> = {
+  [K in keyof T]?: string
+}

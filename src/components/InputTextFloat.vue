@@ -1,13 +1,21 @@
 <template>
-  <label class="floating-label">
-    <input
-      v-model="model"
-      :type="type"
-      :placeholder="labelText"
-      class="input input-md w-full"
+  <div>
+    <label class="floating-label">
+      <input
+        v-model="model"
+        :type="type"
+        :placeholder="labelText"
+        class="input input-md w-full"
+      >
+      <span>{{ labelText }}</span>
+    </label>
+    <div
+      v-if="error"
+      class="text-xs text-error px-4 mt-1"
     >
-    <span>{{ labelText }}</span>
-  </label>
+      {{ error }}
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -15,6 +23,7 @@ import { computed } from 'vue'
 
 interface Props {
   label: string
+  error?: string
   required?: boolean
   type?: 'text' | 'date'
 }
