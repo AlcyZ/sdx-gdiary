@@ -1,45 +1,23 @@
-interface Plant {
-  id: number
-  strain: string
-  name: string
-  poppedAt: string
-  image: string
-  createdAt: string
-  updatedAt: string
+interface NewPlantSubstrate {
+  substrate: PlantSubstrate
+  size: string
+  info?: string
+}
+
+interface NewPlantPhase {
+  phase: PlantPhase
+  startedAt: string
+  info?: string
 }
 
 interface NewPlant {
   strain: string
   name?: string
-  poppedAt: string
-  image: string
+  substrate: NewPlantSubstrate
+  phase: NewPlantPhase
 }
 
-interface Timestamps {
-  createdAt: string
-  updatedAt: string
-}
-
-type PlantRow = {
-  id: number
-  name: string
-  strain: string
-  poppedAt: string
-} & Timestamps
-
-interface PlantImageRow {
-  id: number
-  plantId: number
-  image: Blob
-}
-
-interface SavePlantError {
-  image?: string
-  strain?: string
-  poppedAt?: string
-  unknown?: string
-}
-
+type PlantSubstrate = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
 type PlantPhase = 'germination'
   | 'seedling'
   | 'vegetation'
