@@ -17,7 +17,11 @@
 
       <div v-if="showLoadingBar" class="absolute bottom-2.5 left-0 w-full flex items-center justify-center">
         <div class="w-full">
-          <div class="w-full h-2 bg-gradient-to-r from-info to-green-400 border-b border-b-secondary/10" :style="loadingBarStyles" />
+          <div
+            class="w-full h-2 bg-gradient-to-r border-b border-b-secondary/10"
+            :class="loadingBarClass"
+            :style="loadingBarStyles"
+          />
         </div>
       </div>
     </div>
@@ -48,11 +52,6 @@ interface Emits {
 const { variant, position = 'te', positionMobile = 'bc', duration } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const { progress } = useProgressTimer(duration)
-
-const showLoadingBar = computed((): boolean => progress.value !== undefined)
-const loadingBarStyles = computed(() => progress.value !== undefined ? { width: `${progress.value}%` } : undefined)
-
 const alertClassMap: { [K in ToastVariant]: string } = {
   info: 'alert-info',
   success: 'alert-success',
@@ -66,6 +65,18 @@ const btnClassMap: { [K in ToastVariant]: string } = {
   warning: 'btn-warning',
   error: 'btn-error',
 }
+
+const loadingBarClassMap: { [K in ToastVariant]: string } = {
+  info: 'from-info to-blue-400',
+  success: 'from-success to-green-400',
+  warning: 'from-warning to-yellow-400',
+  error: 'from-error to-yellow-400',
+}
+
+const { progress } = useProgressTimer(duration)
+const showLoadingBar = computed((): boolean => progress.value !== undefined)
+const loadingBarStyles = computed(() => progress.value !== undefined ? { width: `${progress.value}%` } : undefined)
+const loadingBarClass = computed(() => variant !== undefined ? loadingBarClassMap[variant] : undefined)
 
 const toastClassList = computed(
   () => [
