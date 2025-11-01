@@ -3,7 +3,7 @@
 const CACHE_NAME = 'grow-diary-v1'
 
 const ASSETS_TO_CACHE = [
-  './',                             // index.html
+  './', // index.html
   './vite.svg',
   './manifest.json',
   './assets/index-DjvmPv1N.css',
