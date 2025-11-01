@@ -65,10 +65,6 @@ export default class PlantReadRepository {
   }
 
   private async fetchSubstrate(plant: PlantRow, tx: IDBPTransaction): Promise<Result<PlantSubstrate, string>> {
-    if (plant.id === 2) {
-      return err('test')
-    }
-
     const store = tx.objectStore(TABLE_PLANT_SUBSTRATES)
     const index = store.index(INDEX_PLANT_ID)
 
