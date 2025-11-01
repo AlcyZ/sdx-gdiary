@@ -2,21 +2,27 @@
   <IFieldset
     legend="Substrat / Medium"
   >
-    <IFloatingLabel
-      label="Wähle das Substrat oder trage einen eigenen Typ ein"
-    >
-      <ISelect
-        v-model="substrateInternal"
-        :options="substrates"
-        class="w-full"
+    <div>
+      <IFloatingLabel
+        label="Wähle das Substrat oder trage einen eigenen Typ ein"
       >
-        <template #option="{ item }">
-          <option :value="item" :selected="item === substrate">
-            {{ item }}
-          </option>
-        </template>
-      </ISelect>
-    </IFloatingLabel>
+        <ISelect
+          v-model="substrateInternal"
+          :options="substrates"
+          class="w-full"
+        >
+          <template #option="{ item }">
+            <option :value="item" :selected="item === substrate">
+              {{ item }}
+            </option>
+          </template>
+        </ISelect>
+      </IFloatingLabel>
+
+      <div class="text-xs text-error px-4 mt-1">
+        {{ substrateError }}
+      </div>
+    </div>
 
     <InputTextFloat
       v-if="substrateInternal === 'Custom'"
@@ -30,6 +36,7 @@
       label="Gib die Größe des Topfes oder Volumens des Substrats an (z.B. 12L, 15cm x 15cm x 15cm)"
       type="text"
       class="mt-2"
+      :error="sizeError"
       required
     />
   </IFieldset>
@@ -43,7 +50,9 @@ import InputTextFloat from './InputTextFloat.vue'
 import ISelect from './ISelect.vue'
 
 interface Props {
-  substrate: string
+  substrate?: string
+  substrateError?: string
+  sizeError?: string
 }
 interface Emits {
   'update:substrate': [value: string]

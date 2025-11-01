@@ -39,3 +39,18 @@ interface SavePlantError {
   poppedAt?: string
   unknown?: string
 }
+
+type PlantPhase = 'germination'
+  | 'seedling'
+  | 'vegetation'
+  | 'pre-flower'
+  | 'flower'
+  | 'ripening'
+  | 'harvest'
+  | 'drying'
+  | 'curing'
+
+interface PlantPhaseItem {
+  phase: PlantPhase
+  label: string
+}
