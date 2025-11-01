@@ -1,5 +1,6 @@
 import type { Result } from '../../types'
 import type { NewPlant, Plant } from './types'
+import { err, ok } from '../../util.ts'
 import PlantReadRepository from './plant_read_repository.ts'
 import PlantWriteRepository from './plant_write_repository.ts'
 
@@ -27,5 +28,16 @@ export default class PlantRepository {
 
   public async getAll(): Promise<Array<Plant>> {
     return this.read.getAll()
+  }
+
+  public async delete(plantId: number): Promise<Result<undefined, string>> {
+    try {
+      await this.write.delete(plantId)
+      return ok(undefined)
+    }
+    catch (e) {
+      console.error('[PlantRepository.delete] - failed to delete plant with id:', plantId, e)
+      return err('Es ist ein Fehler beim löschen der Pflanze aufgetreten')
+    }
   }
 }
