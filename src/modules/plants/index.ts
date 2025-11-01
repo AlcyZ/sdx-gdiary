@@ -2,6 +2,7 @@ import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
 import { err, ok } from '../../util.ts'
 import { base64ToBlob, getDb, INDEX_PLANT_ID, isBase64String, TABLE_PLANT_IMAGES, TABLE_PLANTS } from '../db'
+import { hasBlobKey, hasNumKey, hasOptionalStrKey, hasStrKey, hasTimestamps } from '../type_guard'
 
 const THRESHOLD_IMAGE_ROWS: number = 30
 
@@ -146,7 +147,7 @@ async function mapSimultaneously(rows: Array<PlantRow>, db: IDBPDatabase): Promi
 function isPlantRow(value: any): value is PlantRow {
   return typeof value === 'object'
     && hasNumKey(value, 'id')
-    && hasStrKey(value, 'name')
+    && hasOptionalStrKey(value, 'name')
     && hasStrKey(value, 'strain')
     && hasStrKey(value, 'poppedAt')
     && hasTimestamps(value)
@@ -157,21 +158,4 @@ function isPlantImageRow(value: any): value is PlantImageRow {
     && hasNumKey(value, 'id')
     && hasNumKey(value, 'plantId')
     && hasBlobKey(value, 'image')
-}
-
-function hasTimestamps(value: any): boolean {
-  return hasStrKey(value, 'createdAt')
-    && hasStrKey(value, 'updatedAt')
-}
-
-function hasStrKey(value: Record<string, unknown>, key: string): boolean {
-  return key in value && typeof value[key] === 'string'
-}
-
-function hasNumKey(value: Record<string, unknown>, key: string): boolean {
-  return key in value && typeof value[key] === 'number'
-}
-
-function hasBlobKey(value: Record<string, unknown>, key: string): boolean {
-  return key in value && value[key] instanceof Blob
 }

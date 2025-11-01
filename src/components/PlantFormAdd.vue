@@ -66,6 +66,7 @@ interface Props {
 }
 interface Emits {
   back: []
+  backAndSync: []
 }
 
 defineProps<Props>()
@@ -127,7 +128,7 @@ async function save() {
     class: 'w-full sm:w-max',
     duration: 1500,
   }, {
-    close: () => emit('back'),
+    close: () => emit('backAndSync'),
   })
 }
 </script>

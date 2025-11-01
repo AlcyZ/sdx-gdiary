@@ -14,6 +14,7 @@
     <PlantFormAdd
       v-else-if="page === 'add'"
       @back="page = 'list'"
+      @back-and-sync="backAndSync"
     />
   </div>
 </template>
@@ -107,6 +108,11 @@ async function removePlant(plant: Plant) {
       class: 'btn-error text-base-100',
     }],
   })
+}
+
+async function backAndSync() {
+  await syncPlants()
+  page.value = 'list'
 }
 
 onMounted(syncPlants)
