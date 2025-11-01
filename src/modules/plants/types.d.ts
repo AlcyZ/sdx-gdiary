@@ -64,3 +64,14 @@ type PlantPhaseRow = WithPlantId<{
   startedAt: string
   info?: string
 }, number>
+
+interface GetPlantNotFoundError {
+  kind: 'not-found'
+}
+
+interface GetPlantErrorInvalidData {
+  kind: 'invalid-data'
+  message: string
+}
+
+type GetPlantError = GetPlantNotFoundError | GetPlantErrorInvalidData

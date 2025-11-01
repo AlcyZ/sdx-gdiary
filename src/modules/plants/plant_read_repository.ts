@@ -1,6 +1,6 @@
 import type { IDBPDatabase, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
-import type { Plant, PlantPhase, PlantPhaseRow, PlantRow, PlantSubstrate } from './types'
+import type { GetPlantError, Plant, PlantPhase, PlantPhaseRow, PlantRow, PlantSubstrate } from './types'
 import { err, ok } from '../../util.ts'
 import { getDb, INDEX_PLANT_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANTS } from '../db'
 import { isPlantPhaseRow, isPlantRow, isPlantSubstrateRow } from './guard.ts'
@@ -62,6 +62,45 @@ export default class PlantReadRepository {
 
     return plantResults.filter(result => result.ok)
       .map(result => result.value)
+  }
+
+  public async getById(id: number): Promise<Result<Plant, GetPlantError>> {
+    const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES])
+    const store = tx.objectStore(TABLE_PLANTS)
+
+    const plantData = await store.get(id)
+    if (plantData === undefined)
+      return err({ kind: 'not-found' })
+
+    if (!isPlantRow(plantData)) {
+      console.error('[PlantReadRepository.getById] - found invalid dataset:', plantData)
+      return err({ kind: 'invalid-data', message: 'Ungültiger Pflanzendatensatz' })
+    }
+
+    const [substrateResult, phaseResult] = await Promise.all([
+      this.fetchSubstrate(plantData, tx),
+      this.fetchCurrentPhase(plantData, tx),
+    ])
+
+    if (substrateResult.ok && phaseResult.ok) {
+      return ok({
+        id: plantData.id,
+        strain: plantData.strain,
+        name: plantData.name,
+        substrate: substrateResult.value,
+        phase: phaseResult.value,
+        createdAt: 'todo',
+        updatedAt: 'todo',
+      })
+    }
+
+    const message: Array<string> = []
+    if (!substrateResult.ok)
+      message.push(substrateResult.error)
+    if (!phaseResult.ok)
+      message.push(phaseResult.error)
+
+    return err({ kind: 'invalid-data', message: message.join('. ') })
   }
 
   private async fetchSubstrate(plant: PlantRow, tx: IDBPTransaction): Promise<Result<PlantSubstrate, string>> {
