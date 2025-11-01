@@ -1,14 +1,15 @@
 <template>
   <div>
-    <label class="floating-label">
+    <IFloatingLabel
+      :label="labelText"
+    >
       <input
         v-model="model"
         :type="type"
         :placeholder="labelText"
         class="input input-md w-full"
       >
-      <span>{{ labelText }}</span>
-    </label>
+    </IFloatingLabel>
     <div
       v-if="error"
       class="text-xs text-error px-4 mt-1"
@@ -20,12 +21,13 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import IFloatingLabel from './IFloatingLabel.vue'
 
 interface Props {
   label: string
   error?: string
   required?: boolean
-  type?: 'text' | 'date'
+  type?: 'text' | 'date' | 'number'
 }
 interface Emits {
 
