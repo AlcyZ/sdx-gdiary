@@ -48,7 +48,7 @@ const { showConfirmationModal } = useModal()
 const { showToast } = useToast()
 
 type PlantPage = 'list' | 'add' | 'edit'
-const page = ref<PlantPage>('list')
+const page = ref<PlantPage>('add')
 
 const plants = ref<Array<Plant>>([])
 
