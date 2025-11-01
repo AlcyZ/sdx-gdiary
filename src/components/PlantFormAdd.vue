@@ -39,9 +39,11 @@
       </div>
 
       <button
-        class="btn btn-primary"
+        class="btn btn-primary text-base-100"
+        :disabled="loading"
         @click="submit"
       >
+        <IconAdd />
         Speichern
       </button>
     </ICard>
@@ -49,10 +51,17 @@
 </template>
 
 <script lang="ts" setup>
+import type { NewPlant, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
+import type { ToastVariant } from '../types'
 import { toTypedSchema } from '@vee-validate/yup'
+import {
+  CirclePlus as IconAdd,
+} from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { ref } from 'vue'
 import * as yup from 'yup'
+import { useToast } from '../composables/useToast.ts'
+import PlantRepository from '../modules/plants/plant_repository.ts'
 import ICard from './ICard.vue'
 import InputTextFloat from './InputTextFloat.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
@@ -62,11 +71,16 @@ interface Props {
 
 }
 interface Emits {
-
+  back: []
+  backAndSync: []
 }
 
 defineProps<Props>()
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
+
+const { showToast } = useToast()
+
+const loading = ref(false)
 
 const ERR_STRAIN_REQUIRED = 'Die Sorte muss angegeben werden'
 const ERR_STRAIN_MAX = ({ max }: { max: number }) => `Die Sorte dar maximal ${max} Zeichen lang sein`
@@ -93,14 +107,55 @@ const { validate, errors, defineField } = useForm({
 
 const [strain] = defineField('strain')
 const [name] = defineField('name')
-const [substrate] = defineField('substrate')
+const [substrate] = defineField<'substrate', PlantSubstrateType>('substrate')
 const [substrateSize] = defineField('substrateSize')
-const [phase] = defineField('phase')
+const [phase] = defineField<'phase', PlantPhaseType>('phase')
 const [phaseStart] = defineField('phaseStart')
 
-async function submit() {
-  const result = await validate()
+function toast(message: string, variant: ToastVariant = 'error', close?: () => void) {
+  showToast({
+    message,
+    variant,
+    class: 'w-full sm:w-max',
+    duration: 1500,
+  }, close !== undefined ? { close } : undefined)
+}
 
-  console.info('[DEV.ValResult]', result)
+async function submit() {
+  loading.value = true
+
+  const r = await validate()
+  if (!r.valid) {
+    toast('Bitte fülle alle Pflichtfelder aus')
+    loading.value = false
+    return
+  }
+
+  const newPlant: NewPlant = {
+    strain: strain.value!,
+    name: name.value,
+    substrate: {
+      substrate: substrate.value,
+      size: substrateSize.value!,
+    },
+    phase: {
+      phase: phase.value,
+      startedAt: phaseStart.value!,
+    },
+  }
+
+  const repo = await PlantRepository.create()
+  const result = await repo.save(newPlant)
+
+  if (result.ok) {
+    toast('Pflanze erfolgreich gespeichert', 'success', () => {
+      loading.value = false
+      emit('backAndSync')
+    })
+    return
+  }
+
+  loading.value = false
+  toast('Pflanze konnte nicht gespeichert werden')
 }
 </script>

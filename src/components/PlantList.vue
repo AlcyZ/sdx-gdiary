@@ -6,11 +6,13 @@
 </template>
 
 <script lang="ts" setup>
+import type { Plant } from '../modules/plants/types'
 import type { ListItem } from '../types'
 import {
   Trash as IconTrash,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
+import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import IList from './IList.vue'
 
 interface Props {
@@ -26,9 +28,9 @@ const emit = defineEmits<Emits>()
 const listItems = computed(
   (): Array<ListItem> => plants.map((plant) => {
     return {
-      text: plant.name,
+      text: plant.name || '',
       title: plant.strain,
-      image: plant.image,
+      image: PLANT_PLACEHOLDER_IMAGE,
       actions: [
         {
           icon: IconTrash,

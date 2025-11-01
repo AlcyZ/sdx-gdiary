@@ -20,6 +20,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Plant } from '../modules/plants/types'
 import type { FabAction } from '../types'
 import {
   Leaf as IconList,
@@ -32,7 +33,7 @@ import PlantFormAdd from '../components/PlantFormAdd.vue'
 import PlantList from '../components/PlantList.vue'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
-import { deletePlant, fetchPlants } from '../modules/plants'
+import PlantRepository from '../modules/plants/plant_repository.ts'
 
 interface Props {
 
@@ -48,7 +49,7 @@ const { showConfirmationModal } = useModal()
 const { showToast } = useToast()
 
 type PlantPage = 'list' | 'add' | 'edit'
-const page = ref<PlantPage>('add')
+const page = ref<PlantPage>('list')
 
 const plants = ref<Array<Plant>>([])
 
@@ -68,10 +69,8 @@ function changePage(newPage: PlantPage) {
 }
 
 async function syncPlants() {
-  const result = await fetchPlants()
-
-  if (result.ok)
-    plants.value = result.value
+  const repo = await PlantRepository.create()
+  plants.value = await repo.getAll()
 }
 
 async function removePlant(plant: Plant) {
@@ -81,7 +80,9 @@ async function removePlant(plant: Plant) {
   const text = `Bist du sicher, dass die Pflanze '${plantName}' gelöscht werden soll? Diese Aktion kann nicht rückgängig gemacht werden.`
 
   const deleteAndSync = async () => {
-    const result = await deletePlant(plant.id)
+    const repo = await PlantRepository.create()
+    const result = await repo.delete(plant.id)
+
     if (result.ok) {
       showToast({
         message: `${plantName} ist gelöscht worden.`,
