@@ -43,6 +43,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { PlantSubstrateType } from '../modules/plants/types'
 import { computed, ref, watch } from 'vue'
 import IFieldset from './IFieldset.vue'
 import IFloatingLabel from './IFloatingLabel.vue'
@@ -61,8 +62,7 @@ interface Emits {
 const { substrate: substrateProp } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-type Substrate = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
-const substrates: Array<Substrate> = ['Erde', 'Coco', 'Hydro', 'Custom']
+const substrates: Array<PlantSubstrateType> = ['Erde', 'Coco', 'Hydro', 'Custom']
 
 const substrateInternal = ref('')
 
@@ -73,7 +73,8 @@ const substrate = computed({
     return substrateProp
   },
   set(value) {
-    emit('update:substrate', value)
+    if (value !== undefined)
+      emit('update:substrate', value)
   },
 })
 

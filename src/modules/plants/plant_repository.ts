@@ -25,7 +25,7 @@ export default class PlantRepository {
     return this.write.save(plant)
   }
 
-  public async getAll(): Promise<Result<Array<Plant>, unknown>> {
+  public async getAll(): Promise<Array<Plant>> {
     return this.read.getAll()
   }
 }

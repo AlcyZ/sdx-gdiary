@@ -1,8 +1,8 @@
 import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
+import type { NewPlant } from './types'
 import { err, ok } from '../../util.ts'
 import { getDb, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANTS } from '../db'
-import type {NewPlant} from "./types";
 
 export default class PlantWriteRepository {
   private readonly db: IDBPDatabase

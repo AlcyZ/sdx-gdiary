@@ -37,6 +37,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { PlantPhaseItem } from '../modules/plants/types'
 import { ref } from 'vue'
 import IFieldset from './IFieldset.vue'
 import IFloatingLabel from './IFloatingLabel.vue'
