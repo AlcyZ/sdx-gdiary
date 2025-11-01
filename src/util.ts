@@ -1,4 +1,4 @@
-import type { Err, Ok } from './types'
+import type { Err, None, Ok, Some } from './types'
 
 /**
  * Creates a successful result object with the given value.
@@ -20,4 +20,12 @@ export function ok<T>(value: T): Ok<T> {
  */
 export function err<E>(error: E): Err<E> {
   return { ok: false, error }
+}
+
+export function some<T>(value: T): Some<T> {
+  return { exist: true, value }
+}
+
+export function none(): None {
+  return { exist: false }
 }

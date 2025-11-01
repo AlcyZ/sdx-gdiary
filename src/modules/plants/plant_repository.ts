@@ -1,57 +1,31 @@
-import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
-import { err, ok } from '../../util.ts'
-import { getDb, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANTS } from '../db'
+import type { NewPlant, Plant } from './types'
+import PlantReadRepository from './plant_read_repository.ts'
+import PlantWriteRepository from './plant_write_repository.ts'
 
 export default class PlantRepository {
-  private readonly db: IDBPDatabase
+  private readonly read: PlantReadRepository
+  private readonly write: PlantWriteRepository
 
-  constructor(db: IDBPDatabase) {
-    this.db = db
+  constructor(read: PlantReadRepository, write: PlantWriteRepository) {
+    this.read = read
+    this.write = write
   }
 
   public static async create() {
-    const db = await getDb()
-    return new PlantRepository(db)
+    const [read, write] = await Promise.all([
+      PlantReadRepository.create(),
+      PlantWriteRepository.create(),
+    ])
+
+    return new PlantRepository(read, write)
   }
 
   public async save(plant: NewPlant): Promise<Result<undefined, unknown>> {
-    try {
-      const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
+    return this.write.save(plant)
+  }
 
-      const plantStore = tx.objectStore(TABLE_PLANTS)
-      const plantSubstrateStore = tx.objectStore(TABLE_PLANT_SUBSTRATES)
-      const plantPhaseStore = tx.objectStore(TABLE_PLANT_PHASES)
-
-      const plantData = {
-        strain: plant.strain,
-        name: plant.name,
-      }
-
-      const plantId = await plantStore.add(plantData)
-
-      const plantSubstrateData = {
-        substrate: plant.substrate.substrate,
-        size: plant.substrate.size,
-        info: plant.substrate.info,
-        plantId,
-      }
-      await plantSubstrateStore.add(plantSubstrateData)
-
-      const plantPhaseData = {
-        phase: plant.phase.phase,
-        startedAt: plant.phase.startedAt,
-        info: plant.phase.info,
-        plantId,
-      }
-      await plantPhaseStore.add(plantPhaseData)
-
-      await tx.done
-
-      return ok(undefined)
-    }
-    catch (error) {
-      return err(error)
-    }
+  public async getAll(): Promise<Result<Array<Plant>, unknown>> {
+    return this.read.getAll()
   }
 }

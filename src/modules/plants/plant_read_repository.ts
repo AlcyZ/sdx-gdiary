@@ -1,0 +1,113 @@
+import type { IDBPDatabase, IDBPTransaction } from 'idb'
+import type { Result } from '../../types'
+import type { Plant, PlantPhase, PlantPhaseRow, PlantRow, PlantSubstrate } from './types'
+import { err, ok } from '../../util.ts'
+import { getDb, INDEX_PLANT_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANTS } from '../db'
+import { isPlantPhaseRow, isPlantRow, isPlantSubstrateRow } from './guard.ts'
+
+export default class PlantReadRepository {
+  private readonly db: IDBPDatabase
+
+  constructor(db: IDBPDatabase) {
+    this.db = db
+  }
+
+  public static async create() {
+    const db = await getDb()
+    return new PlantReadRepository(db)
+  }
+
+  public async getAll(): Promise<Array<Plant>> {
+    const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES])
+
+    const plantStore = tx.objectStore(TABLE_PLANTS)
+
+    const plantData = await plantStore.getAll()
+    const plantRows = plantData.filter((row: any): boolean => isPlantRow(row)) as Array<PlantRow>
+
+    const plantResultsPromise = plantRows.map(async (row: PlantRow): Promise<Result<Plant, Array<string>>> => {
+      const [substrateResult, phaseResult] = await Promise.all([
+        this.fetchSubstrate(row, tx),
+        this.fetchCurrentPhase(row, tx),
+      ])
+
+      if (substrateResult.ok && phaseResult.ok) {
+        return ok({
+          id: row.id,
+          strain: row.strain,
+          name: row.strain,
+          substrate: substrateResult.value,
+          phase: phaseResult.value,
+          createdAt: 'todo',
+          updatedAt: 'todo',
+        })
+      }
+
+      const errors: Array<string> = []
+
+      if (!substrateResult.ok)
+        errors.push(substrateResult.error)
+      if (!phaseResult.ok)
+        errors.push(phaseResult.error)
+
+      return err(errors)
+    })
+
+    const plantResults = await Promise.all(plantResultsPromise)
+    for (const result of plantResults) {
+      if (!result.ok) {
+        console.warn('[PlantReadRepository.getAll] - Found some invalid datasets: ', result.error.join('. '))
+      }
+    }
+
+    return plantResults.filter(result => result.ok)
+      .map(result => result.value)
+  }
+
+  private async fetchSubstrate(plant: PlantRow, tx: IDBPTransaction): Promise<Result<PlantSubstrate, string>> {
+    if (plant.id === 2) {
+      return err('test')
+    }
+
+    const store = tx.objectStore(TABLE_PLANT_SUBSTRATES)
+    const index = store.index(INDEX_PLANT_ID)
+
+    const substrateRow = await index.get(plant.id)
+    if (!isPlantSubstrateRow(substrateRow)) {
+      console.error('[PlantReadRepository.fetchSubstrate] - substrate not found for plant', plant)
+      return err('Pflanze hat kein Substrat zugewiesen')
+    }
+
+    return ok({
+      id: substrateRow.id,
+      substrate: substrateRow.substrate,
+      size: substrateRow.size,
+      info: substrateRow.info,
+    })
+  }
+
+  private async fetchCurrentPhase(plant: PlantRow, tx: IDBPTransaction): Promise<Result<PlantPhase, string>> {
+    const store = tx.objectStore(TABLE_PLANT_PHASES)
+    const index = store.index(INDEX_PLANT_ID)
+
+    const phaseRows = (await index.getAll(plant.id)).filter((row: any) => isPlantPhaseRow(row)) as Array<PlantPhaseRow>
+    if (phaseRows.length === 0) {
+      console.error('[PlantReadRepository.fetchCurrentPhase] - phase not found for plant', plant)
+      return err('Pflanze hat keine Phase zugewiesen')
+    }
+
+    // returns latest, based on 'startedAt' property
+    const latestPhase = phaseRows.reduce(
+      (latest: PlantPhaseRow, current: PlantPhaseRow) => {
+        if (!latest)
+          return current
+
+        return new Date(current.startedAt) > new Date(latest.startedAt)
+          ? current
+          : latest
+      },
+      undefined,
+    )
+    return ok(latestPhase)
+  }
+}

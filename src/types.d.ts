@@ -22,7 +22,24 @@ interface Ok<T> { ok: true, value: T }
  */
 interface Err<E> { ok: false, error: E }
 
+interface Some<T> { exist: true, value: T }
+
+interface None { exist: false }
+
+type Option<T> = Some<T> | None
+
 type Page = 'Home' | 'Pflanzen' | 'Todo'
+
+interface HasId<T> {
+  id: T
+}
+
+type WithId<T, I> = T & HasId<I>
+
+interface HasTimestamps {
+  createdAt: string
+  updatedAt: string
+}
 
 interface DockItem {
   icon: Component

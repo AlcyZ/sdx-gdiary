@@ -1,11 +1,13 @@
+import type { HasId, HasTimestamps, WithId } from '../../types'
+
 interface NewPlantSubstrate {
-  substrate: PlantSubstrate
+  substrate: string
   size: string
   info?: string
 }
 
 interface NewPlantPhase {
-  phase: PlantPhase
+  phase: PlantPhaseType
   startedAt: string
   info?: string
 }
@@ -17,8 +19,18 @@ interface NewPlant {
   phase: NewPlantPhase
 }
 
-type PlantSubstrate = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
-type PlantPhase = 'germination'
+type PlantSubstrate = WithId<NewPlantSubstrate, number>
+type PlantPhase = WithId<NewPlantPhase, number>
+
+type Plant = {
+  strain: string
+  name?: string
+  substrate: PlantSubstrate
+  phase: PlantPhase
+} & HasId<number> & HasTimestamps
+
+type PlantSubstrateType = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
+type PlantPhaseType = 'germination'
   | 'seedling'
   | 'vegetation'
   | 'pre-flower'
@@ -29,6 +41,26 @@ type PlantPhase = 'germination'
   | 'curing'
 
 interface PlantPhaseItem {
-  phase: PlantPhase
+  phase: PlantPhaseType
   label: string
 }
+
+interface PlantRow {
+  id: number
+  strain: string
+  name?: string
+}
+
+type WithPlantId<T> = WithId<T, number> & { plantId: number }
+
+type PlantSubstrateRow = WithPlantId<{
+  substrate: string
+  size: string
+  info?: string
+}, number>
+
+type PlantPhaseRow = WithPlantId<{
+  phase: PlantPhaseType
+  startedAt: string
+  info?: string
+}, number>
