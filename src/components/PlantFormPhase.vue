@@ -47,10 +47,10 @@
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import type { NewPlantPhase, PlantPhaseItem, PlantPhaseType } from '../modules/plants/types'
+import type { NewPlantPhase, PlantPhaseType } from '../modules/plants/types'
 
 import { computed, onMounted, toRaw } from 'vue'
-import { useIcon } from '../composables/useIcon.ts'
+import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { extractEventValue } from '../util.ts'
 import IFieldset from './IFieldset.vue'
 import IStep from './IStep.vue'
@@ -67,55 +67,33 @@ interface Emits {
 const { modelValue } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const { getPhaseIcon } = useIcon()
+const { getPhaseIcon, getPhaseLabel } = usePlantPhase()
 
-type PlantPhaseItemData = PlantPhaseItem & { data?: NewPlantPhase, icon: Component }
+interface PlantPhaseItemData {
+  label: string
+  phase: PlantPhaseType
+  data?: NewPlantPhase
+  icon: Component
+}
 
-const plantPhases: Array<PlantPhaseItem> = [
-  {
-    phase: 'germination',
-    label: 'Keimung',
-  },
-  {
-    phase: 'seedling',
-    label: 'Sämling',
-  },
-  {
-    phase: 'vegetation',
-    label: 'Vegetationsphase',
-  },
-  {
-    phase: 'pre-flower',
-    label: 'Vorblüte',
-  },
-  {
-    phase: 'flower',
-    label: 'Blütephase',
-  },
-  {
-    phase: 'ripening',
-    label: 'Reifephase',
-  },
-  {
-    phase: 'harvest',
-    label: 'Ernte',
-  },
-  {
-    phase: 'drying',
-    label: 'Trocknung',
-  },
-  {
-    phase: 'curing',
-    label: 'Fermentierung',
-  },
+const plantPhases: Array<PlantPhaseType> = [
+  'germination',
+  'seedling',
+  'vegetation',
+  'pre-flower',
+  'flower',
+  'ripening',
+  'harvest',
+  'drying',
 ]
 
 const phases = computed(
   (): Array<PlantPhaseItemData> => plantPhases.map(
-    (plantPhase: PlantPhaseItem): PlantPhaseItemData => ({
-      ...plantPhase,
-      data: modelValue.find((phase: NewPlantPhase): boolean => phase.phase === plantPhase.phase),
-      icon: getPhaseIcon(plantPhase.phase),
+    (phase: PlantPhaseType): PlantPhaseItemData => ({
+      phase,
+      data: modelValue.find((item: NewPlantPhase): boolean => item.phase === phase),
+      icon: getPhaseIcon(phase),
+      label: getPhaseLabel(phase),
     }),
   ),
 )
@@ -124,7 +102,7 @@ function now() {
   return new Date().toISOString().split('T')[0]!
 }
 
-function selectPhase(selectedPhase: PlantPhaseItem) {
+function selectPhase(selectedPhase: PlantPhaseItemData) {
   const collect = () => {
     const data: Array<NewPlantPhase> = []
     const defaultDataset = (phase: PlantPhaseType): NewPlantPhase => ({ phase, startedAt: now() })
@@ -145,7 +123,7 @@ function selectPhase(selectedPhase: PlantPhaseItem) {
   emit('update:modelValue', data)
 }
 
-function changeDate(item: PlantPhaseItem, event: Event) {
+function changeDate(item: PlantPhaseItemData, event: Event) {
   const value = extractEventValue(event)
   const date = value.exist ? value.value : now()
 
