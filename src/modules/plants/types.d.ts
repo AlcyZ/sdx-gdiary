@@ -1,5 +1,5 @@
+import type { Component } from 'vue'
 import type { HasId, HasTimestamps, WithId } from '../../types'
-import type {Component} from "vue";
 
 interface NewPlantSubstrate {
   substrate: string
@@ -17,7 +17,7 @@ interface NewPlant {
   strain: string
   name?: string
   substrate: NewPlantSubstrate
-  phase: NewPlantPhase
+  phases: Array<NewPlantPhase>
 }
 
 type PlantSubstrate = WithId<NewPlantSubstrate, number>

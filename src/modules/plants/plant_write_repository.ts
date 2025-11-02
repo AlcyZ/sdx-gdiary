@@ -39,13 +39,17 @@ export default class PlantWriteRepository {
       }
       await plantSubstrateStore.add(plantSubstrateData)
 
-      const plantPhaseData = {
-        phase: plant.phase.phase,
-        startedAt: plant.phase.startedAt,
-        info: plant.phase.info,
-        plantId,
+      const phasePromises = []
+      for (const phase of plant.phases) {
+        const plantPhaseData = {
+          phase: phase.phase,
+          startedAt: phase.startedAt,
+          info: phase.info,
+          plantId,
+        }
+        phasePromises.push(plantPhaseStore.add(plantPhaseData))
       }
-      await plantPhaseStore.add(plantPhaseData)
+      await Promise.all(phasePromises)
 
       await tx.done
 
