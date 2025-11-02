@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
 import type { ListItem } from '../types'
-import { Eye as IconShow, Trash as IconTrash, Edit as IconEdit } from 'lucide-vue-next'
+import { Edit as IconEdit, Eye as IconShow, Trash as IconTrash } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import IList from './IList.vue'
