@@ -35,26 +35,37 @@
       />
     </div>
 
-    <button
-      class="btn btn-primary text-base-100"
-      :disabled="loading"
-      @click="submit"
-    >
-      <IconAdd />
-      Speichern
-    </button>
+    <div class="flex items-center justify-between">
+      <button
+        class="btn btn-primary text-base-100"
+        :disabled="loading || hasFormErrors"
+        @click="save"
+      >
+        <IconSave />
+        Speichern
+      </button>
+      <button
+        class="btn btn-secondary text-base-100"
+        :disabled="loading || hasFormErrors"
+        @click="saveAndNew"
+      >
+        <IconAdd />
+        Speichern & Neue
+      </button>
+    </div>
   </ICard>
 </template>
 
 <script lang="ts" setup>
 import type { NewPlant, NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
-import type { ToastVariant } from '../types'
+import type {Result, ToastVariant} from '../types'
 import { toTypedSchema } from '@vee-validate/yup'
 import {
   CirclePlus as IconAdd,
+  Save as IconSave,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import * as yup from 'yup'
 import { useToast } from '../composables/useToast.ts'
 import PlantRepository from '../modules/plants/plant_repository.ts'
@@ -62,6 +73,7 @@ import ICard from './ICard.vue'
 import InputTextFloat from './InputTextFloat.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
+import {err} from "../util.ts";
 
 interface Props {
 
@@ -103,7 +115,7 @@ const validationSchema = toTypedSchema(
   }),
 )
 
-const { validate, errors, defineField } = useForm({
+const { validate, errors, defineField, meta } = useForm({
   validationSchema,
   initialValues: {
     strain: '',
@@ -113,6 +125,8 @@ const { validate, errors, defineField } = useForm({
     phases: [],
   },
 })
+
+const hasFormErrors = computed(() => Object.keys(errors.value).length > 0)
 
 const [strain] = defineField('strain')
 const [name] = defineField('name')
@@ -129,14 +143,42 @@ function toast(message: string, variant: ToastVariant = 'error', close?: () => v
   }, close !== undefined ? { close } : undefined)
 }
 
-async function submit() {
+async function save() {
+  const result = await savePlant()
+
+  if (result.ok) {
+    loading.value = true
+    toast('Pflanze erfolgreich gespeichert', 'success', () => {
+      loading.value = false
+      emit('backAndSync')
+    })
+    return
+  }
+
+  toast(result.error)
+}
+
+async function saveAndNew() {
+  const result = await savePlant()
+  if (!result.ok) {
+    toast(result.error)
+    return
+  }
+
+  toast('Pflanze erfolgreich gespeichert', 'success')
+
+  strain.value = ''
+  name.value = ''
+}
+
+async function savePlant(): Promise<Result<undefined, string>> {
   loading.value = true
 
   const r = await validate()
   if (!r.valid) {
-    toast('Bitte fülle alle Pflichtfelder aus')
     loading.value = false
-    return
+
+    return err('Bitte fülle alle Pflichtfelder aus')
   }
 
   const newPlant: NewPlant = {
@@ -151,17 +193,9 @@ async function submit() {
 
   const repo = await PlantRepository.create()
   const result = await repo.save(newPlant)
-
-  if (result.ok) {
-    toast('Pflanze erfolgreich gespeichert', 'success', () => {
-      loading.value = false
-      emit('backAndSync')
-    })
-    return
-  }
-
   loading.value = false
-  toast('Pflanze konnte nicht gespeichert werden')
+
+  return result.ok ? result : err('Pflanze konnte nicht gespeichert werden')
 }
 
 function isChronologicallySorted(phases: Array<NewPlantPhase> | undefined): boolean {
