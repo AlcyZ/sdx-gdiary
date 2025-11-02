@@ -54,6 +54,12 @@ interface ListItem {
   actions: Array<ListItemAction>
 }
 
+interface DropdownItem {
+  label: string
+  icon: Component
+  onClick?: () => void
+}
+
 interface ListItemAction {
   icon: Component
   onClick?: () => void | Promise<void>
