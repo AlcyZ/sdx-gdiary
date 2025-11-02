@@ -7,6 +7,7 @@
         "@vee-validate/yup": "^4.15.1",
         "idb": "^8.0.3",
         "lucide-vue-next": "^0.548.0",
+        "sdx-php-date": "^0.0.1",
         "vee-validate": "^4.15.1",
         "vue": "^3.5.22",
         "vue3-toastify": "^0.2.8",
@@ -813,6 +814,8 @@
     "sass-embedded-win32-x64": ["sass-embedded-win32-x64@1.93.2", "", { "os": "win32", "cpu": "x64" }, "sha512-BbSucRP6PVRZGIwlEBkp+6VQl2GWdkWFMN+9EuOTPrLxCJZoq+yhzmbjspd3PeM8+7WJ7AdFu/uRYdO8tor1iQ=="],
 
     "scslre": ["scslre@0.3.0", "", { "dependencies": { "@eslint-community/regexpp": "^4.8.0", "refa": "^0.12.0", "regexp-ast-analysis": "^0.7.0" } }, "sha512-3A6sD0WYP7+QrjbfNA2FN3FsOaGGFoekCVgTyypy53gPxhbkCIjtO6YWgdrfM+n/8sI8JeXZOIxsHjMTNxQ4nQ=="],
+
+    "sdx-php-date": ["sdx-php-date@0.0.1", "", {}, "sha512-8Ss4ylB35kpz5CNMEsIDbEB+X3vpz+7y+5itxmj4Jnao23QcCXzs1sEQiSiBWklNYZ02eK3m9lAPBdzsp0F73w=="],
 
     "semver": ["semver@7.7.3", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q=="],
 
