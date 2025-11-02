@@ -1,4 +1,5 @@
 import type { HasId, HasTimestamps, WithId } from '../../types'
+import type {Component} from "vue";
 
 interface NewPlantSubstrate {
   substrate: string
@@ -43,6 +44,7 @@ type PlantPhaseType = 'germination'
 interface PlantPhaseItem {
   phase: PlantPhaseType
   label: string
+  icon: Component
 }
 
 interface PlantRow {
