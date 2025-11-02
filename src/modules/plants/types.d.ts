@@ -44,7 +44,6 @@ type PlantPhaseType = 'germination'
 interface PlantPhaseItem {
   phase: PlantPhaseType
   label: string
-  icon: Component
 }
 
 interface PlantRow {

@@ -46,19 +46,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { Component } from 'vue'
 import type { NewPlantPhase, PlantPhaseItem, PlantPhaseType } from '../modules/plants/types'
-import {
-  Archive as IconCuring,
-  Wind as IconDrying,
-  Flower as IconFlower,
-  Sprout as IconGermination,
-  Scissors as IconHarvest,
-  Flower2 as IconPreFlower,
-  Grape as IconRipening,
-  Leaf as IconSeedling,
-  Sun as IconVegetation,
-} from 'lucide-vue-next'
+
 import { computed, onMounted, toRaw } from 'vue'
+import { useIcon } from '../composables/useIcon.ts'
 import { extractEventValue } from '../util.ts'
 import IFieldset from './IFieldset.vue'
 import IStep from './IStep.vue'
@@ -75,53 +67,46 @@ interface Emits {
 const { modelValue } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-type PlantPhaseItemData = PlantPhaseItem & { data?: NewPlantPhase }
+const { getPhaseIcon } = useIcon()
+
+type PlantPhaseItemData = PlantPhaseItem & { data?: NewPlantPhase, icon: Component }
 
 const plantPhases: Array<PlantPhaseItem> = [
   {
     phase: 'germination',
     label: 'Keimung',
-    icon: IconGermination,
   },
   {
     phase: 'seedling',
     label: 'Sämling',
-    icon: IconSeedling,
   },
   {
     phase: 'vegetation',
     label: 'Vegetationsphase',
-    icon: IconVegetation,
   },
   {
     phase: 'pre-flower',
     label: 'Vorblüte',
-    icon: IconPreFlower,
   },
   {
     phase: 'flower',
     label: 'Blütephase',
-    icon: IconFlower,
   },
   {
     phase: 'ripening',
     label: 'Reifephase',
-    icon: IconRipening,
   },
   {
     phase: 'harvest',
     label: 'Ernte',
-    icon: IconHarvest,
   },
   {
     phase: 'drying',
     label: 'Trocknung',
-    icon: IconDrying,
   },
   {
     phase: 'curing',
     label: 'Fermentierung',
-    icon: IconCuring,
   },
 ]
 
@@ -130,6 +115,7 @@ const phases = computed(
     (plantPhase: PlantPhaseItem): PlantPhaseItemData => ({
       ...plantPhase,
       data: modelValue.find((phase: NewPlantPhase): boolean => phase.phase === plantPhase.phase),
+      icon: getPhaseIcon(plantPhase.phase),
     }),
   ),
 )
