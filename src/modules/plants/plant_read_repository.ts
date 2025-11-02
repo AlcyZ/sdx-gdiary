@@ -1,6 +1,6 @@
 import type { IDBPDatabase, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
-import type { GetPlantError, Plant, PlantPhase, PlantPhaseRow, PlantRow, PlantSubstrate } from './types'
+import type { GetPlantError, Plant, PlantPhaseRow, PlantRow, PlantSubstrate } from './types'
 import { err, ok } from '../../util.ts'
 import { getDb, INDEX_PLANT_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANTS } from '../db'
 import { isPlantPhaseRow, isPlantRow, isPlantSubstrateRow } from './guard.ts'
@@ -26,18 +26,21 @@ export default class PlantReadRepository {
     const plantRows = plantData.filter((row: any): boolean => isPlantRow(row)) as Array<PlantRow>
 
     const plantResultsPromise = plantRows.map(async (row: PlantRow): Promise<Result<Plant, Array<string>>> => {
-      const [substrateResult, phaseResult] = await Promise.all([
+      const [substrateResult, phasesResult] = await Promise.all([
         this.fetchSubstrate(row, tx),
-        this.fetchCurrentPhase(row, tx),
+        this.fetchPhases(row, tx),
       ])
 
-      if (substrateResult.ok && phaseResult.ok) {
+      if (substrateResult.ok && phasesResult.ok) {
+        const phase = this.getCurrentPhase(phasesResult.value)
+
         return ok({
           id: row.id,
           strain: row.strain,
           name: row.name,
           substrate: substrateResult.value,
-          phase: phaseResult.value,
+          phases: phasesResult.value,
+          phase,
           createdAt: 'todo',
           updatedAt: 'todo',
         })
@@ -47,8 +50,8 @@ export default class PlantReadRepository {
 
       if (!substrateResult.ok)
         errors.push(substrateResult.error)
-      if (!phaseResult.ok)
-        errors.push(phaseResult.error)
+      if (!phasesResult.ok)
+        errors.push(phasesResult.error)
 
       return err(errors)
     })
@@ -77,18 +80,20 @@ export default class PlantReadRepository {
       return err({ kind: 'invalid-data', message: 'Ungültiger Pflanzendatensatz' })
     }
 
-    const [substrateResult, phaseResult] = await Promise.all([
+    const [substrateResult, phasesResult] = await Promise.all([
       this.fetchSubstrate(plantData, tx),
-      this.fetchCurrentPhase(plantData, tx),
+      this.fetchPhases(plantData, tx),
     ])
 
-    if (substrateResult.ok && phaseResult.ok) {
+    if (substrateResult.ok && phasesResult.ok) {
+      const phase = this.getCurrentPhase(phasesResult.value)
       return ok({
         id: plantData.id,
         strain: plantData.strain,
         name: plantData.name,
         substrate: substrateResult.value,
-        phase: phaseResult.value,
+        phases: phasesResult.value,
+        phase,
         createdAt: 'todo',
         updatedAt: 'todo',
       })
@@ -97,8 +102,8 @@ export default class PlantReadRepository {
     const message: Array<string> = []
     if (!substrateResult.ok)
       message.push(substrateResult.error)
-    if (!phaseResult.ok)
-      message.push(phaseResult.error)
+    if (!phasesResult.ok)
+      message.push(phasesResult.error)
 
     return err({ kind: 'invalid-data', message: message.join('. ') })
   }
@@ -121,20 +126,9 @@ export default class PlantReadRepository {
     })
   }
 
-  private async fetchCurrentPhase(plant: PlantRow, tx: IDBPTransaction): Promise<Result<PlantPhase, string>> {
-    const store = tx.objectStore(TABLE_PLANT_PHASES)
-    const index = store.index(INDEX_PLANT_ID)
-
-    const phaseData = await index.getAll(plant.id)
-    const phaseRows = phaseData.filter((row: any) => isPlantPhaseRow(row)) as Array<PlantPhaseRow>
-
-    if (phaseRows.length === 0) {
-      console.error('[PlantReadRepository.fetchCurrentPhase] - phase not found for plant', plant)
-      return err('Pflanze hat keine Phase zugewiesen')
-    }
-
+  private getCurrentPhase(phases: Array<PlantPhaseRow>): PlantPhaseRow {
     // returns latest, based on 'startedAt' property
-    const latestPhase = phaseRows.reduce(
+    return phases.reduce(
       (latest: PlantPhaseRow, current: PlantPhaseRow) => {
         if (!latest)
           return current
@@ -145,6 +139,20 @@ export default class PlantReadRepository {
       },
       undefined,
     )
-    return ok(latestPhase)
+  }
+
+  private async fetchPhases(plant: PlantRow, tx: IDBPTransaction): Promise<Result<Array<PlantPhaseRow>, string>> {
+    const store = tx.objectStore(TABLE_PLANT_PHASES)
+    const index = store.index(INDEX_PLANT_ID)
+
+    const phaseData = await index.getAll(plant.id)
+    const phaseRows = phaseData.filter((row: any) => isPlantPhaseRow(row)) as Array<PlantPhaseRow>
+
+    if (phaseRows.length === 0) {
+      console.error('[PlantReadRepository.fetchPhases] - phases not found for plant', plant)
+      return err('Pflanze hat keine Phase zugewiesen')
+    }
+
+    return ok(phaseRows)
   }
 }

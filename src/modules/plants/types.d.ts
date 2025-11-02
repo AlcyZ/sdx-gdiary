@@ -28,6 +28,7 @@ type Plant = {
   name?: string
   substrate: PlantSubstrate
   phase: PlantPhase
+  phases: Array<PlantPhase>
 } & HasId<number> & HasTimestamps
 
 type PlantSubstrateType = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
