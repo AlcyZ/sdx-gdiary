@@ -35,7 +35,7 @@ export default class PlantReadRepository {
         return ok({
           id: row.id,
           strain: row.strain,
-          name: row.strain,
+          name: row.name,
           substrate: substrateResult.value,
           phase: phaseResult.value,
           createdAt: 'todo',
