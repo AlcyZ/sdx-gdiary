@@ -58,7 +58,7 @@
 
 <script lang="ts" setup>
 import type { NewPlant, NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
-import type {Result, ToastVariant} from '../types'
+import type { Result, ToastVariant } from '../types'
 import { toTypedSchema } from '@vee-validate/yup'
 import {
   CirclePlus as IconAdd,
@@ -69,11 +69,11 @@ import { computed, ref } from 'vue'
 import * as yup from 'yup'
 import { useToast } from '../composables/useToast.ts'
 import PlantRepository from '../modules/plants/plant_repository.ts'
+import { err } from '../util.ts'
 import ICard from './ICard.vue'
 import InputTextFloat from './InputTextFloat.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
-import {err} from "../util.ts";
 
 interface Props {
 
@@ -115,7 +115,7 @@ const validationSchema = toTypedSchema(
   }),
 )
 
-const { validate, errors, defineField, meta } = useForm({
+const { validate, errors, defineField } = useForm({
   validationSchema,
   initialValues: {
     strain: '',

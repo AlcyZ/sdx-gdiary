@@ -26,6 +26,7 @@
   </ICard>
   <PlantPageSelectionError
     v-else
+    @back="$emit('back')"
   />
 </template>
 

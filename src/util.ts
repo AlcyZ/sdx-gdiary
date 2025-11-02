@@ -1,4 +1,4 @@
- import type { Err, None, Ok, Option, Some } from './types'
+import type { Err, None, Ok, Option, Some } from './types'
 
 /**
  * Creates a successful result object with the given value.
