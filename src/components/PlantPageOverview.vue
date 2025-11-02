@@ -2,15 +2,14 @@
   <IList
     label="Pflanzen"
     :items="listItems"
+    class="w-full max-w-2xl"
   />
 </template>
 
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
 import type { ListItem } from '../types'
-import {
-  Trash as IconTrash,
-} from 'lucide-vue-next'
+import { Eye as IconShow, Trash as IconTrash, Edit as IconEdit } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import IList from './IList.vue'
@@ -19,6 +18,8 @@ interface Props {
   plants: Array<Plant>
 }
 interface Emits {
+  show: [plant: Plant]
+  edit: [plant: Plant]
   delete: [plant: Plant]
 }
 
@@ -32,6 +33,14 @@ const listItems = computed(
       title: plant.strain,
       image: PLANT_PLACEHOLDER_IMAGE,
       actions: [
+        {
+          icon: IconShow,
+          onClick: () => emit('show', plant),
+        },
+        {
+          icon: IconEdit,
+          onClick: () => emit('edit', plant),
+        },
         {
           icon: IconTrash,
           onClick: () => emit('delete', plant),

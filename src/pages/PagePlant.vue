@@ -1,20 +1,32 @@
 <template>
-  <div class="py-6">
+  <div class="py-6 flex justify-center items-center w-full">
     <IFab
       :actions="fabActions"
       class="mb-14"
       :icon="IconMenu"
     />
 
-    <PlantList
+    <PlantPageOverview
       v-if="page === 'list'"
       :plants="plants"
-      @delete="removePlant"
+      @show="showPlant"
+      @edit="editPlant"
+      @delete="showDeleteConfirmationModal"
     />
-    <PlantFormAdd
+    <PlantPageShow
+      v-else-if="page === 'show'"
+      :plant="selected"
+      @back="back"
+    />
+    <PlantPageAdd
       v-else-if="page === 'add'"
-      @back="page = 'list'"
+      @back="back"
       @back-and-sync="backAndSync"
+    />
+    <PlantPageEdit
+      v-else-if="page === 'edit'"
+      :plant="selected"
+      @back="back"
     />
   </div>
 </template>
@@ -29,8 +41,10 @@ import {
 } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import IFab from '../components/IFab.vue'
-import PlantFormAdd from '../components/PlantFormAdd.vue'
-import PlantList from '../components/PlantList.vue'
+import PlantPageAdd from '../components/PlantPageAdd.vue'
+import PlantPageEdit from '../components/PlantPageEdit.vue'
+import PlantPageOverview from '../components/PlantPageOverview.vue'
+import PlantPageShow from '../components/PlantPageShow.vue'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
 import PlantRepository from '../modules/plants/plant_repository.ts'
@@ -48,10 +62,11 @@ defineEmits<Emits>()
 const { showConfirmationModal } = useModal()
 const { showToast } = useToast()
 
-type PlantPage = 'list' | 'add' | 'edit'
+type PlantPage = 'list' | 'add' | 'show' | 'edit'
 const page = ref<PlantPage>('list')
 
 const plants = ref<Array<Plant>>([])
+const selected = ref<Plant | null>(null)
 
 const fabActions = ref<Array<FabAction>>([
   {
@@ -73,7 +88,17 @@ async function syncPlants() {
   plants.value = await repo.getAll()
 }
 
-async function removePlant(plant: Plant) {
+function showPlant(plant: Plant) {
+  page.value = 'show'
+  selected.value = plant
+}
+
+function editPlant(plant: Plant) {
+  page.value = 'edit'
+  selected.value = plant
+}
+
+async function showDeleteConfirmationModal(plant: Plant) {
   const plantName = plant.name !== ''
     ? `${plant.name} (${plant.strain})`
     : plant.strain
@@ -109,6 +134,11 @@ async function removePlant(plant: Plant) {
       class: 'btn-error text-base-100',
     }],
   })
+}
+
+function back() {
+  selected.value = null
+  page.value = 'list'
 }
 
 async function backAndSync() {

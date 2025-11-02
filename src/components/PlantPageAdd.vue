@@ -1,53 +1,51 @@
 <template>
-  <div class="flex items-center justify-center">
-    <ICard
-      class="w-full max-w-xl"
+  <ICard
+    class="w-full max-w-2xl"
+  >
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold">
+        Neue Pflanze anlegen
+      </h1>
+    </div>
+
+    <div class="space-y-3">
+      <InputTextFloat
+        v-model="strain"
+        label="Wähle die Sorte deiner Pflanze aus"
+        :error="errors.strain"
+        required
+      />
+
+      <InputTextFloat
+        v-model="name"
+        label="Gib deiner Pflanze einen Namen (optional)"
+        :error="errors.name"
+      />
+
+      <PlantFormSubstrate
+        v-model:substrate="substrate"
+        v-model:size="substrateSize"
+        :substrate-error="errors.substrate"
+        :size-error="errors.substrateSize"
+      />
+
+      <PlantFormPhase
+        v-model:phase="phase"
+        v-model:start="phaseStart"
+        :phase-error="errors.phase"
+        :start-error="errors.phaseStart"
+      />
+    </div>
+
+    <button
+      class="btn btn-primary text-base-100"
+      :disabled="loading"
+      @click="submit"
     >
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold">
-          Neue Pflanze anlegen
-        </h1>
-      </div>
-
-      <div class="space-y-3">
-        <InputTextFloat
-          v-model="strain"
-          label="Wähle die Sorte deiner Pflanze aus"
-          :error="errors.strain"
-          required
-        />
-
-        <InputTextFloat
-          v-model="name"
-          label="Gib deiner Pflanze einen Namen (optional)"
-          :error="errors.name"
-        />
-
-        <PlantFormSubstrate
-          v-model:substrate="substrate"
-          v-model:size="substrateSize"
-          :substrate-error="errors.substrate"
-          :size-error="errors.substrateSize"
-        />
-
-        <PlantFormPhase
-          v-model:phase="phase"
-          v-model:start="phaseStart"
-          :phase-error="errors.phase"
-          :start-error="errors.phaseStart"
-        />
-      </div>
-
-      <button
-        class="btn btn-primary text-base-100"
-        :disabled="loading"
-        @click="submit"
-      >
-        <IconAdd />
-        Speichern
-      </button>
-    </ICard>
-  </div>
+      <IconAdd />
+      Speichern
+    </button>
+  </ICard>
 </template>
 
 <script lang="ts" setup>
