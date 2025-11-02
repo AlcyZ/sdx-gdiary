@@ -60,6 +60,10 @@ interface DropdownItem {
   onClick?: () => void
 }
 
+interface StepItem {
+
+}
+
 interface ListItemAction {
   icon: Component
   onClick?: () => void | Promise<void>
@@ -81,6 +85,8 @@ interface ToastProps {
 }
 type ToastPosition = 'ts' | 'tc' | 'te' | 'ms' | 'mc' | 'me' | 'bs' | 'bc' | 'be'
 type ToastVariant = 'info' | 'warning' | 'success' | 'error'
+
+type StepVariant = 'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'
 
 type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
 
