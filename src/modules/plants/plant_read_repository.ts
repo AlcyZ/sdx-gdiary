@@ -109,7 +109,7 @@ export default class PlantReadRepository {
 
     const substrateRow = await index.get(plant.id)
     if (!isPlantSubstrateRow(substrateRow)) {
-      console.error('[PlantReadRepository.fetchSubstrate] - substrate not found for plant', plant)
+      console.error('[PlantReadRepository.fetchSubstrate] - substrate not found for plant', plant, substrateRow)
       return err('Pflanze hat kein Substrat zugewiesen')
     }
 
@@ -125,7 +125,9 @@ export default class PlantReadRepository {
     const store = tx.objectStore(TABLE_PLANT_PHASES)
     const index = store.index(INDEX_PLANT_ID)
 
-    const phaseRows = (await index.getAll(plant.id)).filter((row: any) => isPlantPhaseRow(row)) as Array<PlantPhaseRow>
+    const phaseData = await index.getAll(plant.id)
+    const phaseRows = phaseData.filter((row: any) => isPlantPhaseRow(row)) as Array<PlantPhaseRow>
+
     if (phaseRows.length === 0) {
       console.error('[PlantReadRepository.fetchCurrentPhase] - phase not found for plant', plant)
       return err('Pflanze hat keine Phase zugewiesen')

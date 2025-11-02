@@ -29,7 +29,7 @@ export function isPlantPhaseRow(value: any): value is PlantPhaseRow {
 function isPlantPhaseType(value: any): value is PlantPhaseType {
   return typeof value === 'string'
     && (
-      value === 'seedling'
+      value === 'germination'
       || value === 'seedling'
       || value === 'vegetation'
       || value === 'pre-flower'
