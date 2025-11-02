@@ -30,10 +30,8 @@
       />
 
       <PlantFormPhase
-        v-model:phase="phase"
-        v-model:start="phaseStart"
-        :phase-error="errors.phase"
-        :start-error="errors.phaseStart"
+        v-model="phases"
+        :error="errors.phases"
       />
     </div>
 
@@ -49,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { NewPlant, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
+import type { NewPlant, NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
 import type { ToastVariant } from '../types'
 import { toTypedSchema } from '@vee-validate/yup'
 import {
@@ -85,8 +83,13 @@ const ERR_STRAIN_MAX = ({ max }: { max: number }) => `Die Sorte dar maximal ${ma
 
 const ERR_SUBSTRATE_REQUIRED = 'Es muss ein Substrat/Medium ausgewählt werden'
 const ERR_SUBSTRATE_SIZE_REQUIRED = 'Es muss eine Substratgröße angegeben werden'
-const ERR_PHASE_REQUIRED = 'Die Wachstumsphase muss angegeben werden'
-const ERR_PHASE_START_REQUIRED = 'Es muss ein Startdatum für die Wachstumsphase angegeben werden'
+const ERR_PHASES_NOT_CHRONOLOGICALLY = 'Die Phasen müssen chronologisch aufeinander folgen'
+
+const phaseSchema = yup.object({
+  phase: yup.mixed<PlantPhaseType>().required(),
+  startedAt: yup.string().required('Asd muss'),
+  info: yup.string().optional(),
+})
 
 const validationSchema = toTypedSchema(
   yup.object({
@@ -94,21 +97,28 @@ const validationSchema = toTypedSchema(
     name: yup.string().optional(),
     substrate: yup.string().required(ERR_SUBSTRATE_REQUIRED),
     substrateSize: yup.string().required(ERR_SUBSTRATE_SIZE_REQUIRED),
-    phase: yup.string().required(ERR_PHASE_REQUIRED),
-    phaseStart: yup.string().required(ERR_PHASE_START_REQUIRED),
+    phases: yup.array()
+      .of(phaseSchema)
+      .test('is-ascending', ERR_PHASES_NOT_CHRONOLOGICALLY, isChronologicallySorted),
   }),
 )
 
 const { validate, errors, defineField } = useForm({
   validationSchema,
+  initialValues: {
+    strain: '',
+    name: '',
+    substrate: '',
+    substrateSize: '',
+    phases: [],
+  },
 })
 
 const [strain] = defineField('strain')
 const [name] = defineField('name')
 const [substrate] = defineField<'substrate', PlantSubstrateType>('substrate')
 const [substrateSize] = defineField('substrateSize')
-const [phase] = defineField<'phase', PlantPhaseType>('phase')
-const [phaseStart] = defineField('phaseStart')
+const [phases] = defineField<'phases', Array<NewPlantPhase>>('phases')
 
 function toast(message: string, variant: ToastVariant = 'error', close?: () => void) {
   showToast({
@@ -136,10 +146,7 @@ async function submit() {
       substrate: substrate.value,
       size: substrateSize.value!,
     },
-    phase: {
-      phase: phase.value,
-      startedAt: phaseStart.value!,
-    },
+    phases: phases.value,
   }
 
   const repo = await PlantRepository.create()
@@ -155,5 +162,31 @@ async function submit() {
 
   loading.value = false
   toast('Pflanze konnte nicht gespeichert werden')
+}
+
+function isChronologicallySorted(phases: Array<NewPlantPhase> | undefined): boolean {
+  if (!phases || phases.length < 2) {
+    return true
+  }
+
+  for (let i = 0; i < phases.length - 1; i++) {
+    const current = phases[i]
+    const next = phases[i + 1]
+
+    if (!current?.startedAt || !next?.startedAt) {
+      continue
+    }
+
+    const currentDate = new Date(current.startedAt)
+    const nextDate = new Date(next.startedAt)
+
+    if (Number.isNaN(currentDate.getTime()) || Number.isNaN(nextDate.getTime()))
+      continue
+
+    if (currentDate > nextDate)
+      return false
+  }
+
+  return true
 }
 </script>
