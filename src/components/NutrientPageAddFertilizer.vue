@@ -116,6 +116,9 @@ async function saveAndNew() {
   if (!(await validateForm()))
     return
 
+  if (!(await saveFertilizer()))
+    return
+
   toast('Dünger erfolgreich gespeichert', 'success')
 
   name.value = ''
