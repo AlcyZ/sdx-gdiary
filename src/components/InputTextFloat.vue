@@ -36,7 +36,7 @@ interface Emits {
 const { label, required = false, type = 'text' } = defineProps<Props>()
 defineEmits<Emits>()
 
-const model = defineModel()
+const model = defineModel<string | undefined>()
 
 const labelText = computed((): string => required ? `${label}*` : label)
 </script>
