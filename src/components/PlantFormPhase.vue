@@ -51,7 +51,7 @@ import type { NewPlantPhase, PlantPhaseType } from '../modules/plants/types'
 
 import { computed, onMounted, toRaw } from 'vue'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
-import { extractEventValue } from '../util.ts'
+import { extractEventValue, now } from '../util.ts'
 import IFieldset from './IFieldset.vue'
 import IStep from './IStep.vue'
 import ISteps from './ISteps.vue'
@@ -97,10 +97,6 @@ const phases = computed(
     }),
   ),
 )
-
-function now() {
-  return new Date().toISOString().split('T')[0]!
-}
 
 function selectPhase(selectedPhase: PlantPhaseItemData) {
   const collect = () => {
