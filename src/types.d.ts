@@ -86,7 +86,13 @@ interface ToastProps {
 type ToastPosition = 'ts' | 'tc' | 'te' | 'ms' | 'mc' | 'me' | 'bs' | 'bc' | 'be'
 type ToastVariant = 'info' | 'warning' | 'success' | 'error'
 
-type StepVariant = 'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'
+type BaseVariant = 'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'
+type BaseSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+
+type StepVariant = BaseVariant
+
+type BadgeVariant = BaseVariant
+type BadgeSize = BaseSize
 
 type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
 
