@@ -94,6 +94,9 @@ type StepVariant = BaseVariant
 type BadgeVariant = BaseVariant
 type BadgeSize = BaseSize
 
+type ButtonVariant = BaseVariant
+type ButtonSize = BaseSize
+
 type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
 
 type FormError<T extends object> = {
