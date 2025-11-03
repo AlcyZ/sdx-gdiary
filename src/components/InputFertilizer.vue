@@ -1,46 +1,35 @@
 <template>
   <div class="space-y-3">
     <InputTextFloat
+      v-model="name"
       label="Name"
       required
-      :model-value="modelValue.name"
-      @update:model-value="updateName"
+      :error="errorName"
     />
 
     <InputTextFloat
+      v-model="manufacturer"
       label="Hersteller"
-      :model-value="modelValue.manufacturer"
-      @update:model-value="updateManufacturer"
+      :error="errorManufacturer"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
+import type { NewFertilizer } from '../modules/nutrients/types'
 import InputTextFloat from './InputTextFloat.vue'
 
 interface Props {
-  modelValue: NewFertilizer
+  errorName?: string
+  errorManufacturer?: string
 }
 interface Emits {
   'update:modelValue': [value: NewFertilizer]
 }
 
-const { modelValue } = defineProps<Props>()
-const emit = defineEmits<Emits>()
+defineProps<Props>()
+defineEmits<Emits>()
 
-function updateName(name: string | undefined) {
-  if (name) {
-    emit('update:modelValue', {
-      name,
-      manufacturer: modelValue.manufacturer,
-    })
-  }
-}
-
-function updateManufacturer(manufacturer: string | undefined) {
-  emit('update:modelValue', {
-    name: modelValue.name,
-    manufacturer,
-  })
-}
+const name = defineModel<string>('name', { required: true })
+const manufacturer = defineModel<string | undefined>('manufacturer')
 </script>
