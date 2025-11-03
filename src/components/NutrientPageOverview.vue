@@ -1,15 +1,19 @@
 <template>
   <div>
     overview ...
-    <button @click="$emit('back')" class="btn btn-neutral">
+
+
+    <button class="btn btn-neutral" @click="$emit('back')">
       Back
     </button>
   </div>
 </template>
 
 <script lang="ts" setup>
-interface Props {
+import type { Fertilizer } from '../modules/nutrients/types'
 
+interface Props {
+  fertilizers: Array<Fertilizer>
 }
 interface Emits {
 

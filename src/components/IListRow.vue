@@ -1,7 +1,7 @@
 <template>
-  <ul class="list">
+  <li class="list-row">
     <slot />
-  </ul>
+  </li>
 </template>
 
 <script lang="ts" setup>

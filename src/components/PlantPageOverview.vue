@@ -12,7 +12,7 @@ import type { ListItem } from '../types'
 import { Edit as IconEdit, Eye as IconShow, Trash as IconTrash } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
-import IList from './IList.vue'
+import IList from './IListLegacy.vue'
 
 interface Props {
   plants: Array<Plant>
