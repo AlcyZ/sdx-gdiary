@@ -4,6 +4,7 @@
       :label="labelText"
     >
       <input
+        ref="input"
         v-model="model"
         :type="type"
         :placeholder="labelText"
@@ -20,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import IFloatingLabel from './IFloatingLabel.vue'
 
 interface Props {
@@ -37,6 +38,15 @@ const { label, required = false, type = 'text' } = defineProps<Props>()
 defineEmits<Emits>()
 
 const model = defineModel<string | undefined>()
+const input = ref<HTMLInputElement | null>(null)
 
 const labelText = computed((): string => required ? `${label}*` : label)
+
+function focus() {
+  input.value?.focus()
+}
+
+defineExpose({
+  focus,
+})
 </script>
