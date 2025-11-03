@@ -28,7 +28,7 @@ interface None { exist: false }
 
 type Option<T> = Some<T> | None
 
-type Page = 'Home' | 'Pflanzen' | 'Todo'
+type Page = 'Home' | 'Pflanzen' | 'Nutrients'
 
 interface HasId<T> {
   id: T
@@ -71,7 +71,7 @@ interface ListItemAction {
 
 interface FabAction {
   icon: Component
-  onClick?: () => void | Promise<void>
+  onClick?: () => unknown
 }
 
 type ComponentCssClass = string | Record<string, boolean> | Array<ComponentCssClass>

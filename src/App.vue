@@ -9,8 +9,8 @@
     <PagePlant
       v-else-if="currentPage === 'Pflanzen'"
     />
-    <PageTodo
-      v-else-if="currentPage === 'Todo'"
+    <PageNutrients
+      v-else-if="currentPage === 'Nutrients'"
     />
   </LayoutBase>
 </template>
@@ -19,14 +19,14 @@
 import type { DockItem, Page } from './types'
 import {
   House as IconHouse,
+  Apple as IconNutrients,
   Flower2 as IconPlant,
-  LayoutList as IconTodo,
 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import LayoutBase from './layouts/LayoutBase.vue'
 import PageHome from './pages/PageHome.vue'
+import PageNutrients from './pages/PageNutrients.vue'
 import PagePlant from './pages/PagePlant.vue'
-import PageTodo from './pages/PageTodo.vue'
 
 const docks = ref<Array<DockItem>>([
   {
@@ -37,12 +37,12 @@ const docks = ref<Array<DockItem>>([
   {
     label: 'Pflanzen',
     icon: IconPlant,
-    active: true,
+    active: false,
   },
   {
-    label: 'Todo',
-    icon: IconTodo,
-    active: false,
+    label: 'Nutrients',
+    icon: IconNutrients,
+    active: true,
   },
 ])
 
