@@ -46,6 +46,7 @@ import PlantPageEdit from '../components/PlantPageEdit.vue'
 import PlantPageOverview from '../components/PlantPageOverview.vue'
 import PlantPageShow from '../components/PlantPageShow.vue'
 import { useModal } from '../composables/useModal.ts'
+import { usePage } from '../composables/usePage.ts'
 import { useToast } from '../composables/useToast.ts'
 import PlantRepository from '../modules/plants/plant_repository.ts'
 
@@ -63,7 +64,7 @@ const { showConfirmationModal } = useModal()
 const { showToast } = useToast()
 
 type PlantPage = 'list' | 'add' | 'show' | 'edit'
-const page = ref<PlantPage>('list')
+const { page, changePage } = usePage<PlantPage>('list')
 
 const plants = ref<Array<Plant>>([])
 const selected = ref<Plant | null>(null)
@@ -78,10 +79,6 @@ const fabActions = ref<Array<FabAction>>([
     onClick: () => changePage('list'),
   },
 ])
-
-function changePage(newPage: PlantPage) {
-  page.value = newPage
-}
 
 async function syncPlants() {
   const repo = await PlantRepository.create()
