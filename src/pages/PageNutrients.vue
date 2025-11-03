@@ -7,6 +7,9 @@
 
     <NutrientPageOverview
       v-if="page === 'list'"
+      :fertilizers="fertilizers"
+      @sync="syncFertilizer"
+      @add-fertilizer="changePage('add-fertilizer')"
       @back="back"
     />
     <NutrientPageAddFertilizer
@@ -21,6 +24,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Fertilizer } from '../modules/nutrients/types'
 import type { FabAction } from '../types'
 import {
   Beaker as IconFertilizer,
@@ -28,12 +32,13 @@ import {
   Cog as IconMenu,
   CirclePlus as IconNew,
 } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import IFab from '../components/IFab.vue'
 import NutrientPageAdd from '../components/NutrientPageAdd.vue'
 import NutrientPageAddFertilizer from '../components/NutrientPageAddFertilizer.vue'
 import NutrientPageOverview from '../components/NutrientPageOverview.vue'
 import { usePage } from '../composables/usePage.ts'
+import FertilizerRepository from '../modules/nutrients/fertilizer_repository.ts'
 
 interface Props {
 
@@ -46,7 +51,18 @@ defineProps<Props>()
 defineEmits<Emits>()
 
 type NutrientPage = 'list' | 'add' | 'add-fertilizer'
-const { page, changePage } = usePage<NutrientPage>('add-fertilizer')
+const { page, changePage } = usePage<NutrientPage>('list')
+
+const fertilizers = ref<Array<Fertilizer>>([])
+
+function back() {
+  changePage('list')
+}
+
+async function syncFertilizer() {
+  const repo = await FertilizerRepository.create()
+  fertilizers.value = await repo.getAll()
+}
 
 const fabActions = ref<Array<FabAction>>([
   {
@@ -63,7 +79,5 @@ const fabActions = ref<Array<FabAction>>([
   },
 ])
 
-function back() {
-  changePage('list')
-}
+onMounted(syncFertilizer)
 </script>

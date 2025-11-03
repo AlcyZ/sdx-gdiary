@@ -5,13 +5,20 @@
     </ICardTitle>
 
     <div class="my-8 py-4">
-      <h2 class="text-lg font-semibold">
-        Dünger
-      </h2>
+      <div class="flex items-center justify-between mb-3 border-b border-b-base-200">
+        <h2 class="text-lg font-semibold">
+          Dünger
+        </h2>
+
+        <IBtn ghost @click="$emit('addFertilizer')">
+          <IconAdd />
+          Neu
+        </IBtn>
+      </div>
 
       <div class="join join-vertical w-full">
         <ICollapse
-          v-for="(fertilizerList, manufacturer) in fertilizersGroup"
+          v-for="manufacturer in Object.keys(fertilizersGroup).sort()"
           :key="manufacturer"
           name="manufacturer"
           class="border border-base-200 join-item"
@@ -22,10 +29,10 @@
           </ICollapseTitle>
           <ICollapseContent>
             <div
-              v-for="(fertilizer, i) in fertilizerList"
+              v-for="(fertilizer, i) in fertilizersGroup[manufacturer]"
               :key="i"
               class="flex justify-between items-center"
-              :class="{'border-t border-t-base-200': i === 0}"
+              :class="{ 'border-t border-t-base-200': i === 0 }"
             >
               <div>
                 {{ fertilizer.name }}
@@ -35,7 +42,7 @@
                 <IBtn square ghost>
                   <IconEdit />
                 </IBtn>
-                <IBtn square ghost variant="error">
+                <IBtn square ghost variant="error" @click="showDeleteConfirmation(fertilizer)">
                   <IconDelete />
                 </IBtn>
               </div>
@@ -44,41 +51,43 @@
         </ICollapse>
       </div>
     </div>
-
-    <button class="btn btn-neutral" @click="$emit('back')">
-      Back
-    </button>
   </ICard>
 </template>
 
 <script lang="ts" setup>
 import type { Fertilizer } from '../modules/nutrients/types'
 import {
+  CirclePlus as IconAdd,
   Trash as IconDelete,
   Edit as IconEdit,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
+import { useModal } from '../composables/useModal.ts'
+import { useToast } from '../composables/useToast.ts'
+import FertilizerRepository from '../modules/nutrients/fertilizer_repository.ts'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
 import ICollapse from './ICollapse.vue'
 import ICollapseContent from './ICollapseContent.vue'
 import ICollapseTitle from './ICollapseTitle.vue'
-import IList from './IList.vue'
-import IListRow from './IListRow.vue'
 
 interface Props {
   fertilizers: Array<Fertilizer>
 }
 interface Emits {
-  back: []
+  sync: []
+  addFertilizer: []
 }
 
 const { fertilizers } = defineProps<Props>()
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
+
+const { toast } = useToast()
+const { showConfirmationModal } = useModal()
 
 const fertilizersGroup = computed(() => {
-  const unknown = 'unknown'
+  const unknown = 'Unbekannter Hersteller'
 
   const data: Record<string, Array<Fertilizer>> = {}
 
@@ -94,4 +103,37 @@ const fertilizersGroup = computed(() => {
 
   return data
 })
+
+function showDeleteConfirmation(fertilizer: Fertilizer) {
+  const fertilizerName = fertilizer.manufacturer !== undefined && fertilizer.manufacturer !== ''
+    ? `${fertilizer.name} (${fertilizer.manufacturer})`
+    : fertilizer.name
+  const text = `Bist du sicher, dass der Dünger '${fertilizerName}' gelöscht werden soll?`
+
+  const deleteFertilizer = async () => {
+    const repo = await FertilizerRepository.create()
+    const result = await repo.delete(fertilizer.id)
+
+    if (result.ok) {
+      toast('Dünger erfolgreich gelöscht', 'success')
+      emit('sync')
+    }
+    else {
+      toast('Es ist ein Fehler beim löschen des Düngers aufgetreten', 'error')
+    }
+  }
+
+  showConfirmationModal({
+    title: 'Dünger löschen',
+    text,
+    actions: [
+      {
+        label: 'Löschen',
+        class: 'btn-error text-base-100',
+        onClick: deleteFertilizer,
+        icon: IconDelete,
+      },
+    ],
+  })
+}
 </script>

@@ -28,4 +28,18 @@ export default class FertilizerWriteRepository {
       return err(error)
     }
   }
+
+  public async delete(fertilizerId: number): Promise<Result<undefined, unknown>> {
+    try {
+      const tx = this.db.transaction(TABLE_FERTILIZERS, 'readwrite')
+      const store = tx.objectStore(TABLE_FERTILIZERS)
+
+      await store.delete(fertilizerId)
+      return ok(undefined)
+    }
+    catch (error) {
+      console.error('[FertilizerWriteRepository.delete] - failed to delete fertilizer:', fertilizerId, error)
+      return err(error)
+    }
+  }
 }

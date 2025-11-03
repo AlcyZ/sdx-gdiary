@@ -10,6 +10,7 @@
       <div class="modal-action">
         <form method="dialog">
           <button class="btn">
+            <IconBack />
             Schließen
           </button>
           <button
@@ -20,6 +21,7 @@
             :type="action.type || 'submit'"
             @click="action.onClick"
           >
+            <component :is="action.icon" v-if="action.icon" />
             {{ action.label }}
           </button>
         </form>
@@ -33,6 +35,7 @@
 
 <script lang="ts" setup>
 import type { ShowConfirmationModalAction } from '../types'
+import { ArrowBigLeft as IconBack } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 
 interface Props {

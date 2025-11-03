@@ -105,9 +105,10 @@ type FormError<T extends object> = {
 
 interface ShowConfirmationModalAction {
   label: string
-  onClick: () => void
+  onClick: () => void | Promise<void>
   class?: ComponentCssClass
   type?: 'button' | 'submit'
+  icon?: Component
 }
 
 interface ShowConfirmationModalProps {

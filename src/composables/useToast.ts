@@ -1,4 +1,4 @@
-import type { ToastProps } from '../types'
+import type { ToastProps, ToastVariant } from '../types'
 import { createApp, h } from 'vue'
 import IToast from '../components/IToast.vue'
 
@@ -28,7 +28,16 @@ export function useToast() {
     app.mount(container)
   }
 
+  const toast = (message: string, variant: ToastVariant, duration: number = 1500, close?: () => void) => {
+    showToast({
+      message,
+      variant,
+      duration,
+    }, close ? { close } : undefined)
+  }
+
   return {
     showToast,
+    toast,
   }
 }
