@@ -1,5 +1,5 @@
 import type { Result } from '../../types'
-import type { NewFertilizer } from './types'
+import type {Fertilizer, NewFertilizer} from './types'
 import FertilizerReadRepository from './fertilizer_read_repository.ts'
 import FertilizerWriteRepository from './fertilizer_write_repository.ts'
 
@@ -24,7 +24,7 @@ export default class FertilizerRepository {
     return this.write.save(fertilizer)
   }
 
-  public async getAll(): Promise<Array<unknown>> {
+  public async getAll(): Promise<Array<Fertilizer>> {
     return this.read.getAll()
   }
 }
