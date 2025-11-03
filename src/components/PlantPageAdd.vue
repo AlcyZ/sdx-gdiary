@@ -37,21 +37,31 @@
 
     <div class="flex items-center justify-between">
       <button
-        class="btn btn-primary text-base-100"
-        :disabled="loading || hasFormErrors"
-        @click="save"
+        class="btn btn-soft"
+        @click="$emit('back')"
       >
-        <IconSave />
-        Speichern
+        <IconBack />
+        Zurück
       </button>
-      <button
-        class="btn btn-secondary text-base-100"
-        :disabled="loading || hasFormErrors"
-        @click="saveAndNew"
-      >
-        <IconAdd />
-        Speichern & Neue
-      </button>
+
+      <div class="join">
+        <button
+          class="btn btn-primary text-base-100 join-item"
+          :disabled="loading || hasFormErrors"
+          @click="save"
+        >
+          <IconSave />
+          Speichern
+        </button>
+        <button
+          class="btn btn-neutral text-base-100 join-item"
+          :disabled="loading || hasFormErrors"
+          @click="saveAndNew"
+        >
+          <IconAdd />
+          Speichern & Neue
+        </button>
+      </div>
     </div>
   </ICard>
 </template>
@@ -62,6 +72,7 @@ import type { Result, ToastVariant } from '../types'
 import { toTypedSchema } from '@vee-validate/yup'
 import {
   CirclePlus as IconAdd,
+  MoveLeft as IconBack,
   Save as IconSave,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
