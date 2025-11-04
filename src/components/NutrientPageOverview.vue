@@ -36,29 +36,37 @@
           class="border border-base-200 join-item"
           arrow
         >
-          <ICollapseTitle>
+          <ICollapseTitle class="font-semibold opacity-80">
             {{ manufacturer }}
           </ICollapseTitle>
           <ICollapseContent>
-            <div
-              v-for="(fertilizer, i) in fertilizersGroup[manufacturer]"
-              :key="i"
-              class="flex justify-between items-center"
-              :class="{ 'border-t border-t-base-200': i === 0 }"
-            >
-              <div>
-                {{ fertilizer.name }}
-              </div>
+            <IList>
+              <IListRow
+                v-for="(fertilizer, i) in fertilizersGroup[manufacturer]"
+                :key="i"
+              >
+                <div class="list-col-grow flex items-center font-semibold opacity-60">
+                  {{ fertilizer.name }}
+                </div>
+                <IBtn
+                  square
+                  ghost
+                  size="sm"
+                  @click="edit(fertilizer)"
+                >
+                  <IconEdit :size="20" />
+                </IBtn>
 
-              <div>
-                <IBtn square ghost @click="edit(fertilizer)">
-                  <IconEdit />
+                <IBtn
+                  square
+                  ghost
+                  size="sm"
+                  @click="showDeleteConfirmation(fertilizer)"
+                >
+                  <IconDelete :size="20" />
                 </IBtn>
-                <IBtn square ghost variant="error" @click="showDeleteConfirmation(fertilizer)">
-                  <IconDelete />
-                </IBtn>
-              </div>
-            </div>
+              </IListRow>
+            </IList>
           </ICollapseContent>
         </ICollapse>
       </div>
@@ -84,6 +92,8 @@ import ICardTitle from './ICardTitle.vue'
 import ICollapse from './ICollapse.vue'
 import ICollapseContent from './ICollapseContent.vue'
 import ICollapseTitle from './ICollapseTitle.vue'
+import IList from './IList.vue'
+import IListRow from './IListRow.vue'
 
 interface Props {
   fertilizers: Array<Fertilizer>
