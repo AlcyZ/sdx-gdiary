@@ -1,10 +1,23 @@
 <template>
   <ICard class="w-full max-w-2xl">
-    <ICardTitle class="text-2xl font-bold">
+    <ICardTitle class="text-2xl font-bold mb-5">
       Nutrients
     </ICardTitle>
 
-    <div class="my-8 py-4">
+    <div class="my-3">
+      <div class="flex items-center justify-between mb-3 border-b border-b-base-200">
+        <h2 class="text-lg font-semibold">
+          Zuchtschema
+        </h2>
+
+        <IBtn ghost @click="$emit('addSchema')">
+          <IconAdd />
+          Neu
+        </IBtn>
+      </div>
+    </div>
+
+    <div class="my-3">
       <div class="flex items-center justify-between mb-3 border-b border-b-base-200">
         <h2 class="text-lg font-semibold">
           Dünger
@@ -15,7 +28,6 @@
           Neu
         </IBtn>
       </div>
-
       <div class="join join-vertical w-full">
         <ICollapse
           v-for="manufacturer in Object.keys(fertilizersGroup).sort()"
@@ -79,6 +91,7 @@ interface Props {
 interface Emits {
   sync: []
   addFertilizer: []
+  addSchema: []
 }
 
 const { fertilizers } = defineProps<Props>()

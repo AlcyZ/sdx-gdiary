@@ -1,5 +1,5 @@
 <template>
-  <component :is="as" class="btn" :class="btnClass">
+  <component :is="as" class="btn" :class="btnClass" :type="as === 'button' ? 'button' : undefined">
     <slot />
   </component>
 </template>
@@ -30,6 +30,7 @@ const {
   wide = false,
   block = false,
   square = false,
+  circle = false,
   as = 'button',
   outline = false,
   dash = false,
@@ -63,6 +64,7 @@ const btnClass = computed((): Array<string> => [
   wide ? 'btn-wide' : undefined,
   block ? 'btn-block' : undefined,
   square ? 'btn-square' : undefined,
+  circle ? 'btn-circle' : undefined,
   soft ? 'btn-soft' : undefined,
   ghost ? 'btn-ghost' : undefined,
   variant ? variantMap[variant] : undefined,

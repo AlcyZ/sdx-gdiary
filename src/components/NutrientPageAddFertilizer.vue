@@ -3,20 +3,21 @@
     class="w-full max-w-2xl"
     class-actions="justify-between"
   >
-    <form @submit.prevent="saveAndNew">
-      <ICardTitle class="text-3xl">
-        Neuen Dünger anlegen
-      </ICardTitle>
+    <ICardTitle class="text-3xl">
+      Neuen Dünger anlegen
+    </ICardTitle>
 
-      <div class="my-5">
-        <InputFertilizer
-          ref="inputFertilizer"
-          v-model:name="name"
-          v-model:manufacturer="manufacturer"
-          :error-name="errors.name"
-          :error-manufacturer="errors.manufacturer"
-        />
-      </div>
+    <form
+      class="my-5"
+      @submit.prevent="saveAndNew"
+    >
+      <InputFertilizer
+        ref="inputFertilizer"
+        v-model:name="name"
+        v-model:manufacturer="manufacturer"
+        :error-name="errors.name"
+        :error-manufacturer="errors.manufacturer"
+      />
       <input type="submit" class="hidden">
     </form>
 

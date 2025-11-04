@@ -4,6 +4,15 @@
       :label="labelText"
     >
       <input
+        v-if="type === 'number'"
+        ref="input"
+        v-model.number="model"
+        :type="type"
+        :placeholder="labelText"
+        class="input input-md w-full"
+      >
+      <input
+        v-else
         ref="input"
         v-model="model"
         :type="type"
@@ -37,7 +46,7 @@ interface Emits {
 const { label, required = false, type = 'text' } = defineProps<Props>()
 defineEmits<Emits>()
 
-const model = defineModel<string | undefined>()
+const model = defineModel<string | number | undefined>()
 const input = ref<HTMLInputElement | null>(null)
 
 const labelText = computed((): string => required ? `${label}*` : label)
