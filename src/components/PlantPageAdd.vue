@@ -142,7 +142,7 @@ const hasFormErrors = computed(() => Object.keys(errors.value).length > 0)
 const [strain] = defineField('strain')
 const [name] = defineField('name')
 const [substrate] = defineField<'substrate', PlantSubstrateType>('substrate')
-const [substrateSize] = defineField('substrateSize')
+const [substrateSize] = defineField<'substrateSize', string>('substrateSize')
 const [phases] = defineField<'phases', Array<NewPlantPhase>>('phases')
 
 function toast(message: string, variant: ToastVariant = 'error', close?: () => void) {

@@ -66,7 +66,7 @@ const substrates: Array<PlantSubstrateType> = ['Erde', 'Coco', 'Hydro', 'Custom'
 
 const substrateInternal = ref('')
 
-const size = defineModel('size', { required: true })
+const size = defineModel<string>('size', { required: true })
 
 const substrate = computed({
   get() {
