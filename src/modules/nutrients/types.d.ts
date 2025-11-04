@@ -16,3 +16,23 @@ interface NewWateringSchema {
   name: string
   fertilizers: Array<NewWateringSchemaFertilizer>
 }
+
+type WateringSchemaFertilizer = WithId<NewWateringSchemaFertilizer, number>
+
+type WateringSchema = Omit<WithId<NewWateringSchema, number>, 'fertilizers'> & {
+  fertilizers: Array<WateringSchemaFertilizer>
+}
+
+interface WateringSchemaRow {
+  id: number
+  name: string
+  createdAt: number
+  updatedAt: number
+}
+
+interface FertilizerWateringSchemaRow {
+  id: number
+  wateringSchemaId: number
+  fertilizerId: number
+  amount: number
+}

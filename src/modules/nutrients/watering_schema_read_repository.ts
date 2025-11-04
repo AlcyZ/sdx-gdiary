@@ -1,0 +1,67 @@
+import type { IDBPDatabase } from 'idb'
+import type { WateringSchema, WateringSchemaFertilizer } from './types'
+import {
+  getDb,
+  INDEX_WATERING_SCHEMA_ID,
+  TABLE_FERTILIZERS,
+  TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
+  TABLE_WATERING_SCHEMAS,
+} from '../db'
+import { isFertilizer, isFertilizerWateringSchemaRow, isWateringSchemaRow } from './guard.ts'
+
+export default class WateringSchemaReadRepository {
+  private readonly db: IDBPDatabase
+
+  constructor(db: IDBPDatabase) {
+    this.db = db
+  }
+
+  public static async create(): Promise<WateringSchemaReadRepository> {
+    const db = await getDb()
+    return new WateringSchemaReadRepository(db)
+  }
+
+  public async getAll(): Promise<Array<WateringSchema>> {
+    const tx = this.db.transaction([TABLE_WATERING_SCHEMAS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, TABLE_FERTILIZERS])
+
+    const schemaStore = tx.objectStore(TABLE_WATERING_SCHEMAS)
+    const fertilizerStore = tx.objectStore(TABLE_FERTILIZERS)
+
+    const pivotStore = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
+    const indexSchema = pivotStore.index(INDEX_WATERING_SCHEMA_ID)
+
+    const schemaData = await schemaStore.getAll()
+    const schemaRows = schemaData.filter(row => isWateringSchemaRow(row))
+
+    const data: Array<WateringSchema> = []
+
+    for (const schemaRow of schemaRows) {
+      const pivotData = await indexSchema.getAll(schemaRow.id)
+      const pivotRows = pivotData.filter(row => isFertilizerWateringSchemaRow(row))
+
+      const fertilizers: Array<WateringSchemaFertilizer> = []
+
+      for (const pivotRow of pivotRows) {
+        const fertilizer = await fertilizerStore.get(pivotRow.fertilizerId)
+        if (!isFertilizer(fertilizer)) {
+          console.warn('[WateringSchemaReadRepository.getAll] - invalid fertilizer data:', fertilizer, pivotRow)
+          continue
+        }
+
+        fertilizers.push({
+          id: schemaRow.id,
+          fertilizer,
+          amount: pivotRow.amount,
+        })
+      }
+
+      data.push({
+        id: schemaRow.id,
+        name: schemaRow.name,
+        fertilizers,
+      })
+    }
+
+    return data
+  }
+}
