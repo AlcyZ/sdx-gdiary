@@ -4,21 +4,16 @@
       Nutrients
     </ICardTitle>
 
-    <div class="my-3">
-      <div class="flex items-center justify-between mb-3 border-b border-b-base-200">
-        <h2 class="text-lg font-semibold">
-          Zuchtschema
-        </h2>
-
-        <IBtn ghost @click="$emit('addSchema')">
-          <IconAdd />
-          Neu
-        </IBtn>
-      </div>
-    </div>
+    <NutrientPageOverviewWateringSchemas
+      :watering-schemas="wateringSchemas"
+      class="my-3"
+      @sync="$emit('sync')"
+      @add-schema="$emit('addSchema')"
+    />
 
     <NutrientPageOverviewFertilizers
       :fertilizers="fertilizers"
+      class="my-3"
       @sync="$emit('sync')"
       @add-fertilizer="$emit('addFertilizer')"
     />
@@ -27,13 +22,10 @@
 
 <script lang="ts" setup>
 import type { Fertilizer, WateringSchema } from '../modules/nutrients/types'
-import {
-  CirclePlus as IconAdd,
-} from 'lucide-vue-next'
-import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
 import NutrientPageOverviewFertilizers from './NutrientPageOverviewFertilizers.vue'
+import NutrientPageOverviewWateringSchemas from "./NutrientPageOverviewWateringSchemas.vue";
 
 interface Props {
   wateringSchemas: Array<WateringSchema>
