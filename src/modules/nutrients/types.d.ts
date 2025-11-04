@@ -6,3 +6,13 @@ interface NewFertilizer {
 }
 
 type Fertilizer = WithId<NewFertilizer, number>
+
+interface NewWateringSchemaFertilizer {
+  fertilizer: Fertilizer
+  amount: number
+}
+
+interface NewWateringSchema {
+  name: string
+  fertilizers: Array<NewWateringSchemaFertilizer>
+}
