@@ -2,6 +2,7 @@
   <div class="py-6 flex justify-center items-center w-full">
     <IFab
       :icon="IconMenu"
+      class="mb-14"
       :actions="fabActions"
     />
 

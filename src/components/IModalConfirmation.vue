@@ -1,5 +1,8 @@
 <template>
-  <IModal close-on-click-outside>
+  <IModal
+    class="modal-bottom sm:modal-middle"
+    close-on-click-outside
+  >
     <h3 class="text-xl font-bold">
       {{ title }}
     </h3>
@@ -9,6 +12,7 @@
 
     <template #action>
       <form method="dialog">
+        <div tabindex="-1" class="absolute w-0 h-0 overflow-hidden" />
         <button class="btn">
           <IconBack />
           Schließen

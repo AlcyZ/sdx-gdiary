@@ -1,11 +1,15 @@
 <template>
-  <IModal close-on-click-outside>
+  <IModal
+    close-on-click-outside
+    class="modal-bottom sm:modal-middle"
+  >
     <h2 class="text-xl font-semibold">
       Dünger bearbeiten
     </h2>
 
     <form @submit.prevent="save">
       <InputFertilizer
+          ref="inputFertilizer"
         v-model:name="name"
         v-model:manufacturer="manufacturer"
         :error-name="errors.name"
@@ -45,6 +49,7 @@ import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
 import IBtn from './IBtn.vue'
 import IModal from './IModal.vue'
 import InputFertilizer from './InputFertilizer.vue'
+import {onMounted, ref} from "vue";
 
 interface Props {
   fertilizer: Fertilizer
@@ -57,6 +62,8 @@ interface Emits {
 const { fertilizer } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+const inputFertilizer = ref<InstanceType<typeof InputFertilizer> | null>(null)
+
 const { errors, defineField } = useFertilizerForm({
   name: fertilizer.name,
   manufacturer: fertilizer.manufacturer,
@@ -68,4 +75,19 @@ const [manufacturer] = defineField<'manufacturer', string>('manufacturer')
 function save() {
   emit('save', { name: name.value, manufacturer: manufacturer.value })
 }
+
+/**
+ * When opening the modal, the first input autofocus before layout stabilize, therefore the input might be
+ * out of the viewport. Focus another input first to make sure autoscroll works properly!
+ */
+function workaroundFocusName() {
+  inputFertilizer.value?.focusManufacturer()
+  inputFertilizer.value?.focusName()
+}
+
+function applyInputNameFocusWorkaroundAfter(timeout: number = 250) {
+  setTimeout(workaroundFocusName, timeout)
+}
+
+onMounted(applyInputNameFocusWorkaroundAfter)
 </script>

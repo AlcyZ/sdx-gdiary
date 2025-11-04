@@ -35,34 +35,34 @@
       />
     </div>
 
-    <div class="flex items-center justify-between">
-      <button
-        class="btn btn-soft"
+    <template #actions>
+      <IBtn
         @click="$emit('back')"
       >
         <IconBack />
         Zurück
-      </button>
-
+      </IBtn>
       <div class="join">
-        <button
-          class="btn btn-primary text-base-100 join-item"
+        <IBtn
+          variant="primary"
+          class="join-item text-base-100"
           :disabled="loading || hasFormErrors"
           @click="save"
         >
           <IconSave />
           Speichern
-        </button>
-        <button
-          class="btn btn-neutral text-base-100 join-item"
+        </IBtn>
+        <IBtn
+          variant="neutral"
+          class="join-item"
           :disabled="loading || hasFormErrors"
           @click="saveAndNew"
         >
           <IconAdd />
-          Speichern & Neue
-        </button>
+          Speichern & Neu
+        </IBtn>
       </div>
-    </div>
+    </template>
   </ICard>
 </template>
 
@@ -81,6 +81,7 @@ import * as yup from 'yup'
 import { useToast } from '../composables/useToast.ts'
 import PlantRepository from '../modules/plants/plant_repository.ts'
 import { err } from '../util.ts'
+import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import InputTextFloat from './InputTextFloat.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
