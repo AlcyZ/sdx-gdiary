@@ -1,5 +1,5 @@
 <template>
-  <IModal>
+  <IModal close-on-click-outside>
     <h2 class="text-xl font-semibold">
       Dünger bearbeiten
     </h2>
