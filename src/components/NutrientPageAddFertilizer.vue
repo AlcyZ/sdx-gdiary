@@ -57,10 +57,10 @@ import {
   MoveLeft as IconBack,
   Save as IconSave,
 } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
 import { useToast } from '../composables/useToast.ts'
-import FertilizerRepository from '../modules/nutrients/fertilizer_repository.ts'
+import { REPO_FERTILIZERS } from '../di_keys.ts'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
@@ -123,9 +123,13 @@ async function validateForm() {
   return validationResult.valid
 }
 
+const fertilizerRepo = inject(REPO_FERTILIZERS)
+
 async function saveFertilizer() {
-  const repo = await FertilizerRepository.create()
-  const result = await repo.save({
+  if (!fertilizerRepo)
+    return
+
+  const result = await fertilizerRepo.save({
     name: name.value,
     manufacturer: manufacturer.value,
   })
@@ -135,6 +139,6 @@ async function saveFertilizer() {
     toast('Dünger konnte nicht gespeichert werden')
   }
 
-  return result.ok
+  return result
 }
 </script>
