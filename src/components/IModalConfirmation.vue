@@ -1,42 +1,39 @@
 <template>
-  <dialog ref="dialog" class="modal">
-    <div class="modal-box">
-      <h3 class="text-lg font-bold">
-        {{ title }}
-      </h3>
-      <p v-if="text" class="py-4">
-        {{ text }}
-      </p>
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn">
-            <IconBack />
-            Schließen
-          </button>
-          <button
-            v-for="(action, i) in actions"
-            :key="i"
-            class="btn ml-1"
-            :class="action.class"
-            :type="action.type || 'submit'"
-            @click="action.onClick"
-          >
-            <component :is="action.icon" v-if="action.icon" />
-            {{ action.label }}
-          </button>
-        </form>
-      </div>
-    </div>
-    <form method="dialog" class="modal-backdrop">
-      <button>close</button>
-    </form>
-  </dialog>
+  <IModal close-on-click-outside>
+    <h3 class="text-lg font-bold">
+      {{ title }}
+    </h3>
+    <p v-if="text" class="py-4">
+      {{ text }}
+    </p>
+
+    <template #action>
+      <form method="dialog">
+        <button class="btn">
+          <IconBack />
+          Schließen
+        </button>
+        <button
+          v-for="(action, i) in actions"
+          :key="i"
+          class="btn ml-1"
+          :class="action.class"
+          :type="action.type || 'submit'"
+          @click="action.onClick"
+        >
+          <component :is="action.icon" v-if="action.icon" />
+          {{ action.label }}
+        </button>
+      </form>
+    </template>
+  </IModal>
 </template>
 
 <script lang="ts" setup>
 import type { ShowConfirmationModalAction } from '../types'
 import { ArrowBigLeft as IconBack } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
+import IModal from './IModal.vue'
 
 interface Props {
   title: string
