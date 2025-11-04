@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Fertilizer } from '../modules/nutrients/types'
+import type { Fertilizer, NewWateringSchema, NewWateringSchemaFertilizer } from '../modules/nutrients/types'
 import { toTypedSchema } from '@vee-validate/yup'
 import {
   CirclePlus as IconAdd,
@@ -99,6 +99,7 @@ import {
 import { useForm } from 'vee-validate'
 import { array, object, string } from 'yup'
 import { useToast } from '../composables/useToast.ts'
+import WateringSchemaRepository from '../modules/nutrients/watering_schema_repository.ts'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
@@ -109,6 +110,7 @@ interface Props {
 }
 interface Emits {
   back: []
+  backAndSync: []
 }
 
 interface FertilizerData {
@@ -117,7 +119,7 @@ interface FertilizerData {
 }
 
 const { fertilizers } = defineProps<Props>()
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
 
 const { toast } = useToast()
 
@@ -151,17 +153,41 @@ function addFertilizer() {
 }
 
 async function save() {
-  if (!(await validateForm()))
+  if (!(await saveSchema()))
     return
 
-  console.info('so save')
+  toast('Zuchtschema erfolgreich gespeichert', 'success', 1500, () => emit('backAndSync'))
 }
 
 async function saveAndNew() {
-  if (!(await validateForm()))
+  if (!(await saveSchema()))
     return
 
-  console.info('sa save and new')
+  toast('Zuchtschema erfolgreich gespeichert', 'success')
+  name.value = ''
+}
+
+async function saveSchema(): Promise<boolean> {
+  if (!(await validateForm()))
+    return false
+
+  const fertilizerItems: Array<NewWateringSchemaFertilizer>
+    = fertilizersData.value.map((data: FertilizerData): NewWateringSchemaFertilizer => ({
+      fertilizer: data.fertilizer,
+      amount: data.value,
+    }))
+  const schema: NewWateringSchema = {
+    name: name.value!,
+    fertilizers: fertilizerItems,
+  }
+
+  const repo = await WateringSchemaRepository.create()
+  const result = await repo.save(schema)
+
+  if (!result.ok)
+    toast('Zuchtschema konnte nicht gespeichert werden', 'error')
+
+  return result.ok
 }
 
 async function validateForm(): Promise<boolean> {
