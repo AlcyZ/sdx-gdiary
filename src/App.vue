@@ -1,55 +1,53 @@
 <template>
   <LayoutBase
     :docks="docks"
-    @change-page="changePage"
+    @change-page="navigateTo"
   >
     <PageHome
-      v-if="currentPage === 'Home'"
+      v-if="page === 'home'"
     />
     <PagePlant
-      v-else-if="currentPage === 'Pflanzen'"
+      v-else-if="page === 'plant'"
     />
     <PageNutrients
-      v-else-if="currentPage === 'Nutrients'"
+      v-else-if="page === 'nutrients'"
     />
   </LayoutBase>
 </template>
 
 <script setup lang="ts">
-import type { DockItem, Page } from './types'
+import type { DockItem } from './types'
 import {
   House as IconHouse,
   Apple as IconNutrients,
   Flower2 as IconPlant,
 } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
+import { usePage } from './composables/usePage.ts'
 import LayoutBase from './layouts/LayoutBase.vue'
 import PageHome from './pages/PageHome.vue'
 import PageNutrients from './pages/PageNutrients.vue'
 import PagePlant from './pages/PagePlant.vue'
+import { typedKeys } from './util.ts'
 
-const docks = ref<Array<DockItem>>([
-  {
-    label: 'Home',
-    icon: IconHouse,
-    active: false,
-  },
-  {
-    label: 'Pflanzen',
-    icon: IconPlant,
-    active: false,
-  },
-  {
-    label: 'Nutrients',
-    icon: IconNutrients,
-    active: true,
-  },
-])
+type AppPage = 'home' | 'plant' | 'nutrients'
+const { page, changePage } = usePage<AppPage>('plant')
 
-const currentPage = computed((): Page => docks.value.find(dock => dock.active)?.label || 'Home')
+const pagesMap: Record<AppPage, DockItem<AppPage>> = {
+  home: { label: 'Home', icon: IconHouse, data: 'home' },
+  plant: { label: 'Pflanzen', icon: IconPlant, data: 'plant' },
+  nutrients: { label: 'Nutrients', icon: IconNutrients, data: 'nutrients' },
+}
 
-function changePage(newPage: Page) {
-  docks.value.forEach(dock => dock.active = false)
-  docks.value.filter(dock => dock.label === newPage).forEach(dock => dock.active = true)
+const docks = computed(
+  () => typedKeys(pagesMap).map((p: AppPage): DockItem<AppPage> => ({
+    ...pagesMap[p],
+    active: page.value === p,
+  })),
+)
+
+function navigateTo(item: DockItem<AppPage>) {
+  if (item.data)
+    changePage(item.data)
 }
 </script>

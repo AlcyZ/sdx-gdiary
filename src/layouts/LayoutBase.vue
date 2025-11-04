@@ -9,15 +9,15 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import type { DockItem, Page } from '../types'
+<script lang="ts" setup generic="T = undefined">
+import type { DockItem } from '../types'
 import LayoutDock from '../components/LayoutDock.vue'
 
 interface Props {
-  docks: Array<DockItem>
+  docks: Array<DockItem<T>>
 }
 interface Emits {
-  changePage: [page: Page]
+  changePage: [page: DockItem<T>]
 }
 
 defineProps<Props>()

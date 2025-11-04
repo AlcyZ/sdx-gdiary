@@ -28,8 +28,6 @@ interface None { exist: false }
 
 type Option<T> = Some<T> | None
 
-type Page = 'Home' | 'Pflanzen' | 'Nutrients'
-
 interface HasId<T> {
   id: T
 }
@@ -41,10 +39,11 @@ interface HasTimestamps {
   updatedAt: string
 }
 
-interface DockItem {
+interface DockItem<T = undefined> {
   icon: Component
-  label: Page
+  label: string
   active?: boolean
+  data?: T
 }
 
 interface ListItem {
