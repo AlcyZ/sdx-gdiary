@@ -70,6 +70,7 @@ interface Props {
 
 }
 interface Emits {
+  sync: []
   back: []
 }
 
@@ -137,6 +138,8 @@ async function saveFertilizer() {
   if (!result.ok) {
     console.error('[NutrientPageAddFertilizer:saveFertilizer] - failed to save fertilizer due to error in repository:', result.error)
     toast('Dünger konnte nicht gespeichert werden')
+  } else {
+    emit('sync')
   }
 
   return result

@@ -8,8 +8,9 @@
 
     <NutrientPageOverview
       v-if="page === 'list'"
+      :watering-schemas="wateringSchemas"
       :fertilizers="fertilizers"
-      @sync="syncFertilizer"
+      @sync="syncData"
       @add-fertilizer="changePage('add-fertilizer')"
       @add-schema="changePage('add-schema')"
       @back="back"
@@ -17,6 +18,7 @@
     <NutrientPageAddFertilizer
       v-else-if="page === 'add-fertilizer'"
       @back="back"
+      @sync="syncData"
     />
     <NutrientPageAddSchema
       v-else-if="page === 'add-schema'"
@@ -32,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Fertilizer } from '../modules/nutrients/types'
+import type { Fertilizer, WateringSchema } from '../modules/nutrients/types'
 import type { FabAction } from '../types'
 import {
   Beaker as IconFertilizer,
@@ -47,7 +49,7 @@ import NutrientPageAddFertilizer from '../components/NutrientPageAddFertilizer.v
 import NutrientPageAddSchema from '../components/NutrientPageAddSchema.vue'
 import NutrientPageOverview from '../components/NutrientPageOverview.vue'
 import { usePage } from '../composables/usePage.ts'
-import { REPO_FERTILIZERS } from '../di_keys.ts'
+import { REPO_FERTILIZERS, REPO_WATERING_SCHEMA } from '../di_keys.ts'
 
 interface Props {
 
@@ -62,8 +64,10 @@ defineEmits<Emits>()
 type NutrientPage = 'list' | 'add' | 'add-fertilizer' | 'add-schema'
 const { page, changePage } = usePage<NutrientPage>('list')
 
+const wateringRepo = inject(REPO_WATERING_SCHEMA)
 const fertilizerRepo = inject(REPO_FERTILIZERS)
 
+const wateringSchemas = ref<Array<WateringSchema>>([])
 const fertilizers = ref<Array<Fertilizer>>([])
 
 function back() {
@@ -71,11 +75,12 @@ function back() {
 }
 async function backAndSync() {
   changePage('list')
-  await syncFertilizer()
+  await syncData()
 }
 
-async function syncFertilizer() {
+async function syncData() {
   fertilizers.value = await fertilizerRepo?.getAll() || []
+  wateringSchemas.value = await wateringRepo?.getAll() || []
 }
 
 const fabActions = ref<Array<FabAction>>([
@@ -93,5 +98,5 @@ const fabActions = ref<Array<FabAction>>([
   },
 ])
 
-onMounted(syncFertilizer)
+onMounted(syncData)
 </script>
