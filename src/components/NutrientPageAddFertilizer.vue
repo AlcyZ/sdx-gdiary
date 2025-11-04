@@ -51,15 +51,13 @@
 
 <script lang="ts" setup>
 import type { ToastVariant } from '../types'
-import { toTypedSchema } from '@vee-validate/yup'
 import {
   CirclePlus as IconAdd,
   MoveLeft as IconBack,
   Save as IconSave,
 } from 'lucide-vue-next'
-import { useForm } from 'vee-validate'
 import { ref } from 'vue'
-import * as yup from 'yup'
+import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
 import { useToast } from '../composables/useToast.ts'
 import FertilizerRepository from '../modules/nutrients/fertilizer_repository.ts'
 import IBtn from './IBtn.vue'
@@ -81,20 +79,9 @@ const { showToast } = useToast()
 
 const inputFertilizer = ref<InstanceType<typeof InputFertilizer> | null>(null)
 
-const ERR_NAME_REQUIRED = 'Es muss ein Name angegeben werden'
-
-const fertilizerSchema = yup.object({
-  name: yup.string().required(ERR_NAME_REQUIRED),
-  manufacturer: yup.string().optional(),
-})
-
-const validationSchema = toTypedSchema(fertilizerSchema)
-const { errors, defineField, validate } = useForm({
-  validationSchema,
-  initialValues: {
-    name: '',
-    manufacturer: undefined,
-  },
+const { errors, defineField, validate } = useFertilizerForm({
+  name: '',
+  manufacturer: undefined,
 })
 
 const [name] = defineField<'name', string>('name')
