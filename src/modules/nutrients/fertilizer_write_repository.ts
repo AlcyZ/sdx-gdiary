@@ -1,6 +1,6 @@
 import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
-import type { NewFertilizer } from './types'
+import type {Fertilizer, NewFertilizer} from './types'
 import { err, ok } from '../../util.ts'
 import { getDb, TABLE_FERTILIZERS } from '../db'
 
@@ -25,6 +25,19 @@ export default class FertilizerWriteRepository {
       return ok(fertilizerId)
     }
     catch (error: unknown) {
+      return err(error)
+    }
+  }
+
+  public async update(fertilizer: Fertilizer): Promise<Result<undefined, unknown>> {
+    try {
+      const tx = this.db.transaction(TABLE_FERTILIZERS, 'readwrite')
+      const store = tx.objectStore(TABLE_FERTILIZERS)
+
+      await store.put(fertilizer)
+      return ok(undefined)
+    } catch (error: unknown) {
+      console.error('[FertilizerWriteRepository.update] - failed to update fertilizer:', fertilizer, error)
       return err(error)
     }
   }

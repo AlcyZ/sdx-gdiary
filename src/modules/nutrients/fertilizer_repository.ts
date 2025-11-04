@@ -20,12 +20,16 @@ export default class FertilizerRepository {
     return new FertilizerRepository(read, write)
   }
 
+  public async getAll(): Promise<Array<Fertilizer>> {
+    return this.read.getAll()
+  }
+
   public async save(fertilizer: NewFertilizer): Promise<Result<IDBValidKey, unknown>> {
     return this.write.save(fertilizer)
   }
 
-  public async getAll(): Promise<Array<Fertilizer>> {
-    return this.read.getAll()
+  public async update(fertilizer: Fertilizer): Promise<Result<undefined, unknown>> {
+    return this.write.update(fertilizer)
   }
 
   public async delete(fertilizerId: number): Promise<Result<undefined, unknown>> {
