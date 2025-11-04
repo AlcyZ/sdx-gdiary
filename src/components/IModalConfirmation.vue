@@ -1,6 +1,6 @@
 <template>
   <IModal close-on-click-outside>
-    <h3 class="text-lg font-bold">
+    <h3 class="text-xl font-bold">
       {{ title }}
     </h3>
     <p v-if="text" class="py-4">
