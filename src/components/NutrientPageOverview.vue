@@ -39,7 +39,7 @@
               </div>
 
               <div>
-                <IBtn square ghost>
+                <IBtn square ghost @click="edit(fertilizer)">
                   <IconEdit />
                 </IBtn>
                 <IBtn square ghost variant="error" @click="showDeleteConfirmation(fertilizer)">
@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Fertilizer } from '../modules/nutrients/types'
+import type { Fertilizer, NewFertilizer } from '../modules/nutrients/types'
 import {
   CirclePlus as IconAdd,
   Trash as IconDelete,
@@ -65,6 +65,7 @@ import { computed } from 'vue'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
 import FertilizerRepository from '../modules/nutrients/fertilizer_repository.ts'
+import FertilizerModalEdit from './FertilizerModalEdit.vue'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
@@ -84,7 +85,7 @@ const { fertilizers } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const { toast } = useToast()
-const { showConfirmationModal } = useModal()
+const { showConfirmationModal, showModal } = useModal()
 
 const fertilizersGroup = computed(() => {
   const unknown = 'Unbekannter Hersteller'
@@ -103,6 +104,31 @@ const fertilizersGroup = computed(() => {
 
   return data
 })
+
+function edit(fertilizer: Fertilizer) {
+  const onSave = async (update: NewFertilizer) => {
+    const repo = await FertilizerRepository.create()
+    const data: Fertilizer = {
+      id: fertilizer.id,
+      name: update.name,
+      manufacturer: update.manufacturer,
+    }
+
+    const result = await repo.update(data)
+    if (!result.ok) {
+      toast('Es ist ein Fehler beim aktualisieren des Düngers aufgetreten', 'error')
+      return
+    }
+
+    toast('Dünger aktualisiert', 'success')
+    emit('sync')
+  }
+
+  showModal(FertilizerModalEdit, {
+    fertilizer,
+    onSave,
+  })
+}
 
 function showDeleteConfirmation(fertilizer: Fertilizer) {
   const fertilizerName = fertilizer.manufacturer !== undefined && fertilizer.manufacturer !== ''
