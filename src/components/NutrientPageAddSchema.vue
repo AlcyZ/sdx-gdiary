@@ -97,9 +97,10 @@ import {
   Save as IconSave,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
+import { inject } from 'vue'
 import { array, object, string } from 'yup'
 import { useToast } from '../composables/useToast.ts'
-import WateringSchemaRepository from '../modules/nutrients/watering_schema_repository.ts'
+import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
@@ -121,6 +122,7 @@ interface FertilizerData {
 const { fertilizers } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+const wateringRepo = inject(REPO_WATERING_SCHEMA)
 const { toast } = useToast()
 
 const ERR_MSG_REQUIRED = 'Es muss ein Name für das Zuchtschema angegeben werden'
@@ -168,6 +170,9 @@ async function saveAndNew() {
 }
 
 async function saveSchema(): Promise<boolean> {
+  if (!wateringRepo)
+    return false
+
   if (!(await validateForm()))
     return false
 
@@ -181,8 +186,7 @@ async function saveSchema(): Promise<boolean> {
     fertilizers: fertilizerItems,
   }
 
-  const repo = await WateringSchemaRepository.create()
-  const result = await repo.save(schema)
+  const result = await wateringRepo.save(schema)
 
   if (!result.ok)
     toast('Zuchtschema konnte nicht gespeichert werden', 'error')

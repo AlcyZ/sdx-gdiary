@@ -76,10 +76,10 @@ import {
   Save as IconSave,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
-import { computed, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import * as yup from 'yup'
 import { useToast } from '../composables/useToast.ts'
-import PlantRepository from '../modules/plants/plant_repository.ts'
+import { REPO_PLANT } from '../di_keys.ts'
 import { err } from '../util.ts'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
@@ -98,6 +98,7 @@ interface Emits {
 defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+const plantRepo = inject(REPO_PLANT)
 const { showToast } = useToast()
 
 const loading = ref(false)
@@ -203,8 +204,7 @@ async function savePlant(): Promise<Result<undefined, string>> {
     phases: phases.value,
   }
 
-  const repo = await PlantRepository.create()
-  const result = await repo.save(newPlant)
+  const result = await plantRepo?.save(newPlant) || err(undefined)
   loading.value = false
 
   return result.ok ? result : err('Pflanze konnte nicht gespeichert werden')

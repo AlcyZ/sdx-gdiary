@@ -11,11 +11,18 @@
       :fertilizers="fertilizers"
       @sync="syncFertilizer"
       @add-fertilizer="changePage('add-fertilizer')"
+      @add-schema="changePage('add-schema')"
       @back="back"
     />
     <NutrientPageAddFertilizer
       v-else-if="page === 'add-fertilizer'"
       @back="back"
+    />
+    <NutrientPageAddSchema
+      v-else-if="page === 'add-schema'"
+      :fertilizers="fertilizers"
+      @back="back"
+      @back-and-sync="backAndSync"
     />
     <NutrientPageAdd
       v-else-if="page === 'add'"
@@ -52,8 +59,10 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-type NutrientPage = 'list' | 'add' | 'add-fertilizer'
+type NutrientPage = 'list' | 'add' | 'add-fertilizer' | 'add-schema'
 const { page, changePage } = usePage<NutrientPage>('list')
+
+const fertilizerRepo = inject(REPO_FERTILIZERS)
 
 const fertilizers = ref<Array<Fertilizer>>([])
 

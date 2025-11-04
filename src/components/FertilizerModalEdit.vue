@@ -9,7 +9,7 @@
 
     <form @submit.prevent="save">
       <InputFertilizer
-          ref="inputFertilizer"
+        ref="inputFertilizer"
         v-model:name="name"
         v-model:manufacturer="manufacturer"
         :error-name="errors.name"
@@ -45,11 +45,11 @@ import {
   X as IconClose,
   Save as IconSave,
 } from 'lucide-vue-next'
+import { onMounted, ref } from 'vue'
 import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
 import IBtn from './IBtn.vue'
 import IModal from './IModal.vue'
 import InputFertilizer from './InputFertilizer.vue'
-import {onMounted, ref} from "vue";
 
 interface Props {
   fertilizer: Fertilizer

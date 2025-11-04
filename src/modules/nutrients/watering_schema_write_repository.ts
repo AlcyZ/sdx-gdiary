@@ -7,7 +7,7 @@ import {
   INDEX_FERTILIZER_ID,
   INDEX_WATERING_SCHEMA_ID,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
-  TABLE_WATERING_SCHEMAS
+  TABLE_WATERING_SCHEMAS,
 } from '../db'
 
 export default class WateringSchemaWriteRepository {

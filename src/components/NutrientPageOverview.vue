@@ -81,10 +81,11 @@ import {
   Trash as IconDelete,
   Edit as IconEdit,
 } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
-import FertilizerRepository from '../modules/nutrients/fertilizer_repository.ts'
+import { REPO_FERTILIZERS } from '../di_keys.ts'
+import { err } from '../util.ts'
 import FertilizerModalEdit from './FertilizerModalEdit.vue'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
@@ -106,6 +107,8 @@ interface Emits {
 
 const { fertilizers } = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+const fertilizerRepo = inject(REPO_FERTILIZERS)
 
 const { toast } = useToast()
 const { showConfirmationModal, showModal } = useModal()
@@ -130,14 +133,13 @@ const fertilizersGroup = computed(() => {
 
 function edit(fertilizer: Fertilizer) {
   const updateFertilizer = async (update: NewFertilizer, close: () => void) => {
-    const repo = await FertilizerRepository.create()
     const data: Fertilizer = {
       id: fertilizer.id,
       name: update.name,
       manufacturer: update.manufacturer,
     }
 
-    const result = await repo.update(data)
+    const result = await fertilizerRepo?.update(data) || err(undefined)
     if (!result.ok) {
       toast('Es ist ein Fehler beim aktualisieren des Düngers aufgetreten', 'error')
       return
@@ -161,8 +163,7 @@ function showDeleteConfirmation(fertilizer: Fertilizer) {
   const text = `Bist du sicher, dass der Dünger '${fertilizerName}' gelöscht werden soll?`
 
   const deleteFertilizer = async () => {
-    const repo = await FertilizerRepository.create()
-    const result = await repo.delete(fertilizer.id)
+    const result = await fertilizerRepo?.delete(fertilizer.id) || err(undefined)
 
     if (result.ok) {
       toast('Dünger erfolgreich gelöscht', 'success')
