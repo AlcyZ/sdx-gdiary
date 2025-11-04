@@ -9,12 +9,12 @@ export const TABLE_PLANT_IMAGES = 'plantImages'
 export const TABLE_PLANT_SUBSTRATES = 'plantSubstrates'
 export const TABLE_PLANT_PHASES = 'plantPhases'
 export const TABLE_FERTILIZERS = 'fertilizers'
-export const TABLE_SCHEMAS = 'schemas'
-export const TABLE_PIVOT_FERTILIZER_SCHEMA = 'fertilizerSchema'
+export const TABLE_WATERING_SCHEMAS = 'wateringSchema'
+export const TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA = 'fertilizerWateringSchema'
 
 export const INDEX_PLANT_ID = 'plantId'
 export const INDEX_FERTILIZER_ID = 'fertilizerId'
-export const INDEX_SCHEMA_ID = 'schemaId'
+export const INDEX_WATERING_SCHEMA_ID = 'wateringSchemaId'
 
 const DEFAULT_KEY_PATH = 'id'
 const TYPE_PNG = 'image/png'
@@ -58,8 +58,8 @@ export async function getDb() {
       createPlantSubTable(TABLE_PLANT_PHASES, db)
 
       createTable(TABLE_FERTILIZERS, db)
-      createTable(TABLE_SCHEMAS, db)
-      createTableWithIndices(TABLE_PIVOT_FERTILIZER_SCHEMA, [INDEX_FERTILIZER_ID, INDEX_SCHEMA_ID], db)
+      createTable(TABLE_WATERING_SCHEMAS, db)
+      createTableWithIndices(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, [INDEX_FERTILIZER_ID, INDEX_WATERING_SCHEMA_ID], db)
     },
   })
 }
