@@ -34,23 +34,36 @@
         <div
           v-for="(fertilizerData, i) in fertilizersData"
           :key="i"
-          class="flex items-center justify-between"
+          class="flex items-center"
         >
-          <select class="select">
-            <option
-              v-for="(fertilizer, j) in fertilizers"
-              :key="j"
-              :selected="fertilizer === fertilizerData.fertilizer"
-            >
-              {{ fertilizer.name }} - {{ fertilizer.manufacturer ?? 'Unknown' }}
-            </option>
-          </select>
+          <div class="flex-1 flex items-center justify-between">
+            <select v-model="fertilizerData.fertilizer" class="select">
+              <option
+                v-for="(fertilizer, j) in sortedFertilizers"
+                :key="j"
+                :value="fertilizer"
+                :disabled="isSelected(fertilizer)"
+              >
+                {{ fertilizer.manufacturer ?? fallbackManufacturer }} - {{ fertilizer.name }}
+              </option>
+            </select>
 
-          <InputTextFloat
-            v-model="fertilizerData.value"
-            label="ML pro Liter"
-            type="number"
-          />
+            <InputTextFloat
+              v-model="fertilizerData.value"
+              label="ML pro Liter"
+              type="number"
+            />
+          </div>
+
+          <IBtn
+            square
+            ghost
+            size="sm"
+            class="ml-3"
+            @click="removeItem(fertilizerData)"
+          >
+            <IconRemove :size="20" />
+          </IBtn>
         </div>
         <span
           v-if="errors.fertilizersData"
@@ -94,13 +107,15 @@ import { toTypedSchema } from '@vee-validate/yup'
 import {
   CirclePlus as IconAdd,
   MoveLeft as IconBack,
+  CircleMinus as IconRemove,
   Save as IconSave,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 import { array, object, string } from 'yup'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
+import { removeArrayElement } from '../util.ts'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
@@ -125,6 +140,15 @@ const emit = defineEmits<Emits>()
 const wateringRepo = inject(REPO_WATERING_SCHEMA)
 const { toast } = useToast()
 
+const fallbackManufacturer = 'Unbekannter Hersteller'
+
+const sortedFertilizers = computed(
+  () => [...fertilizers].sort(
+    (lhs: Fertilizer, rhs: Fertilizer) =>
+      (lhs.manufacturer ?? fallbackManufacturer).localeCompare(rhs.manufacturer ?? fallbackManufacturer),
+  ),
+)
+
 const ERR_MSG_REQUIRED = 'Es muss ein Name für das Zuchtschema angegeben werden'
 const ERR_DATA_REQUIRED = 'Es muss mindestens ein Dünger dem Schema zugewiesen werden'
 
@@ -142,16 +166,30 @@ const { errors, defineField, validate } = useForm({
 const [name] = defineField('name')
 const [fertilizersData] = defineField<'fertilizersData', Array<FertilizerData>>('fertilizersData')
 
+const unselectedFertilizers = computed(
+  (): Array<Fertilizer> => sortedFertilizers.value.filter(
+    item => fertilizersData.value.every(dataset => dataset.fertilizer.id !== item.id),
+  ),
+)
+
+function isSelected(fertilizer: Fertilizer): boolean {
+  return fertilizersData.value.some(item => item.fertilizer.id === fertilizer.id)
+}
+
 function addFertilizer() {
-  if (fertilizers.length === 0)
+  if (unselectedFertilizers.value.length === 0)
     return
 
   const dataset = {
-    fertilizer: fertilizers[0]!,
+    fertilizer: unselectedFertilizers.value[0]!,
     value: 5,
   }
 
   fertilizersData.value?.push(dataset)
+}
+
+function removeItem(item: FertilizerData) {
+  removeArrayElement(fertilizersData.value, i => i.fertilizer.id === item.fertilizer.id)
 }
 
 async function save() {
