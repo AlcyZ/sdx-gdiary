@@ -30,19 +30,27 @@ export function useModal() {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    const app = createApp({
+    let app: ReturnType<typeof createApp>
+
+    const close = () => {
+      return new Promise<void>((r) => {
+        app.unmount()
+        container.remove()
+
+        if ('onClose' in props && typeof props.onClose === 'function') {
+          props.onClose()
+        }
+
+        app.onUnmount(() => r())
+      })
+    }
+
+    app = createApp({
       render() {
         // Merge user props with mandatory onClose
         const modalProps = {
           ...props,
-          onClose: () => {
-            app.unmount()
-            container.remove()
-
-            if ('onClose' in props && typeof props.onClose === 'function') {
-              props.onClose()
-            }
-          },
+          onClose: close,
         } as VNodeProps & P
 
         return h(component, modalProps)
@@ -50,6 +58,10 @@ export function useModal() {
     })
 
     app.mount(container)
+
+    return {
+      close,
+    }
   }
 
   return {
