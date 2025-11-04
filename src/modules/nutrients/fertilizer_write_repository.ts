@@ -1,6 +1,6 @@
 import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
-import type {Fertilizer, NewFertilizer} from './types'
+import type { Fertilizer, NewFertilizer } from './types'
 import { err, ok } from '../../util.ts'
 import { getDb, TABLE_FERTILIZERS } from '../db'
 
@@ -36,7 +36,8 @@ export default class FertilizerWriteRepository {
 
       await store.put(fertilizer)
       return ok(undefined)
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error('[FertilizerWriteRepository.update] - failed to update fertilizer:', fertilizer, error)
       return err(error)
     }

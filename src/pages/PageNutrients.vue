@@ -58,6 +58,10 @@ const fertilizers = ref<Array<Fertilizer>>([])
 function back() {
   changePage('list')
 }
+async function backAndSync() {
+  changePage('list')
+  await syncFertilizer()
+}
 
 async function syncFertilizer() {
   const repo = await FertilizerRepository.create()
