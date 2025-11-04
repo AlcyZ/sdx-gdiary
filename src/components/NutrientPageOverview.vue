@@ -106,7 +106,7 @@ const fertilizersGroup = computed(() => {
 })
 
 function edit(fertilizer: Fertilizer) {
-  const onSave = async (update: NewFertilizer) => {
+  const updateFertilizer = async (update: NewFertilizer, close: () => void) => {
     const repo = await FertilizerRepository.create()
     const data: Fertilizer = {
       id: fertilizer.id,
@@ -122,11 +122,12 @@ function edit(fertilizer: Fertilizer) {
 
     toast('Dünger aktualisiert', 'success')
     emit('sync')
+    close()
   }
 
-  showModal(FertilizerModalEdit, {
+  const { close } = showModal(FertilizerModalEdit, {
     fertilizer,
-    onSave,
+    onSave: async (update: NewFertilizer) => updateFertilizer(update, close),
   })
 }
 

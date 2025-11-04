@@ -4,13 +4,16 @@
       Dünger bearbeiten
     </h2>
 
-    <InputFertilizer
-      v-model:name="name"
-      v-model:manufacturer="manufacturer"
-      :error-name="errors.name"
-      :error-manufacturer="errors.manufacturer"
-      class="my-3"
-    />
+    <form @submit.prevent="save">
+      <InputFertilizer
+        v-model:name="name"
+        v-model:manufacturer="manufacturer"
+        :error-name="errors.name"
+        :error-manufacturer="errors.manufacturer"
+        class="my-3"
+      />
+      <input type="submit" class="hidden">
+    </form>
 
     <template #action>
       <IBtn
@@ -33,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import type {Fertilizer, NewFertilizer} from '../modules/nutrients/types'
+import type { Fertilizer, NewFertilizer } from '../modules/nutrients/types'
 import {
   X as IconClose,
   Save as IconSave,
