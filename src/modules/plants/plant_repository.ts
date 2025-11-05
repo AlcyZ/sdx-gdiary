@@ -1,5 +1,5 @@
 import type { Result } from '../../types'
-import type { GetPlantError, NewPlant, Plant } from './types'
+import type { EditPlant, GetPlantError, NewPlant, Plant } from './types'
 import { err, ok } from '../../util.ts'
 import PlantReadRepository from './plant_read_repository.ts'
 import PlantWriteRepository from './plant_write_repository.ts'
@@ -24,6 +24,10 @@ export default class PlantRepository {
 
   public async save(plant: NewPlant): Promise<Result<undefined, unknown>> {
     return this.write.save(plant)
+  }
+
+  public async update(plant: EditPlant): Promise<Result<undefined, unknown>> {
+    return this.write.update(plant)
   }
 
   public async getAll(): Promise<Array<Plant>> {

@@ -19,6 +19,10 @@ interface NewPlant {
   phases: Array<NewPlantPhase>
 }
 
+type EditPlant = Omit<WithId<NewPlant, number>, 'substrate'> & {
+  substrate: PlantSubstrate
+}
+
 type PlantSubstrate = WithId<NewPlantSubstrate, number>
 type PlantPhase = WithId<NewPlantPhase, number>
 
