@@ -1,11 +1,11 @@
 import type { PartialDeep } from 'type-fest'
 import type { InferType } from 'yup'
+import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
-import {computed, ref} from 'vue'
+import { computed, ref } from 'vue'
 import * as yup from 'yup'
-import type {WateringSchema} from "../modules/nutrients/types";
 
 const ERR_STRAIN_REQUIRED = 'Die Sorte muss angegeben werden'
 const ERR_STRAIN_MAX = ({ max }: { max: number }) => `Die Sorte dar maximal ${max} Zeichen lang sein`
@@ -60,7 +60,7 @@ function isChronologicallySorted(phases: Array<NewPlantPhase> | undefined): bool
   return true
 }
 
-export function usePlantForm(initialValues?: PartialDeep<PlantForm>) {
+export function usePlantForm(initialValues?: PartialDeep<PlantForm>, wateringSchemaArg?: WateringSchema) {
   const { validate, errors, defineField } = useForm({
     validationSchema,
     initialValues,
@@ -74,7 +74,7 @@ export function usePlantForm(initialValues?: PartialDeep<PlantForm>) {
   const [substrateSize] = defineField<'substrateSize', string>('substrateSize')
   const [phases] = defineField<'phases', Array<NewPlantPhase>>('phases')
 
-  const wateringSchema = ref<WateringSchema | undefined>(undefined)
+  const wateringSchema = ref<WateringSchema | undefined>(wateringSchemaArg)
 
   return {
     strain,

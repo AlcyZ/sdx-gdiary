@@ -15,7 +15,9 @@
       v-model:substrate="substrate"
       v-model:substrate-size="substrateSize"
       v-model:phases="phases"
+      v-model:watering-schema="wateringSchema"
       :errors="errors"
+      :watering-schemas="wateringSchemas"
     />
 
     <template #actions>
@@ -40,6 +42,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { WateringSchema } from '../modules/nutrients/types'
 import type { EditPlant, Plant } from '../modules/plants/types'
 import {
   MoveLeft as IconBack,
@@ -56,6 +59,7 @@ import PlantForm from './PlantForm.vue'
 
 interface Props {
   plant: Plant
+  wateringSchemas: Array<WateringSchema>
 }
 interface Emits {
   back: []
@@ -82,6 +86,7 @@ const {
   substrate,
   substrateSize,
   phases,
+  wateringSchema,
   validate,
   errors,
 } = usePlantForm({
@@ -90,7 +95,7 @@ const {
   substrate: plant.substrate.substrate,
   substrateSize: plant.substrate.size,
   phases: plant.phases,
-})
+}, plant.wateringSchema)
 
 const hasFormErrors = computed(() => Object.keys(errors.value).length > 0)
 

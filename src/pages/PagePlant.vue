@@ -34,6 +34,7 @@
       <PlantPageEdit
         v-if="selected"
         :plant="selected"
+        :watering-schemas="wateringSchemas"
         @back="back"
       />
       <PlantPageSelectionError
