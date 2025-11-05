@@ -13,11 +13,17 @@
       @edit="editPlant"
       @delete="showDeleteConfirmationModal"
     />
-    <PlantPageShow
-      v-else-if="page === 'show'"
-      :plant="selected"
-      @back="back"
-    />
+    <template v-if="page === 'show'">
+      <PlantPageShow
+        v-if="selected"
+        :plant="selected"
+        @back="back"
+      />
+      <PlantPageSelectionError
+        v-else
+        @back="back"
+      />
+    </template>
     <PlantPageAdd
       v-else-if="page === 'add'"
       @back="back"

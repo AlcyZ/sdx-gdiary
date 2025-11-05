@@ -1,6 +1,6 @@
 <template>
   <ICard
-    v-if="plant !== null"
+    v-if="plant"
     class="w-full max-w-2xl"
   >
     <h1 class="text-4xl font-bold text-primary border-b border-b-base-200 mb-3">
@@ -59,31 +59,32 @@
       <div />
     </div>
 
-    <div class="card-actions border-t border-t-base-200 mt-3">
-      <button
-        class="btn btn-ghost"
-        @click="$emit('back')"
-      >
-        <IconBack />
-      </button>
-    </div>
+    <template #actions>
+      <IBtn>
+        <IconImage />
+        Bild hinzufügen
+      </IBtn>
+
+      <IBtn>
+        <IconWater />
+        Gießeintrag hinzufügen
+      </IBtn>
+    </template>
   </ICard>
-  <PlantPageSelectionError
-    v-else
-    @back="$emit('back')"
-  />
 </template>
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
 import type { Plant, PlantPhase } from '../modules/plants/types'
 import {
-  MoveLeft as IconBack,
+  Image as IconImage,
+  Droplet as IconWater,
 } from 'lucide-vue-next'
 import { formatDate } from 'sdx-php-date'
 import { computed } from 'vue'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { now } from '../util.ts'
+import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import IStat from './IStat.vue'
 import IStatDesc from './IStatDesc.vue'
@@ -92,10 +93,9 @@ import IStatTitle from './IStatTitle.vue'
 import IStatValue from './IStatValue.vue'
 import ITimeline from './ITimeline.vue'
 import ITimelineItem from './ITimelineItem.vue'
-import PlantPageSelectionError from './PlantPageSelectionError.vue'
 
 interface Props {
-  plant: Plant | null
+  plant: Plant
 }
 interface Emits {
   back: []
