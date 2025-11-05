@@ -67,6 +67,9 @@ export default class WateringSchemaReadRepository {
 
     const data = await schemaStore.get(id)
     if (!isWateringSchemaRow(data)) {
+      if (data !== undefined)
+        console.error('[WateringSchemaReadRepository.getById] - failed to fetch watering schema due to invalid data:', data)
+
       return none()
     }
 

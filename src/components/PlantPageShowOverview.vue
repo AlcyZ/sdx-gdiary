@@ -1,6 +1,7 @@
 <template>
   <ICard
     class="w-full max-w-2xl"
+    class-actions="justify-between"
   >
     <h1 class="text-4xl font-bold text-primary border-b border-b-base-200 mb-3">
       {{ plantName }}
@@ -59,17 +60,30 @@
     </div>
 
     <template #actions>
-      <IBtn>
-        <IconImage />
-        Bild hinzufügen
+      <IBtn
+        @click="$emit('back')"
+      >
+        <IconBack />
+        Zurück
       </IBtn>
 
-      <IBtn
-        @click="$emit('addPour')"
-      >
-        <IconWater />
-        Gießeintrag hinzufügen
-      </IBtn>
+      <div class="join">
+        <IBtn
+          class="join-item"
+        >
+          <IconImage />
+          Bild hinzufügen
+        </IBtn>
+
+        <IBtn
+          variant="neutral"
+          class="join-item"
+          @click="$emit('addPour')"
+        >
+          <IconWater />
+          Gießeintrag hinzufügen
+        </IBtn>
+      </div>
     </template>
   </ICard>
 </template>
@@ -78,6 +92,7 @@
 import type { Component } from 'vue'
 import type { Plant, PlantPhase } from '../modules/plants/types'
 import {
+  MoveLeft as IconBack,
   Image as IconImage,
   Droplet as IconWater,
 } from 'lucide-vue-next'
@@ -100,6 +115,7 @@ interface Props {
 }
 interface Emits {
   addPour: []
+  back: []
 }
 
 type PhaseData = PlantPhase & { label: string, icon: Component, started: string }

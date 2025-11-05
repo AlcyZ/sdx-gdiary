@@ -52,6 +52,7 @@ import { computed, inject, ref } from 'vue'
 import { usePlantForm } from '../composables/usePlantForm.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_PLANT } from '../di_keys.ts'
+import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { err } from '../util.ts'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
@@ -116,6 +117,10 @@ async function updatePlant() {
       size: substrateSize.value,
     },
     phases: phases.value,
+  }
+
+  if (wateringSchema.value) {
+    data[INDEX_WATERING_SCHEMA_ID] = wateringSchema.value.id
   }
 
   const result = await plantRepo?.update(data) || err(undefined)

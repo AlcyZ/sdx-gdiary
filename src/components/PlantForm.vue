@@ -36,7 +36,11 @@
         :id="schemaSelectId"
         v-model="wateringSchema"
         class="select"
+        :class="{ 'opacity-75': wateringSchema === undefined }"
       >
+        <option class="opacity-75 text-xs" :value="undefined">
+          - Kein Bewässerungsschema -
+        </option>
         <option
           v-for="(schema, i) in wateringSchemas"
           :key="i"

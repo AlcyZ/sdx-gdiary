@@ -16,6 +16,7 @@
     <template v-if="page === 'show'">
       <PlantPageShow
         v-if="selected"
+        :fertilizers="fertilizers"
         :plant="selected"
         @back="back"
       />
@@ -36,6 +37,7 @@
         :plant="selected"
         :watering-schemas="wateringSchemas"
         @back="back"
+        @back-and-sync="backAndSync"
       />
       <PlantPageSelectionError
         v-else
@@ -46,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { WateringSchema } from '../modules/nutrients/types'
+import type { Fertilizer, WateringSchema } from '../modules/nutrients/types'
 import type { Plant } from '../modules/plants/types'
 import type { FabAction } from '../types'
 import {
@@ -64,7 +66,7 @@ import PlantPageShow from '../components/PlantPageShow.vue'
 import { useModal } from '../composables/useModal.ts'
 import { usePage } from '../composables/usePage.ts'
 import { useToast } from '../composables/useToast.ts'
-import { REPO_PLANT, REPO_WATERING_SCHEMA } from '../di_keys.ts'
+import { REPO_FERTILIZERS, REPO_PLANT, REPO_WATERING_SCHEMA } from '../di_keys.ts'
 import PlantRepository from '../modules/plants/plant_repository.ts'
 
 interface Props {
@@ -78,6 +80,7 @@ defineEmits<Emits>()
 
 const plantRepo = inject(REPO_PLANT)
 const wateringRepo = inject(REPO_WATERING_SCHEMA)
+const fertilizerRepo = inject(REPO_FERTILIZERS)
 
 const { showConfirmationModal } = useModal()
 const { showToast } = useToast()
@@ -87,6 +90,7 @@ const { page, changePage } = usePage<PlantPage>('list')
 
 const plants = ref<Array<Plant>>([])
 const wateringSchemas = ref<Array<WateringSchema>>([])
+const fertilizers = ref<Array<Fertilizer>>([])
 const selected = ref<Plant | null>(null)
 
 const fabActions = ref<Array<FabAction>>([
@@ -103,6 +107,7 @@ const fabActions = ref<Array<FabAction>>([
 async function syncData() {
   plants.value = await plantRepo?.getAll() || []
   wateringSchemas.value = await wateringRepo?.getAll() || []
+  fertilizers.value = await fertilizerRepo?.getAll() || []
 }
 
 function showPlant(plant: Plant) {

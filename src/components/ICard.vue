@@ -11,17 +11,25 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
+
 interface Props {
-  classActions?: string | Array<string> | Record<string, boolean>
+  classActions?: string
+  justifyActionsBetween?: boolean
 }
 interface Emits {
 
 }
 
-defineProps<Props>()
+const { classActions: classActionsProp, justifyActionsBetween } = defineProps<Props>()
 defineEmits<Emits>()
 defineSlots<{
   default: (props: Record<string, never>) => any
   actions: (props: Record<string, never>) => any
 }>()
+
+const classActions = computed(() => [
+  classActionsProp,
+  justifyActionsBetween ? 'justify-between' : undefined,
+])
 </script>

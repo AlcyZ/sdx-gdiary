@@ -6,20 +6,23 @@
   />
   <PlantPageShowAddPouring
     v-else-if="page === 'add-pour'"
+    :fertilizers="fertilizers"
     :plant="plant"
     @back="back"
   />
 </template>
 
 <script lang="ts" setup>
-import type { Plant } from '../modules/plants/types'
+import type { Fertilizer } from '../modules/nutrients/types'
 
+import type { Plant } from '../modules/plants/types'
 import { usePage } from '../composables/usePage.ts'
 import PlantPageShowAddPouring from './PlantPageShowAddPouring.vue'
 import PlantPageShowOverview from './PlantPageShowOverview.vue'
 
 interface Props {
   plant: Plant
+  fertilizers: Array<Fertilizer>
 }
 interface Emits {
   back: []
