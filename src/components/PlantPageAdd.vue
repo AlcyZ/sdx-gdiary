@@ -9,32 +9,14 @@
       </h1>
     </div>
 
-    <div class="space-y-3">
-      <InputTextFloat
-        v-model="strain"
-        label="Wähle die Sorte deiner Pflanze aus"
-        :error="errors.strain"
-        required
-      />
-
-      <InputTextFloat
-        v-model="name"
-        label="Gib deiner Pflanze einen Namen (optional)"
-        :error="errors.name"
-      />
-
-      <PlantFormSubstrate
-        v-model:substrate="substrate"
-        v-model:size="substrateSize"
-        :substrate-error="errors.substrate"
-        :size-error="errors.substrateSize"
-      />
-
-      <PlantFormPhase
-        v-model="phases"
-        :error="errors.phases"
-      />
-    </div>
+    <PlantForm
+      v-model:strain="strain"
+      v-model:name="name"
+      v-model:substrate="substrate"
+      v-model:substrate-size="substrateSize"
+      v-model:phases="phases"
+      :errors="errors"
+    />
 
     <template #actions>
       <IBtn
@@ -84,9 +66,7 @@ import { REPO_PLANT } from '../di_keys.ts'
 import { err } from '../util.ts'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
-import InputTextFloat from './InputTextFloat.vue'
-import PlantFormPhase from './PlantFormPhase.vue'
-import PlantFormSubstrate from './PlantFormSubstrate.vue'
+import PlantForm from './PlantForm.vue'
 
 interface Props {
 

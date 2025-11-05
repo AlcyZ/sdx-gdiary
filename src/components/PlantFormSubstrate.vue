@@ -69,10 +69,10 @@ const substrateInternal = ref('')
 const size = defineModel<string>('size', { required: true })
 
 const substrate = computed({
-  get() {
+  get(): string | undefined {
     return substrateProp
   },
-  set(value) {
+  set(value: string | undefined): void {
     if (value !== undefined)
       emit('update:substrate', value)
   },
