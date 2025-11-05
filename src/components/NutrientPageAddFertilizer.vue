@@ -30,20 +30,20 @@
       </IBtn>
       <div class="join">
         <IBtn
-          variant="primary"
-          class="join-item text-base-100"
-          @click="save"
-        >
-          <IconSave />
-          Speichern
-        </IBtn>
-        <IBtn
           variant="neutral"
           class="join-item"
           @click="saveAndNew"
         >
           <IconAdd />
           Speichern & Neu
+        </IBtn>
+        <IBtn
+          variant="primary"
+          class="join-item text-base-100"
+          @click="save"
+        >
+          <IconSave />
+          Speichern
         </IBtn>
       </div>
     </template>

@@ -1,6 +1,7 @@
 <template>
   <ICard
     class="w-full max-w-2xl"
+    class-actions="justify-between"
   >
     <div class="text-center mb-8">
       <h1 class="text-3xl font-bold">
@@ -44,15 +45,6 @@
       </IBtn>
       <div class="join">
         <IBtn
-          variant="primary"
-          class="join-item text-base-100"
-          :disabled="loading || hasFormErrors"
-          @click="save"
-        >
-          <IconSave />
-          Speichern
-        </IBtn>
-        <IBtn
           variant="neutral"
           class="join-item"
           :disabled="loading || hasFormErrors"
@@ -60,6 +52,15 @@
         >
           <IconAdd />
           Speichern & Neu
+        </IBtn>
+        <IBtn
+          variant="primary"
+          class="join-item text-base-100"
+          :disabled="loading || hasFormErrors"
+          @click="save"
+        >
+          <IconSave />
+          Speichern
         </IBtn>
       </div>
     </template>
