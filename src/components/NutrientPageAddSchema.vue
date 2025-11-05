@@ -102,18 +102,17 @@
 </template>
 
 <script lang="ts" setup>
+import type { FertilizerData } from '../composables/useWateringSchemaForm.ts'
 import type { Fertilizer, NewWateringSchema, NewWateringSchemaFertilizer } from '../modules/nutrients/types'
-import { toTypedSchema } from '@vee-validate/yup'
 import {
   CirclePlus as IconAdd,
   MoveLeft as IconBack,
   CircleMinus as IconRemove,
   Save as IconSave,
 } from 'lucide-vue-next'
-import { useForm } from 'vee-validate'
 import { computed, inject } from 'vue'
-import { array, object, string } from 'yup'
 import { useToast } from '../composables/useToast.ts'
+import { useWateringSchemaForm } from '../composables/useWateringSchemaForm.ts'
 import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
 import { removeArrayElement } from '../util.ts'
 import IBtn from './IBtn.vue'
@@ -127,11 +126,6 @@ interface Props {
 interface Emits {
   back: []
   backAndSync: []
-}
-
-interface FertilizerData {
-  fertilizer: Fertilizer
-  value: number
 }
 
 const { fertilizers } = defineProps<Props>()
@@ -149,22 +143,14 @@ const sortedFertilizers = computed(
   ),
 )
 
-const ERR_MSG_REQUIRED = 'Es muss ein Name für das Zuchtschema angegeben werden'
-const ERR_DATA_REQUIRED = 'Es muss mindestens ein Dünger dem Schema zugewiesen werden'
-
-const validationSchema = toTypedSchema(object({
-  name: string().required(ERR_MSG_REQUIRED),
-  fertilizersData: array().required(ERR_DATA_REQUIRED).min(1, ERR_DATA_REQUIRED),
-}))
-const { errors, defineField, validate } = useForm({
-  validationSchema,
-  initialValues: {
-    fertilizersData: [],
-  },
+const {
+  name,
+  fertilizersData,
+  errors,
+  validate,
+} = useWateringSchemaForm({
+  fertilizersData: [],
 })
-
-const [name] = defineField('name')
-const [fertilizersData] = defineField<'fertilizersData', Array<FertilizerData>>('fertilizersData')
 
 const unselectedFertilizers = computed(
   (): Array<Fertilizer> => sortedFertilizers.value.filter(
