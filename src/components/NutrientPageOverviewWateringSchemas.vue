@@ -87,6 +87,7 @@
                 square
                 ghost
                 size="sm"
+                @click="showDeleteConfirmationModal(fertilizer)"
               >
                 <IconDelete :size="20" />
               </IBtn>
@@ -105,7 +106,9 @@ import {
   Trash as IconDelete,
   Edit as IconEdit,
 } from 'lucide-vue-next'
+import { inject } from 'vue'
 import { useModal } from '../composables/useModal.ts'
+import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
 import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICollapse from './ICollapse.vue'
@@ -115,6 +118,8 @@ import IList from './IList.vue'
 import IListRow from './IListRow.vue'
 import NutrientPageOverviewWateringSchemaModalEditFertilizer
   from './NutrientPageOverviewWateringSchemaModalEditFertilizer.vue'
+import {err} from "../util.ts";
+import {useToast} from "../composables/useToast.ts";
 
 interface Props {
   wateringSchemas: Array<WateringSchema>
@@ -128,7 +133,9 @@ interface Emits {
 const { fertilizers } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const { showModal } = useModal()
+const  { toast } = useToast()
+const { showModal, showConfirmationModal } = useModal()
+const wateringRepo = inject(REPO_WATERING_SCHEMA)
 
 const fallbackManufacturer = 'Unbekannter Hersteller'
 
@@ -141,6 +148,36 @@ async function editSchemaFertilizer(wateringSchema: WateringSchema, fertilizer: 
       emit('sync')
       await close()
     },
+  })
+}
+
+function showDeleteConfirmationModal(fertilizer: WateringSchemaFertilizer) {
+  const name = `${fertilizer.fertilizer.name} (${fertilizer.fertilizer.manufacturer || fallbackManufacturer})`
+  const text = `Bist du sicher, dass du '${name}' aus den Zuchtschema entfernen möchtest?`
+
+  const onClick = async () => {
+    const result = await wateringRepo?.deleteSchemaFertilizer(fertilizer) || err(undefined)
+
+    if (!result.ok) {
+      toast('Es ist ein Fehler beim entfernen des Düngers aus den Schema aufgetreten', 'error')
+      return
+    }
+
+    toast('Dünger erfolgreich aus den Schema entfernt', 'success')
+    emit('sync')
+  }
+
+  showConfirmationModal({
+    title: 'Dünger aus Schema entfernen',
+    text,
+    actions: [
+      {
+        label: 'Entfernen',
+        icon: IconDelete,
+        class: 'btn-error text-base-100',
+        onClick,
+      },
+    ],
   })
 }
 </script>

@@ -1,6 +1,6 @@
 import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
-import type { NewWateringSchema, NewWateringSchemaFertilizer } from './types'
+import type { NewWateringSchema, NewWateringSchemaFertilizer, WateringSchemaFertilizer } from './types'
 import { err, ok } from '../../util.ts'
 import {
   getDb,
@@ -51,7 +51,7 @@ export default class WateringSchemaWriteRepository {
     }
   }
 
-  public async updateSchemaFertilizer(schemaId: number, schemaFertilizerId: number, data: NewWateringSchemaFertilizer) {
+  public async updateSchemaFertilizer(schemaId: number, schemaFertilizerId: number, data: NewWateringSchemaFertilizer): Promise<Result<undefined, unknown>> {
     try {
       const tx = this.db.transaction(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, 'readwrite')
       const store = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
@@ -67,7 +67,23 @@ export default class WateringSchemaWriteRepository {
       return ok(undefined)
     }
     catch (error: unknown) {
-      console.error('[WateringSchemaWriteRepository.updateSchemaFertilizer] - failed to update schema fertilizer:', schemaId, schemaFertilizerId, data)
+      console.error('[WateringSchemaWriteRepository.updateSchemaFertilizer] - failed to update schema fertilizer:', schemaId, schemaFertilizerId, data, error)
+      return err(error)
+    }
+  }
+
+  public async deleteSchemaFertilizer(fertilizer: WateringSchemaFertilizer): Promise<Result<undefined, unknown>> {
+    try {
+      const tx = this.db.transaction(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, 'readwrite')
+      const store = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
+
+      await store.delete(fertilizer.id)
+      await tx.done
+
+      return ok(undefined)
+    }
+    catch (error: unknown) {
+      console.error('[WateringSchemaWriteRepository.deleteSchemaFertilizer] - failed to delete schema fertilizer:', fertilizer, error)
       return err(error)
     }
   }
