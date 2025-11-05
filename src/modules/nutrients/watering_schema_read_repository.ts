@@ -49,7 +49,7 @@ export default class WateringSchemaReadRepository {
         }
 
         fertilizers.push({
-          id: schemaRow.id,
+          id: pivotRow.id,
           fertilizer,
           amount: pivotRow.amount,
         })
