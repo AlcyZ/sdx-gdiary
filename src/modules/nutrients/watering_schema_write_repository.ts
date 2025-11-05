@@ -1,6 +1,6 @@
 import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
-import type { NewWateringSchema } from './types'
+import type { NewWateringSchema, NewWateringSchemaFertilizer } from './types'
 import { err, ok } from '../../util.ts'
 import {
   getDb,
@@ -47,6 +47,27 @@ export default class WateringSchemaWriteRepository {
     }
     catch (error: unknown) {
       console.error('[WateringSchemaWriteRepository.update] - failed to save schema:', schema, error)
+      return err(error)
+    }
+  }
+
+  public async updateSchemaFertilizer(schemaId: number, schemaFertilizerId: number, data: NewWateringSchemaFertilizer) {
+    try {
+      const tx = this.db.transaction(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, 'readwrite')
+      const store = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
+
+      const dataset = {
+        [INDEX_WATERING_SCHEMA_ID]: schemaId,
+        [INDEX_FERTILIZER_ID]: data.fertilizer.id,
+        amount: data.amount,
+        id: schemaFertilizerId,
+      }
+
+      store.put(dataset)
+      return ok(undefined)
+    }
+    catch (error: unknown) {
+      console.error('[WateringSchemaWriteRepository.updateSchemaFertilizer] - failed to update schema fertilizer:', schemaId, schemaFertilizerId, data)
       return err(error)
     }
   }

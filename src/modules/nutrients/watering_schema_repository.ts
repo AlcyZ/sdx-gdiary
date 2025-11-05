@@ -1,5 +1,5 @@
 import type { Result } from '../../types'
-import type { NewWateringSchema } from './types'
+import type { NewWateringSchema, NewWateringSchemaFertilizer } from './types'
 import WateringSchemaReadRepository from './watering_schema_read_repository.ts'
 import WateringSchemaWriteRepository from './watering_schema_write_repository.ts'
 
@@ -22,6 +22,10 @@ export default class WateringSchemaRepository {
 
   public async save(schema: NewWateringSchema): Promise<Result<IDBValidKey, unknown>> {
     return this.write.save(schema)
+  }
+
+  public async updateSchemaFertilizer(schemaId: number, schemaFertilizerId: number, data: NewWateringSchemaFertilizer) {
+    return this.write.updateSchemaFertilizer(schemaId, schemaFertilizerId, data)
   }
 
   public async getAll() {
