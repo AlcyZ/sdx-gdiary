@@ -61,12 +61,18 @@
               <IBadge
                 ghost
                 size="xs"
-                class="w-14 h-6"
+                class="w-14 h-6 text-[9px]"
               >
                 {{ fertilizer.amount }}ml/L
               </IBadge>
-              <div class="flex items-center font-semibold opacity-60">
-                {{ fertilizer.fertilizer.name }}
+              <div class="flex items-center justify-between pr-9">
+                <span class="font-semibold opacity-60">{{ fertilizer.fertilizer.name }}</span>
+                <IBadge
+                  size="xs"
+                  outline
+                >
+                  {{ fertilizer.fertilizer.manufacturer || fallbackManufacturer }}
+                </IBadge>
               </div>
               <IBtn
                 square
@@ -123,6 +129,8 @@ const { fertilizers } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const { showModal } = useModal()
+
+const fallbackManufacturer = 'Unbekannter Hersteller'
 
 async function editSchemaFertilizer(wateringSchema: WateringSchema, fertilizer: WateringSchemaFertilizer) {
   const { close } = showModal(NutrientPageOverviewWateringSchemaModalEditFertilizer, {
