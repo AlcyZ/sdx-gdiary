@@ -1,7 +1,7 @@
 <template>
-  <div class="collapse-title">
+  <summary class="collapse-title">
     <slot />
-  </div>
+  </summary>
 </template>
 
 <script lang="ts" setup>

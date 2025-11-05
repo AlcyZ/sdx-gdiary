@@ -17,6 +17,7 @@
         name="manufacturer"
         class="border border-base-200 join-item"
         arrow
+        closable
       >
         <ICollapseTitle class="font-semibold opacity-80">
           {{ manufacturer }}
