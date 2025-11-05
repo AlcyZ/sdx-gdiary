@@ -51,7 +51,7 @@ export async function getDb() {
 
   return openDB(DB_NAME, 1, {
     upgrade(db) {
-      createTable(TABLE_PLANTS, db)
+      createTableWithIndices(TABLE_PLANTS, [INDEX_WATERING_SCHEMA_ID], db)
 
       createPlantSubTable(TABLE_PLANT_IMAGES, db)
       createPlantSubTable(TABLE_PLANT_SUBSTRATES, db)

@@ -1,4 +1,5 @@
 import type { HasId, HasTimestamps, WithId } from '../../types'
+import type { INDEX_WATERING_SCHEMA_ID } from '../db'
 
 interface NewPlantSubstrate {
   substrate: string
@@ -17,10 +18,12 @@ interface NewPlant {
   name?: string
   substrate: NewPlantSubstrate
   phases: Array<NewPlantPhase>
+  [INDEX_WATERING_SCHEMA_ID]?: number
 }
 
 type EditPlant = Omit<WithId<NewPlant, number>, 'substrate'> & {
   substrate: PlantSubstrate
+  [INDEX_WATERING_SCHEMA_ID]?: number
 }
 
 type PlantSubstrate = WithId<NewPlantSubstrate, number>

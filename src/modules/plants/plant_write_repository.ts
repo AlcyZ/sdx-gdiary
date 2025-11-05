@@ -1,7 +1,8 @@
 import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
-import type {
-  TABLE_PLANT_IMAGES,
+import {
+  INDEX_WATERING_SCHEMA_ID,
+  type TABLE_PLANT_IMAGES,
 } from '../db'
 import type { EditPlant, NewPlant, NewPlantPhase, NewPlantSubstrate, PlantSubstrate } from './types'
 import { wrapSafe } from '../../util.ts'
@@ -33,9 +34,12 @@ export default class PlantWriteRepository {
       const plantSubstrateStore = tx.objectStore(TABLE_PLANT_SUBSTRATES)
       const plantPhaseStore = tx.objectStore(TABLE_PLANT_PHASES)
 
-      const plantData = {
+      const plantData: Record<string, string | number | undefined> = {
         strain: plant.strain,
         name: plant.name,
+      }
+      if (plant[INDEX_WATERING_SCHEMA_ID]) {
+        plantData[INDEX_WATERING_SCHEMA_ID] = plant[INDEX_WATERING_SCHEMA_ID]
       }
 
       const plantId = await plantStore.add(plantData)
@@ -59,11 +63,15 @@ export default class PlantWriteRepository {
       await this.insertPhases(plant.id, plant.phases, phaseStore)
       await this.insertSubstrate(plant.id, plant.substrate, substrateStore)
 
-      const data = {
+      const data: Record<string, string | number | undefined> = {
         strain: plant.strain,
         name: plant.name,
         id: plant.id,
       }
+      if (plant[INDEX_WATERING_SCHEMA_ID]) {
+        data[INDEX_WATERING_SCHEMA_ID] = plant[INDEX_WATERING_SCHEMA_ID]
+      }
+
       await plantStore.put(data)
       await tx.done
     })
