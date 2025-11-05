@@ -13,6 +13,12 @@ export function hasOptionalStrKey(value: Record<string, unknown>, key: string): 
     : true
 }
 
+export function hasOptionalNumKey(value: Record<string, unknown>, key: string): boolean {
+  return key in value
+    ? typeof value[key] === 'number' || typeof value[key] === 'undefined'
+    : true
+}
+
 export function hasNumKey(value: Record<string, unknown>, key: string): boolean {
   return key in value && typeof value[key] === 'number'
 }

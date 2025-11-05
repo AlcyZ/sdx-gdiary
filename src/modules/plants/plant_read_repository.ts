@@ -1,20 +1,24 @@
 import type { IDBPDatabase, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
 import type { GetPlantError, Plant, PlantPhaseRow, PlantRow, PlantSubstrate } from './types'
-import { err, ok } from '../../util.ts'
+import { err, none, ok } from '../../util.ts'
 import { getDb, INDEX_PLANT_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANTS } from '../db'
+import WateringSchemaReadRepository from '../nutrients/watering_schema_read_repository.ts'
 import { isPlantPhaseRow, isPlantRow, isPlantSubstrateRow } from './guard.ts'
 
 export default class PlantReadRepository {
   private readonly db: IDBPDatabase
+  private readonly wateringRepo: WateringSchemaReadRepository
 
-  constructor(db: IDBPDatabase) {
+  constructor(db: IDBPDatabase, wateringRepo: WateringSchemaReadRepository) {
     this.db = db
+    this.wateringRepo = wateringRepo
   }
 
   public static async create() {
     const db = await getDb()
-    return new PlantReadRepository(db)
+    const wateringRepo = await WateringSchemaReadRepository.create()
+    return new PlantReadRepository(db, wateringRepo)
   }
 
   public async getAll(): Promise<Array<Plant>> {
@@ -33,6 +37,10 @@ export default class PlantReadRepository {
 
       if (substrateResult.ok && phasesResult.ok) {
         const phase = this.getCurrentPhase(phasesResult.value)
+        const wateringSchemaResult = row.wateringSchemaId
+          ? await this.wateringRepo.getById(row.wateringSchemaId)
+          : none()
+        const wateringSchema = wateringSchemaResult.exist ? wateringSchemaResult.value : undefined
 
         return ok({
           id: row.id,
@@ -41,6 +49,7 @@ export default class PlantReadRepository {
           substrate: substrateResult.value,
           phases: phasesResult.value,
           phase,
+          wateringSchema,
           createdAt: 'todo',
           updatedAt: 'todo',
         })

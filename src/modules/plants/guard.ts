@@ -1,11 +1,13 @@
 import type { PlantPhaseRow, PlantPhaseType, PlantRow, PlantSubstrateRow } from './types'
-import { hasNumKey, hasOptionalStrKey, hasStrKey } from '../type_guard'
+import { INDEX_WATERING_SCHEMA_ID } from '../db'
+import { hasNumKey, hasOptionalNumKey, hasOptionalStrKey, hasStrKey } from '../type_guard'
 
 export function isPlantRow(value: any): value is PlantRow {
   return typeof value === 'object'
     && hasNumKey(value, 'id')
     && hasStrKey(value, 'strain')
     && hasOptionalStrKey(value, 'name')
+    && hasOptionalNumKey(value, INDEX_WATERING_SCHEMA_ID)
 }
 
 export function isPlantSubstrateRow(value: any): value is PlantSubstrateRow {

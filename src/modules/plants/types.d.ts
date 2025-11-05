@@ -1,5 +1,6 @@
 import type { HasId, HasTimestamps, WithId } from '../../types'
 import type { INDEX_WATERING_SCHEMA_ID } from '../db'
+import type { WateringSchema } from '../nutrients/types'
 
 interface NewPlantSubstrate {
   substrate: string
@@ -35,6 +36,7 @@ type Plant = {
   substrate: PlantSubstrate
   phase: PlantPhase
   phases: Array<PlantPhase>
+  wateringSchema?: WateringSchema
 } & HasId<number> & HasTimestamps
 
 type PlantSubstrateType = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
@@ -52,6 +54,7 @@ interface PlantRow {
   id: number
   strain: string
   name?: string
+  [INDEX_WATERING_SCHEMA_ID]?: number
 }
 
 type WithPlantId<T> = WithId<T, number> & { plantId: number }

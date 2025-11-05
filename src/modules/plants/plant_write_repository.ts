@@ -1,17 +1,16 @@
 import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
-import {
-  INDEX_WATERING_SCHEMA_ID,
-  type TABLE_PLANT_IMAGES,
-} from '../db'
+import type { TABLE_PLANT_IMAGES } from '../db'
 import type { EditPlant, NewPlant, NewPlantPhase, NewPlantSubstrate, PlantSubstrate } from './types'
 import { wrapSafe } from '../../util.ts'
 import {
   getDb,
   INDEX_PLANT_ID,
+  INDEX_WATERING_SCHEMA_ID,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_SUBSTRATES,
   TABLE_PLANTS,
+
 } from '../db'
 
 export default class PlantWriteRepository {
