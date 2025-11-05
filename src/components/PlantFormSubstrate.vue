@@ -27,7 +27,7 @@
     <InputTextFloat
       v-if="substrateInternal === 'Custom'"
       v-model="substrate"
-      label="Eigener Substrattyp z.B. Steinwolle oder Spezialmischung"
+      label="Eigener Substrat-Typ z.B. Steinwolle oder Spezialmischung"
       class="mt-2"
     />
 
@@ -64,7 +64,17 @@ const emit = defineEmits<Emits>()
 
 const substrates: Array<PlantSubstrateType> = ['Erde', 'Coco', 'Hydro', 'Custom']
 
-const substrateInternal = ref('')
+function getInitialSubstrate() {
+  if (substrateProp === undefined)
+    return ''
+
+  if (substrates.includes(substrateProp as PlantSubstrateType))
+    return substrateProp
+
+  return substrateProp !== '' ? 'Custom' : ''
+}
+
+const substrateInternal = ref(getInitialSubstrate())
 
 const size = defineModel<string>('size', { required: true })
 

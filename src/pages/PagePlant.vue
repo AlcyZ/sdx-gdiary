@@ -23,11 +23,17 @@
       @back="back"
       @back-and-sync="backAndSync"
     />
-    <PlantPageEdit
-      v-else-if="page === 'edit'"
-      :plant="selected"
-      @back="back"
-    />
+    <template v-if="page === 'edit'">
+      <PlantPageEdit
+        v-if="selected"
+        :plant="selected"
+        @back="back"
+      />
+      <PlantPageSelectionError
+        v-else
+        @back="back"
+      />
+    </template>
   </div>
 </template>
 
@@ -44,6 +50,7 @@ import IFab from '../components/IFab.vue'
 import PlantPageAdd from '../components/PlantPageAdd.vue'
 import PlantPageEdit from '../components/PlantPageEdit.vue'
 import PlantPageOverview from '../components/PlantPageOverview.vue'
+import PlantPageSelectionError from '../components/PlantPageSelectionError.vue'
 import PlantPageShow from '../components/PlantPageShow.vue'
 import { useModal } from '../composables/useModal.ts'
 import { usePage } from '../composables/usePage.ts'

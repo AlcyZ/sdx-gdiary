@@ -1,32 +1,125 @@
 <template>
-  <div v-if="plant">
-    edit: {{ plant?.strain || 'not selected' }}
+  <ICard
+    class="w-full max-w-2xl"
+    class-actions="justify-between"
+  >
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold">
+        {{ plantName }} bearbeiten
+      </h1>
+    </div>
 
-    <button
-      class="btn"
-      @click="$emit('back')"
-    >
-      Zurück
-    </button>
-  </div>
-  <PlantPageSelectionError
-    v-else
-    @back="$emit('back')"
-  />
+    <PlantForm
+      v-model:strain="strain"
+      v-model:name="name"
+      v-model:substrate="substrate"
+      v-model:substrate-size="substrateSize"
+      v-model:phases="phases"
+      :errors="errors"
+    />
+
+    <template #actions>
+      <IBtn
+        @click="$emit('back')"
+      >
+        <IconBack />
+        Zurück
+      </IBtn>
+
+      <IBtn
+        variant="primary"
+        class="text-base-100"
+        :disabled="loading || hasFormErrors"
+        @click="updatePlant"
+      >
+        <IconSave />
+        Aktualisieren
+      </IBtn>
+    </template>
+  </ICard>
 </template>
 
 <script lang="ts" setup>
-import type { Plant } from '../modules/plants/types'
-import PlantPageSelectionError from './PlantPageSelectionError.vue'
+import type { EditPlant, Plant } from '../modules/plants/types'
+import {
+  MoveLeft as IconBack,
+  Save as IconSave,
+} from 'lucide-vue-next'
+import { computed, inject, ref } from 'vue'
+import { usePlantForm } from '../composables/usePlantForm.ts'
+import { useToast } from '../composables/useToast.ts'
+import { REPO_PLANT } from '../di_keys.ts'
+import { err } from '../util.ts'
+import IBtn from './IBtn.vue'
+import ICard from './ICard.vue'
+import PlantForm from './PlantForm.vue'
 
 interface Props {
-  plant: Plant | null
+  plant: Plant
 }
 interface Emits {
   back: []
   backAndSync: []
 }
 
-defineProps<Props>()
-defineEmits<Emits>()
+const { plant } = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const loading = ref(false)
+
+const plantRepo = inject(REPO_PLANT)
+const { toast } = useToast()
+
+const plantName = computed(
+  () => plant.name !== undefined && plant.name !== ''
+    ? `${plant.name} (${plant.strain})`
+    : plant.strain,
+)
+
+const {
+  strain,
+  name,
+  substrate,
+  substrateSize,
+  phases,
+  validate,
+  errors,
+} = usePlantForm({
+  strain: plant.strain,
+  name: plant.name,
+  substrate: plant.substrate.substrate,
+  substrateSize: plant.substrate.size,
+  phases: plant.phases,
+})
+
+const hasFormErrors = computed(() => Object.keys(errors.value).length > 0)
+
+async function updatePlant() {
+  const validationResult = await validate()
+  if (!validationResult.valid) {
+    toast('Bitte fülle alle Pflichtfelder aus', 'error')
+    return
+  }
+
+  const data: EditPlant = {
+    id: plant.id,
+    strain: strain.value!,
+    name: name.value,
+    substrate: {
+      id: plant.substrate.id,
+      substrate: substrate.value,
+      size: substrateSize.value,
+    },
+    phases: phases.value,
+  }
+
+  const result = await plantRepo?.update(data) || err(undefined)
+  if (!result.ok) {
+    toast('Es ist ein Fehler beim aktualisieren der Pflanze aufgetreten', 'error')
+    return
+  }
+
+  toast('Pflanze erfolgreich aktualisiert', 'success')
+  emit('backAndSync')
+}
 </script>
