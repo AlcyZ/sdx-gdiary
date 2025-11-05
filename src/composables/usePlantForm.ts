@@ -3,8 +3,9 @@ import type { InferType } from 'yup'
 import type { NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
-import { computed } from 'vue'
+import {computed, ref} from 'vue'
 import * as yup from 'yup'
+import type {WateringSchema} from "../modules/nutrients/types";
 
 const ERR_STRAIN_REQUIRED = 'Die Sorte muss angegeben werden'
 const ERR_STRAIN_MAX = ({ max }: { max: number }) => `Die Sorte dar maximal ${max} Zeichen lang sein`
@@ -73,12 +74,15 @@ export function usePlantForm(initialValues?: PartialDeep<PlantForm>) {
   const [substrateSize] = defineField<'substrateSize', string>('substrateSize')
   const [phases] = defineField<'phases', Array<NewPlantPhase>>('phases')
 
+  const wateringSchema = ref<WateringSchema | undefined>(undefined)
+
   return {
     strain,
     name,
     substrate,
     substrateSize,
     phases,
+    wateringSchema,
     validate,
     errors,
     hasFormErrors,

@@ -23,6 +23,30 @@
       :size-error="errors.substrateSize"
     />
 
+    <IFieldset
+      v-if="wateringSchemas.length > 0"
+      legend="Bewässerungsschema"
+    >
+      <label
+        :for="schemaSelectId"
+      >
+        Wähle dein Bewässerungsschema. Dadurch lässt sich beim erstellen eines Gießeintrags direkt die passenden Dünger auswählen
+      </label>
+      <select
+        :id="schemaSelectId"
+        v-model="wateringSchema"
+        class="select"
+      >
+        <option
+          v-for="(schema, i) in wateringSchemas"
+          :key="i"
+          :value="schema"
+        >
+          {{ schema.name }}
+        </option>
+      </select>
+    </IFieldset>
+
     <PlantFormPhase
       v-model="phases"
       :error="errors.phases"
@@ -31,13 +55,17 @@
 </template>
 
 <script lang="ts" setup>
+import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
+import { useId } from 'vue'
+import IFieldset from './IFieldset.vue'
 import InputTextFloat from './InputTextFloat.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
 
 interface Props {
   errors: FormError
+  wateringSchemas: Array<WateringSchema>
 }
 interface Emits {
   submit: []
@@ -51,7 +79,7 @@ interface FormError {
   phases?: string
 }
 
-defineProps<Props>()
+const { wateringSchemas } = defineProps<Props>()
 defineEmits<Emits>()
 
 const strain = defineModel<string>('strain')
@@ -59,4 +87,7 @@ const name = defineModel<string>('name')
 const substrate = defineModel<string>('substrate')
 const substrateSize = defineModel<string>('substrateSize', { required: true })
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
+const wateringSchema = defineModel<WateringSchema>('wateringSchema')
+
+const schemaSelectId = useId()
 </script>

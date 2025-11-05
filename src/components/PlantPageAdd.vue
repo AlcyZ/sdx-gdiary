@@ -15,7 +15,9 @@
       v-model:substrate="substrate"
       v-model:substrate-size="substrateSize"
       v-model:phases="phases"
+      v-model:watering-schema="wateringSchema"
       :errors="errors"
+      :watering-schemas="wateringSchemas"
     />
 
     <template #actions>
@@ -50,6 +52,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlant } from '../modules/plants/types'
 import type { Result, ToastVariant } from '../types'
 import {
@@ -67,7 +70,7 @@ import ICard from './ICard.vue'
 import PlantForm from './PlantForm.vue'
 
 interface Props {
-
+  wateringSchemas: Array<WateringSchema>
 }
 interface Emits {
   back: []
@@ -88,6 +91,7 @@ const {
   substrate,
   substrateSize,
   phases,
+  wateringSchema,
   validate,
   errors,
   hasFormErrors,
