@@ -72,6 +72,31 @@ export default class WateringSchemaWriteRepository {
     }
   }
 
+  public async deleteSchema(schemaId: number): Promise<Result<undefined, unknown>> {
+    try {
+      const tx = this.db.transaction([TABLE_WATERING_SCHEMAS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA], 'readwrite')
+
+      const store = tx.objectStore(TABLE_WATERING_SCHEMAS)
+      const pivotStore = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
+
+      const indexSchemaId = pivotStore.index(INDEX_WATERING_SCHEMA_ID)
+
+      const promises = []
+      for await (const entry of indexSchemaId.iterate(schemaId)) {
+        promises.push(entry.delete())
+      }
+      promises.push(store.delete(schemaId))
+
+      await Promise.all(promises)
+      await tx.done
+
+      return ok(undefined)
+    } catch (error: unknown) {
+      console.error('[WateringSchemaWriteRepository.deleteSchema] - failed to delete schema:', schemaId, error)
+      return err(error)
+    }
+  }
+
   public async deleteSchemaFertilizer(fertilizer: WateringSchemaFertilizer): Promise<Result<undefined, unknown>> {
     try {
       const tx = this.db.transaction(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, 'readwrite')

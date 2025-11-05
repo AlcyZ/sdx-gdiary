@@ -50,6 +50,7 @@
                 square
                 ghost
                 size="sm"
+                @click="showDeleteSchemaModal(wateringSchema)"
               >
                 <IconDelete :size="20" />
               </IBtn>
@@ -87,7 +88,7 @@
                 square
                 ghost
                 size="sm"
-                @click="showDeleteConfirmationModal(fertilizer)"
+                @click="showDeleteSchemaFertilizerModal(fertilizer)"
               >
                 <IconDelete :size="20" />
               </IBtn>
@@ -108,7 +109,9 @@ import {
 } from 'lucide-vue-next'
 import { inject } from 'vue'
 import { useModal } from '../composables/useModal.ts'
+import { useToast } from '../composables/useToast.ts'
 import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
+import { err } from '../util.ts'
 import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICollapse from './ICollapse.vue'
@@ -118,8 +121,6 @@ import IList from './IList.vue'
 import IListRow from './IListRow.vue'
 import NutrientPageOverviewWateringSchemaModalEditFertilizer
   from './NutrientPageOverviewWateringSchemaModalEditFertilizer.vue'
-import {err} from "../util.ts";
-import {useToast} from "../composables/useToast.ts";
 
 interface Props {
   wateringSchemas: Array<WateringSchema>
@@ -133,7 +134,7 @@ interface Emits {
 const { fertilizers } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const  { toast } = useToast()
+const { toast } = useToast()
 const { showModal, showConfirmationModal } = useModal()
 const wateringRepo = inject(REPO_WATERING_SCHEMA)
 
@@ -151,7 +152,7 @@ async function editSchemaFertilizer(wateringSchema: WateringSchema, fertilizer: 
   })
 }
 
-function showDeleteConfirmationModal(fertilizer: WateringSchemaFertilizer) {
+function showDeleteSchemaFertilizerModal(fertilizer: WateringSchemaFertilizer) {
   const name = `${fertilizer.fertilizer.name} (${fertilizer.fertilizer.manufacturer || fallbackManufacturer})`
   const text = `Bist du sicher, dass du '${name}' aus den Zuchtschema entfernen möchtest?`
 
@@ -173,6 +174,36 @@ function showDeleteConfirmationModal(fertilizer: WateringSchemaFertilizer) {
     actions: [
       {
         label: 'Entfernen',
+        icon: IconDelete,
+        class: 'btn-error text-base-100',
+        onClick,
+      },
+    ],
+  })
+}
+
+function showDeleteSchemaModal(wateringSchema: WateringSchema) {
+  const title = 'Bewässerungsschema löschen'
+  const text = `Bist du sicher, dass das Bewässerungsschema '${wateringSchema.name}' gelöscht werden soll?`
+
+  const onClick = async () => {
+    const result = await wateringRepo?.deleteSchema(wateringSchema.id) || err(undefined)
+
+    if (!result.ok) {
+      toast('Es ist ein Fehler beim entfernen des Schemas aufgetreten', 'error')
+      return
+    }
+
+    toast('Bewässerungsschema erfolgreich gelöscht', 'success')
+    emit('sync')
+  }
+
+  showConfirmationModal({
+    title,
+    text,
+    actions: [
+      {
+        label: 'Löschen',
         icon: IconDelete,
         class: 'btn-error text-base-100',
         onClick,

@@ -28,6 +28,10 @@ export default class WateringSchemaRepository {
     return this.write.updateSchemaFertilizer(schemaId, schemaFertilizerId, data)
   }
 
+  public async deleteSchema(schemaId: number): Promise<Result<undefined, unknown>> {
+    return this.write.deleteSchema(schemaId)
+  }
+
   public async deleteSchemaFertilizer(fertilizer: WateringSchemaFertilizer): Promise<Result<undefined, unknown>> {
     return this.write.deleteSchemaFertilizer(fertilizer)
   }
