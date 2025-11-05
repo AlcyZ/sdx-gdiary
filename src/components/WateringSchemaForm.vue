@@ -111,7 +111,6 @@ function isSelected(fertilizer: Fertilizer): boolean {
 }
 
 function addFertilizer() {
-  console.info('add')
   if (unselectedFertilizers.value.length === 0)
     return
 
@@ -122,8 +121,6 @@ function addFertilizer() {
 
   const data = [...fertilizersData]
   data.push(dataset)
-
-  console.info('so', dataset, data)
 
   emit('update:fertilizersData', data)
 }

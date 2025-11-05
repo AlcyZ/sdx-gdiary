@@ -31,7 +31,9 @@
       <NutrientPageEditSchema
         v-if="selectedSchema"
         :watering-schema="selectedSchema"
+        :fertilizers="fertilizers"
         @back="back"
+        @back-and-sync="backAndSync"
       />
 
       <ISelectionError
