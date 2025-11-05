@@ -43,6 +43,7 @@
                 square
                 ghost
                 size="sm"
+                @click="$emit('editSchema', wateringSchema)"
               >
                 <IconEdit :size="20" />
               </IBtn>
@@ -130,6 +131,7 @@ interface Props {
 interface Emits {
   sync: []
   addSchema: []
+  editSchema: [wateringSchema: WateringSchema]
 }
 
 const { fertilizers } = defineProps<Props>()

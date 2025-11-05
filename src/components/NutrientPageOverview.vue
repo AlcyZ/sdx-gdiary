@@ -10,6 +10,7 @@
       class="my-3"
       @sync="$emit('sync')"
       @add-schema="$emit('addSchema')"
+      @edit-schema="$emit('editSchema', $event)"
     />
 
     <NutrientPageOverviewFertilizers
@@ -36,6 +37,7 @@ interface Emits {
   sync: []
   addFertilizer: []
   addSchema: []
+  editSchema: [wateringSchema: WateringSchema]
 }
 
 const { fertilizers } = defineProps<Props>()

@@ -1,14 +1,11 @@
 <template>
-  <ICard class="w-full max-w-xl">
-    <span class="text-error text-center">Aufgrund eines Fehlers wurde die Pflanze nicht richtig ausgewählt.</span>
-    <button class="btn btn-secondary" @click="$emit('back')">
-      Zurück
-    </button>
-  </ICard>
+  <ISelectionError
+    text="Aufgrund eines Fehlers wurde die Pflanze nicht richtig ausgewählt."
+  />
 </template>
 
 <script lang="ts" setup>
-import ICard from './ICard.vue'
+import ISelectionError from './ISelectionError.vue'
 
 interface Props {
 
