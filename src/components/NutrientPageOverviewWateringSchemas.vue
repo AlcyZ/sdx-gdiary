@@ -72,6 +72,7 @@
                 square
                 ghost
                 size="sm"
+                @click="editSchemaFertilizer(wateringSchema, fertilizer)"
               >
                 <IconEdit :size="20" />
               </IBtn>
@@ -92,12 +93,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { WateringSchema } from '../modules/nutrients/types'
+import type { Fertilizer, WateringSchema, WateringSchemaFertilizer } from '../modules/nutrients/types'
 import {
   CirclePlus as IconAdd,
   Trash as IconDelete,
   Edit as IconEdit,
 } from 'lucide-vue-next'
+import { useModal } from '../composables/useModal.ts'
 import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICollapse from './ICollapse.vue'
@@ -105,14 +107,32 @@ import ICollapseContent from './ICollapseContent.vue'
 import ICollapseTitle from './ICollapseTitle.vue'
 import IList from './IList.vue'
 import IListRow from './IListRow.vue'
+import NutrientPageOverviewWateringSchemaModalEditFertilizer
+  from './NutrientPageOverviewWateringSchemaModalEditFertilizer.vue'
 
 interface Props {
   wateringSchemas: Array<WateringSchema>
+  fertilizers: Array<Fertilizer>
 }
 interface Emits {
+  sync: []
   addSchema: []
 }
 
-defineProps<Props>()
-defineEmits<Emits>()
+const { fertilizers } = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const { showModal } = useModal()
+
+async function editSchemaFertilizer(wateringSchema: WateringSchema, fertilizer: WateringSchemaFertilizer) {
+  const { close } = showModal(NutrientPageOverviewWateringSchemaModalEditFertilizer, {
+    wateringSchema,
+    fertilizer,
+    fertilizers,
+    onSaved: async () => {
+      emit('sync')
+      await close()
+    },
+  })
+}
 </script>

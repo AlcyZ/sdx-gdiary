@@ -6,6 +6,7 @@
 
     <NutrientPageOverviewWateringSchemas
       :watering-schemas="wateringSchemas"
+      :fertilizers="fertilizers"
       class="my-3"
       @sync="$emit('sync')"
       @add-schema="$emit('addSchema')"
@@ -25,7 +26,7 @@ import type { Fertilizer, WateringSchema } from '../modules/nutrients/types'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
 import NutrientPageOverviewFertilizers from './NutrientPageOverviewFertilizers.vue'
-import NutrientPageOverviewWateringSchemas from "./NutrientPageOverviewWateringSchemas.vue";
+import NutrientPageOverviewWateringSchemas from './NutrientPageOverviewWateringSchemas.vue'
 
 interface Props {
   wateringSchemas: Array<WateringSchema>
@@ -38,5 +39,5 @@ interface Emits {
 }
 
 const { fertilizers } = defineProps<Props>()
-const emit = defineEmits<Emits>()
+defineEmits<Emits>()
 </script>
