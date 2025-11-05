@@ -4,17 +4,17 @@ import { none, some } from '../../util.ts'
 
 const DB_NAME = 'GrowDiary'
 
-export const TABLE_PLANTS = 'plants'
-export const TABLE_PLANT_IMAGES = 'plantImages'
-export const TABLE_PLANT_SUBSTRATES = 'plantSubstrates'
-export const TABLE_PLANT_PHASES = 'plantPhases'
-export const TABLE_FERTILIZERS = 'fertilizers'
-export const TABLE_WATERING_SCHEMAS = 'wateringSchema'
-export const TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA = 'fertilizerWateringSchema'
+export const TABLE_PLANTS = 'plants' as const
+export const TABLE_PLANT_IMAGES = 'plantImages' as const
+export const TABLE_PLANT_SUBSTRATES = 'plantSubstrates' as const
+export const TABLE_PLANT_PHASES = 'plantPhases' as const
+export const TABLE_FERTILIZERS = 'fertilizers' as const
+export const TABLE_WATERING_SCHEMAS = 'wateringSchema' as const
+export const TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA = 'fertilizerWateringSchema' as const
 
-export const INDEX_PLANT_ID = 'plantId'
-export const INDEX_FERTILIZER_ID = 'fertilizerId'
-export const INDEX_WATERING_SCHEMA_ID = 'wateringSchemaId'
+export const INDEX_PLANT_ID = 'plantId' as const
+export const INDEX_FERTILIZER_ID = 'fertilizerId' as const
+export const INDEX_WATERING_SCHEMA_ID = 'wateringSchemaId' as const
 
 const DEFAULT_KEY_PATH = 'id'
 const TYPE_PNG = 'image/png'
