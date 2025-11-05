@@ -91,7 +91,8 @@ export default class WateringSchemaWriteRepository {
       await tx.done
 
       return ok(undefined)
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error('[WateringSchemaWriteRepository.deleteSchema] - failed to delete schema:', schemaId, error)
       return err(error)
     }
