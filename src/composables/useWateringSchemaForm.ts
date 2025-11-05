@@ -1,14 +1,9 @@
 import type { PartialDeep } from 'type-fest'
 import type { InferType } from 'yup'
-import type { Fertilizer } from '../modules/nutrients/types'
+import type { NewWateringSchemaFertilizer } from '../modules/nutrients/types'
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
 import { array, object, string } from 'yup'
-
-export interface FertilizerData {
-  fertilizer: Fertilizer
-  value: number
-}
 
 const ERR_MSG_REQUIRED = 'Es muss ein Name für das Zuchtschema angegeben werden'
 const ERR_DATA_REQUIRED = 'Es muss mindestens ein Dünger dem Schema zugewiesen werden'
@@ -28,7 +23,7 @@ export function useWateringSchemaForm(initialValues?: PartialDeep<WateringSchema
   })
 
   const [name] = defineField('name')
-  const [fertilizersData] = defineField<'fertilizersData', Array<FertilizerData>>('fertilizersData')
+  const [fertilizersData] = defineField<'fertilizersData', Array<NewWateringSchemaFertilizer>>('fertilizersData')
 
   return {
     name,

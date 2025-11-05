@@ -40,7 +40,7 @@
           </select>
 
           <InputTextFloat
-            v-model="fertilizerData.value"
+            v-model="fertilizerData.amount"
             label="ML pro Liter"
             type="number"
           />
@@ -65,8 +65,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { FertilizerData } from '../composables/useWateringSchemaForm.ts'
-import type { Fertilizer } from '../modules/nutrients/types'
+import type { Fertilizer, NewWateringSchemaFertilizer } from '../modules/nutrients/types'
 import {
   CirclePlus as IconAdd,
   CircleMinus as IconRemove,
@@ -77,13 +76,13 @@ import IBtn from './IBtn.vue'
 import InputTextFloat from './InputTextFloat.vue'
 
 interface Props {
-  fertilizersData: Array<FertilizerData>
+  fertilizersData: Array<NewWateringSchemaFertilizer>
   errorName?: string
   errorFertilizerData?: string
   fertilizers: Array<Fertilizer>
 }
 interface Emits {
-  'update:fertilizersData': [data: Array<FertilizerData>]
+  'update:fertilizersData': [data: Array<NewWateringSchemaFertilizer>]
   'submit': []
 }
 
@@ -116,9 +115,9 @@ function addFertilizer() {
   if (unselectedFertilizers.value.length === 0)
     return
 
-  const dataset = {
+  const dataset: NewWateringSchemaFertilizer = {
     fertilizer: unselectedFertilizers.value[0]!,
-    value: 5,
+    amount: 5,
   }
 
   const data = [...fertilizersData]
@@ -129,7 +128,7 @@ function addFertilizer() {
   emit('update:fertilizersData', data)
 }
 
-function removeItem(item: FertilizerData) {
+function removeItem(item: NewWateringSchemaFertilizer) {
   const data = [...fertilizersData]
   removeArrayElement(data, i => i.fertilizer.id === item.fertilizer.id)
 

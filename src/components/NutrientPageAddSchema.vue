@@ -47,8 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { FertilizerData } from '../composables/useWateringSchemaForm.ts'
-import type { Fertilizer, NewWateringSchema, NewWateringSchemaFertilizer } from '../modules/nutrients/types'
+import type { Fertilizer, NewWateringSchema } from '../modules/nutrients/types'
 import {
   CirclePlus as IconAdd,
   MoveLeft as IconBack,
@@ -108,14 +107,9 @@ async function saveSchema(): Promise<boolean> {
   if (!(await validateForm()))
     return false
 
-  const fertilizerItems: Array<NewWateringSchemaFertilizer>
-    = fertilizersData.value.map((data: FertilizerData): NewWateringSchemaFertilizer => ({
-      fertilizer: data.fertilizer,
-      amount: data.value,
-    }))
   const schema: NewWateringSchema = {
     name: name.value!,
-    fertilizers: fertilizerItems,
+    fertilizers: fertilizersData.value,
   }
 
   const result = await wateringRepo.save(schema)
