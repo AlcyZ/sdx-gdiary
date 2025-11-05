@@ -90,6 +90,7 @@ const {
   phases,
   validate,
   errors,
+  hasFormErrors,
 } = usePlantForm({
   strain: '',
   name: '',

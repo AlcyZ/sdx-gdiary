@@ -3,6 +3,7 @@ import type { InferType } from 'yup'
 import type { NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
+import { computed } from 'vue'
 import * as yup from 'yup'
 
 const ERR_STRAIN_REQUIRED = 'Die Sorte muss angegeben werden'
@@ -64,6 +65,8 @@ export function usePlantForm(initialValues?: PartialDeep<PlantForm>) {
     initialValues,
   })
 
+  const hasFormErrors = computed(() => Object.keys(errors.value).length > 0)
+
   const [strain] = defineField('strain')
   const [name] = defineField('name')
   const [substrate] = defineField<'substrate', PlantSubstrateType>('substrate')
@@ -78,5 +81,6 @@ export function usePlantForm(initialValues?: PartialDeep<PlantForm>) {
     phases,
     validate,
     errors,
+    hasFormErrors,
   }
 }
