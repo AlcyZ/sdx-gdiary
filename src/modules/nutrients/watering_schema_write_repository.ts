@@ -1,6 +1,11 @@
-import type { IDBPDatabase } from 'idb'
+import type { IDBPDatabase, IDBPObjectStore } from 'idb'
 import type { Result } from '../../types'
-import type { NewWateringSchema, NewWateringSchemaFertilizer, WateringSchemaFertilizer } from './types'
+import type {
+  EditedWateringSchema,
+  NewWateringSchema,
+  NewWateringSchemaFertilizer,
+  WateringSchemaFertilizer,
+} from './types'
 import { err, ok } from '../../util.ts'
 import {
   getDb,
@@ -34,19 +39,42 @@ export default class WateringSchemaWriteRepository {
         updatedAt: Date.now(),
       }
       const wateringSchemaId = await store.add(wateringSchema)
+      await this.insertSchemaFertilizer(wateringSchemaId, schema.fertilizers, pivotStore)
 
-      await Promise.all(
-        schema.fertilizers.map(fertilizer => pivotStore.add({
-          [INDEX_WATERING_SCHEMA_ID]: wateringSchemaId,
-          [INDEX_FERTILIZER_ID]: fertilizer.fertilizer.id,
-          amount: fertilizer.amount,
-        })),
-      )
       await tx.done
       return ok(wateringSchemaId)
     }
     catch (error: unknown) {
       console.error('[WateringSchemaWriteRepository.update] - failed to save schema:', schema, error)
+      return err(error)
+    }
+  }
+
+  public async updateSchema(schema: EditedWateringSchema): Promise<Result<undefined, unknown>> {
+    try {
+      const tx = this.db.transaction([
+        TABLE_WATERING_SCHEMAS,
+        TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
+      ], 'readwrite')
+
+      const schemaStore = tx.objectStore(TABLE_WATERING_SCHEMAS)
+      const pivotStore = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
+
+      await this.deleteSchemaFertilizerAssociations(schema.id, pivotStore)
+      await this.insertSchemaFertilizer(schema.id, schema.fertilizers, pivotStore)
+
+      await schemaStore.put({
+        name: schema.name,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        id: schema.id,
+      })
+      await tx.done
+
+      return ok(undefined)
+    }
+    catch (error: unknown) {
+      console.error('[WateringSchemaWriteRepository.updateSchema] - failed to update schema:', schema, error)
       return err(error)
     }
   }
@@ -79,15 +107,9 @@ export default class WateringSchemaWriteRepository {
       const store = tx.objectStore(TABLE_WATERING_SCHEMAS)
       const pivotStore = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
 
-      const indexSchemaId = pivotStore.index(INDEX_WATERING_SCHEMA_ID)
+      await this.deleteSchemaFertilizerAssociations(schemaId, pivotStore)
+      await store.delete(schemaId)
 
-      const promises = []
-      for await (const entry of indexSchemaId.iterate(schemaId)) {
-        promises.push(entry.delete())
-      }
-      promises.push(store.delete(schemaId))
-
-      await Promise.all(promises)
       await tx.done
 
       return ok(undefined)
@@ -110,6 +132,41 @@ export default class WateringSchemaWriteRepository {
     }
     catch (error: unknown) {
       console.error('[WateringSchemaWriteRepository.deleteSchemaFertilizer] - failed to delete schema fertilizer:', fertilizer, error)
+      return err(error)
+    }
+  }
+
+  private async insertSchemaFertilizer(
+    wateringSchemaId: IDBValidKey | number,
+    fertilizers: Array<NewWateringSchemaFertilizer>,
+    pivotStore: IDBPObjectStore<unknown, string[], 'fertilizerWateringSchema', 'readwrite'>,
+  ) {
+    await Promise.all(
+      fertilizers.map(fertilizer => pivotStore.add({
+        [INDEX_WATERING_SCHEMA_ID]: wateringSchemaId,
+        [INDEX_FERTILIZER_ID]: fertilizer.fertilizer.id,
+        amount: fertilizer.amount,
+      })),
+    )
+  }
+
+  private async deleteSchemaFertilizerAssociations(
+    schemaId: number,
+    pivotStore: IDBPObjectStore<unknown, string[], 'fertilizerWateringSchema', 'readwrite'>,
+  ) {
+    try {
+      const indexSchemaId = pivotStore.index(INDEX_WATERING_SCHEMA_ID)
+
+      const promises = []
+      for await (const entry of indexSchemaId.iterate(schemaId)) {
+        promises.push(entry.delete())
+      }
+
+      await Promise.all(promises)
+      return ok(undefined)
+    }
+    catch (error: unknown) {
+      console.error('[WateringSchemaWriteRepository.deleteSchemaFertilizerAssociations] - failed to delete schema associations:', schemaId, error)
       return err(error)
     }
   }
