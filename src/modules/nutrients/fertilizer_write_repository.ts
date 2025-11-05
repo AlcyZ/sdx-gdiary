@@ -2,7 +2,7 @@ import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
 import type { Fertilizer, NewFertilizer } from './types'
 import { err, ok } from '../../util.ts'
-import { getDb, TABLE_FERTILIZERS } from '../db'
+import { getDb, INDEX_FERTILIZER_ID, TABLE_FERTILIZERS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA } from '../db'
 
 export default class FertilizerWriteRepository {
   private readonly db: IDBPDatabase
@@ -45,10 +45,19 @@ export default class FertilizerWriteRepository {
 
   public async delete(fertilizerId: number): Promise<Result<undefined, unknown>> {
     try {
-      const tx = this.db.transaction(TABLE_FERTILIZERS, 'readwrite')
+      const tx = this.db.transaction([TABLE_FERTILIZERS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA], 'readwrite')
+
       const store = tx.objectStore(TABLE_FERTILIZERS)
+      const pivotStore = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
+      const indexFertilizer = pivotStore.index(INDEX_FERTILIZER_ID)
+
+      for await (const entry of indexFertilizer.iterate(fertilizerId)) {
+        await entry.delete()
+      }
 
       await store.delete(fertilizerId)
+      await tx.done
+
       return ok(undefined)
     }
     catch (error) {
