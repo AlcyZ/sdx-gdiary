@@ -18,7 +18,34 @@
     </div>
 
     <div class="my-5">
-      so!
+      <h3 class="text-xl font-bold">
+        Gießmenge & Messwerte
+      </h3>
+
+      <IInputNumber
+        v-model="amount"
+        label="Gießmenge (Liter)"
+        info="Wichtig für die Berechnung der Düngermenge."
+        :error="errors.amount"
+        class="mt-3"
+        full-width
+      />
+
+      <IInputNumber
+        v-model="ph"
+        label="pH-Wert"
+        :error="errors.ph"
+        class="mt-3"
+        full-width
+      />
+
+      <IInputNumber
+        v-model="ec"
+        label="EC-Wert"
+        :error="errors.ec"
+        class="mt-3"
+        full-width
+      />
     </div>
 
     <template #actions>
@@ -49,6 +76,7 @@ import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
 import IInputDatetime from './IInputDatetime.vue'
+import IInputNumber from './IInputNumber.vue'
 
 interface Props {
   fertilizers: Array<Fertilizer>
@@ -80,6 +108,8 @@ const fertilizerDataSchema = object({
 
 const pourSchema = object({
   amount: number().required(ERR_AMOUNT_REQUIRED),
+  ph: number().optional(),
+  ec: number().optional(),
   fertilizers: array().of(fertilizerDataSchema),
 })
 
@@ -103,6 +133,8 @@ const { errors, defineField, validate } = useForm({
 })
 
 const [amount] = defineField<'amount', number>('amount')
+const [ph] = defineField('ph')
+const [ec] = defineField('ec')
 const [fertilizersData] = defineField<'fertilizers', Array<FormFertilizerData>>('fertilizers')
 
 const plantName = computed(() => plant.name !== undefined && plant.name !== '' ? `${plant.name} (${plant.strain})` : plant.strain)
