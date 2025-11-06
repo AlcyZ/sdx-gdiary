@@ -28,6 +28,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { InputSize } from '../types'
 import { XIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
 
@@ -36,15 +37,27 @@ interface Props {
   error?: string
   info?: string
   fullWidth?: boolean
+  size?: InputSize
 }
 interface Emits {
 
 }
 
-const { fullWidth } = defineProps<Props>()
+const { fullWidth, size } = defineProps<Props>()
 defineEmits<Emits>()
 
 const model = defineModel<number>()
 
-const inputClass = computed(() => fullWidth ? 'w-full' : undefined)
+const sizeMap: Record<InputSize, string> = {
+  xs: 'input-xs',
+  sm: 'input-sm',
+  md: 'input-md',
+  lg: 'input-lg',
+  xl: 'input-xl',
+}
+
+const inputClass = computed(() => [
+  fullWidth ? 'w-full' : undefined,
+  size ? sizeMap[size] : undefined,
+])
 </script>
