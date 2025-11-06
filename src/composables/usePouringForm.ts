@@ -1,6 +1,7 @@
 import type { InferType } from 'yup'
 import type { Plant } from '../modules/plants/types'
 import { toTypedSchema } from '@vee-validate/yup'
+import dayjs from 'dayjs'
 import { useForm } from 'vee-validate'
 import { array, number, object, string } from 'yup'
 
@@ -21,6 +22,7 @@ const fertilizerDataSchema = object({
 })
 
 const pourSchema = object({
+  date: string().required(),
   amount: number().typeError(ERR_AMOUNT_TYPE).required(ERR_AMOUNT_REQUIRED),
   ph: number().optional(),
   ec: number().optional(),
@@ -35,6 +37,7 @@ export function usePouringForm(plant: Plant) {
   const { errors, defineField, validate } = useForm({
     validationSchema,
     initialValues: {
+      date: dayjs().format('YYYY-MM-DDTHH:mm'),
       amount: DEFAULT_AMOUNT,
       fertilizers: plant.wateringSchema?.fertilizers
         .map((item): FormFertilizerData => ({
@@ -46,12 +49,14 @@ export function usePouringForm(plant: Plant) {
     },
   })
 
+  const [date] = defineField<'date', string>('date')
   const [amount] = defineField<'amount', number>('amount')
   const [ph] = defineField('ph')
   const [ec] = defineField('ec')
   const [fertilizersData] = defineField<'fertilizers', Array<FormFertilizerData>>('fertilizers')
 
   return {
+    date,
     amount,
     ph,
     ec,

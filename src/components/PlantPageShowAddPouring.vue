@@ -12,7 +12,7 @@
           Neuer Gießeintrag
         </h1>
 
-        <IInputDatetime v-model="dateSample" />
+        <IInputDatetime v-model="date" />
       </div>
 
       <div class="flex mt-1">
@@ -145,6 +145,7 @@
       <IBtn
         variant="primary"
         class="text-base-100 w-full sm:w-auto"
+        @click="save"
       >
         <IconSave />
         Speichern
@@ -155,8 +156,7 @@
 
 <script lang="ts" setup>
 import type { Fertilizer, WateringSchemaFertilizer } from '../modules/nutrients/types'
-import type { Plant } from '../modules/plants/types'
-import dayjs from 'dayjs'
+import type {Plant, PourData} from '../modules/plants/types'
 import {
   MoveLeft as IconBack,
   Plus as IconPlus,
@@ -164,9 +164,12 @@ import {
   Trash as IconRemove,
   Check as IconSave,
 } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useModal } from '../composables/useModal.ts'
 import { usePouringForm } from '../composables/usePouringForm.ts'
+import { useToast } from '../composables/useToast.ts'
+import { REPO_PLANT } from '../di_keys.ts'
+import { err } from '../util.ts'
 import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
@@ -182,24 +185,28 @@ interface Props {
 }
 interface Emits {
   back: []
+  backAndSync: []
 }
 
 const { plant, fertilizers } = defineProps<Props>()
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
+
+const plantRepo = inject(REPO_PLANT)
 
 const { showModal } = useModal()
+const { toast } = useToast()
 
-// Todo: replace with proper fields
-const dateSample = ref(dayjs().format('YYYY-MM-DDTHH:mm'))
 const useFertilizer = ref(true)
 
 const {
   DEFAULT_AMOUNT,
+  date,
   amount,
   ph,
   ec,
   fertilizersData,
   errors,
+  validate,
 } = usePouringForm(plant)
 
 const plantName = computed(() => plant.name !== undefined && plant.name !== '' ? `${plant.name} (${plant.strain})` : plant.strain)
@@ -242,5 +249,35 @@ function openAddFertilizerModal() {
       await close()
     },
   })
+}
+
+async function save() {
+  const validationResult = await validate()
+  if (!validationResult.valid) {
+    toast('Bitte fülle alle Pflichtfelder aus', 'error')
+    return
+  }
+
+  const data: PourData = {
+    date: new Date(date.value).getTime(),
+    amount: amount.value,
+    ph: ph.value,
+    ec: ec.value,
+    fertilizers: fertilizersData.value.map(item => ({
+      id: item.fertilizer.id,
+      name: item.fertilizer.name,
+      manufacturer: item.fertilizer.manufacturer,
+      amount: item.amount,
+    })),
+  }
+
+  const result = await plantRepo?.pourPlant(data) || err(undefined)
+  if (!result.ok) {
+    toast('Es ist ein Fehler beim speichern des Gießeintrags aufgetreten', 'error')
+    return
+  }
+
+  toast('Gießeintrag erfolgreich gespeichert', 'success')
+  emit('backAndSync')
 }
 </script>
