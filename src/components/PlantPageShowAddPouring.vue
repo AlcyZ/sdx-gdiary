@@ -3,18 +3,23 @@
     class="w-full max-w-3xl"
     justify-actions-between
   >
-    <div class="flex items-center justify-between mb-5">
-      <ICardTitle class="text-3xl flex items-center">
-        Neuer Gießeintrag
+    <div class="px-4 py-4 border-b border-base-200">
+      <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-semibold">
+          Neuer Gießeintrag
+        </h1>
+
+        <IInputDatetime v-model="dateSample" />
+      </div>
+
+      <div class="flex mt-1">
         <IBadge
           variant="primary"
-          class="text-base-100"
+          class="text-base-100 text-sm py-1 px-2"
         >
           {{ plantName }}
         </IBadge>
-      </ICardTitle>
-
-      <IInputDatetime v-model="dateSample" />
+      </div>
     </div>
 
     <div>
@@ -152,7 +157,6 @@ import { usePouringForm } from '../composables/usePouringForm.ts'
 import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
-import ICardTitle from './ICardTitle.vue'
 import IFieldset from './IFieldset.vue'
 import IInputDatetime from './IInputDatetime.vue'
 import IInputNumber from './IInputNumber.vue'
