@@ -3,7 +3,7 @@
     class="w-full max-w-3xl"
     justify-actions-between
   >
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between mb-5">
       <ICardTitle class="text-3xl flex items-center">
         Neuer Gießeintrag
         <IBadge
@@ -17,7 +17,7 @@
       <IInputDatetime v-model="dateSample" />
     </div>
 
-    <div class="my-5">
+    <div>
       <h3 class="text-xl font-bold">
         Gießmenge & Messwerte
       </h3>
@@ -25,30 +25,38 @@
       <IInputNumber
         v-model="amount"
         label="Gießmenge (Liter)"
-        info="Wichtig für die Berechnung der Düngermenge."
         :error="errors.amount"
-        class="mt-3"
+        class="mt-6 mb-3"
         full-width
+        size="xl"
       />
 
-      <IInputNumber
-        v-model="ph"
-        label="pH-Wert"
-        :error="errors.ph"
-        class="mt-3"
-        full-width
-      />
+      <IFieldset
+        legend="Zusatzinformationen"
+      >
+        <IInputNumber
+          v-model="ph"
+          label="pH-Wert"
+          :error="errors.ph"
+          class="mt-3"
+          full-width
+          size="sm"
+        />
 
-      <IInputNumber
-        v-model="ec"
-        label="EC-Wert"
-        :error="errors.ec"
-        class="mt-3"
-        full-width
-      />
+        <IInputNumber
+          v-model="ec"
+          label="EC-Wert"
+          :error="errors.ec"
+          class="mt-3"
+          full-width
+          size="sm"
+        />
+      </IFieldset>
     </div>
 
-    <div class="my-5">
+    <hr class="my-4 text-base-300">
+
+    <div>
       <div class="flex items-center justify-between mb-1">
         <h3 class="text-xl font-bold">
           Verwendete Dünger
@@ -61,10 +69,10 @@
       <div
         v-if="useFertilizer"
       >
-        <div
+        <ICard
           v-for="(fertilizerData, i) in fertilizersData"
           :key="i"
-          class="py-2 border-t border-t-base-200"
+          class="my-2"
         >
           <div class="flex items-center justify-between">
             <span class="text-lg font-semibold">{{ fertilizerData.fertilizer.name }}</span>
@@ -73,18 +81,18 @@
               square
               outline
               variant="error"
-              size="sm"
+              size="lg"
               @click="removeFertilizer(i)"
             >
-              <IconRemove :size="20" />
+              <IconRemove />
             </IBtn>
           </div>
 
           <div
-            v-if="fertilizerData.recommended"
-            class="text-xs opacity-60"
+            class="text-xs opacity-60 border-b border-b-base-200"
           >
-            Empfohlene Menge des Schemas: {{ fertilizerData.recommended }}ml/L
+            <span v-if="fertilizerData.recommended">Empfohlene Menge des Schemas: {{ fertilizerData.recommended }}ml/L</span>
+            <span v-else>&nbsp;</span>
           </div>
 
           <div class="flex items-center ">
@@ -104,7 +112,7 @@
               {{ formatNumber(amount * fertilizerData.recommended) }}ml/L
             </IBtn>
           </div>
-        </div>
+        </ICard>
       </div>
 
       <IBtn
@@ -145,6 +153,7 @@ import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
+import IFieldset from './IFieldset.vue'
 import IInputDatetime from './IInputDatetime.vue'
 import IInputNumber from './IInputNumber.vue'
 import PlantPageShowAddPouringModalAddFertilizer from './PlantPageShowAddPouringModalAddFertilizer.vue'
@@ -173,7 +182,6 @@ const {
   ec,
   fertilizersData,
   errors,
-  validate,
 } = usePouringForm(plant)
 
 const plantName = computed(() => plant.name !== undefined && plant.name !== '' ? `${plant.name} (${plant.strain})` : plant.strain)
