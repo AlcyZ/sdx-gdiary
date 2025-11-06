@@ -63,7 +63,6 @@ import type { Fertilizer, WateringSchema, WateringSchemaFertilizer } from '../mo
 import {
   X as IconClose,
   Droplet as IconFertilizer,
-  Plus as IconPlus,
   RotateCcw as IconRestore,
 } from 'lucide-vue-next'
 import { computed } from 'vue'

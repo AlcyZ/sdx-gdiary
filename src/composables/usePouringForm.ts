@@ -1,8 +1,8 @@
 import type { InferType } from 'yup'
+import type { Plant } from '../modules/plants/types'
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
 import { array, number, object, string } from 'yup'
-import type {Plant} from "../modules/plants/types";
 
 const DEFAULT_AMOUNT = 1
 const ERR_AMOUNT_REQUIRED = 'Es muss eine Menge angegeben werden'
@@ -27,7 +27,7 @@ const pourSchema = object({
   fertilizers: array().of(fertilizerDataSchema),
 })
 
-type FormFertilizerData = InferType<typeof fertilizerDataSchema>
+export type FormFertilizerData = InferType<typeof fertilizerDataSchema>
 
 const validationSchema = toTypedSchema(pourSchema)
 
@@ -58,5 +58,6 @@ export function usePouringForm(plant: Plant) {
     fertilizersData,
     errors,
     validate,
+    DEFAULT_AMOUNT,
   }
 }
