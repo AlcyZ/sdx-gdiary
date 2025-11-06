@@ -1,6 +1,6 @@
 <template>
   <dialog ref="dialog" class="modal">
-    <div class="modal-box">
+    <div class="modal-box bg-[#fafafa]" :class="modalBoxClass">
       <slot />
 
       <div class="modal-action">
@@ -21,6 +21,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 
 interface Props {
   closeOnClickOutside?: boolean
+  modalBoxClass?: string
 }
 interface Emits {
   close: []

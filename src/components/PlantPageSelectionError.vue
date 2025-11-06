@@ -1,6 +1,7 @@
 <template>
   <ISelectionError
     text="Aufgrund eines Fehlers wurde die Pflanze nicht richtig ausgewählt."
+    @back="$emit('back')"
   />
 </template>
 

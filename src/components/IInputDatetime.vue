@@ -54,7 +54,7 @@ const formatted = computed(
 )
 
 const labelClass = computed(() => [
-    model.value === undefined ? 'opacity-60' : undefined
+  model.value === undefined ? 'opacity-60' : undefined,
 ])
 
 function openPicker() {
