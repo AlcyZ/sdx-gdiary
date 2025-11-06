@@ -65,7 +65,6 @@
           v-for="(fertilizerData, i) in fertilizersData"
           :key="i"
           class="py-2 border-t border-t-base-200"
-          :class="{'': i !== 0}"
         >
           <div class="flex items-center justify-between">
             <span class="text-lg font-semibold">{{ fertilizerData.fertilizer.name }}</span>
@@ -107,6 +106,15 @@
           </div>
         </div>
       </div>
+
+      <IBtn
+        variant="secondary"
+        class="w-full mt-2"
+        @click="openAddFertilizerModal"
+      >
+        <IconPlus />
+        Weiteren Dünger hinzufügen
+      </IBtn>
     </div>
 
     <template #actions>
@@ -130,6 +138,7 @@ import {
   MoveLeft as IconBack,
   Zap as IconQuick,
   Trash as IconRemove,
+    Plus as IconPlus,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
@@ -140,6 +149,8 @@ import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
 import IInputDatetime from './IInputDatetime.vue'
 import IInputNumber from './IInputNumber.vue'
+import {useModal} from "../composables/useModal.ts";
+import PlantPageShowAddPouringModalAddFertilizer from "./PlantPageShowAddPouringModalAddFertilizer.vue";
 
 interface Props {
   fertilizers: Array<Fertilizer>
@@ -151,6 +162,8 @@ interface Emits {
 
 const { plant, fertilizers } = defineProps<Props>()
 defineEmits<Emits>()
+
+const { showModal } = useModal()
 
 const DEFAULT_AMOUNT = 1
 const ERR_AMOUNT_REQUIRED = 'Es muss eine Menge angegeben werden'
@@ -215,5 +228,11 @@ function formatNumberToNumber(number: number): number {
 
 function removeFertilizer(index: number) {
   fertilizersData.value.splice(index, 1)
+}
+
+function openAddFertilizerModal() {
+  const { close } = showModal(PlantPageShowAddPouringModalAddFertilizer, {
+    foo: 'Bar'
+  })
 }
 </script>
