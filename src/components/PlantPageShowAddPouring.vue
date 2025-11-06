@@ -129,28 +129,25 @@
 </template>
 
 <script lang="ts" setup>
-import type { InferType } from 'yup'
 import type { Fertilizer } from '../modules/nutrients/types'
 import type { Plant } from '../modules/plants/types'
-import { toTypedSchema } from '@vee-validate/yup'
 import dayjs from 'dayjs'
 import {
   MoveLeft as IconBack,
+  Plus as IconPlus,
   Zap as IconQuick,
   Trash as IconRemove,
-    Plus as IconPlus,
 } from 'lucide-vue-next'
-import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
-import { array, number, object, string } from 'yup'
+import { useModal } from '../composables/useModal.ts'
+import { usePouringForm } from '../composables/usePouringForm.ts'
 import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
 import IInputDatetime from './IInputDatetime.vue'
 import IInputNumber from './IInputNumber.vue'
-import {useModal} from "../composables/useModal.ts";
-import PlantPageShowAddPouringModalAddFertilizer from "./PlantPageShowAddPouringModalAddFertilizer.vue";
+import PlantPageShowAddPouringModalAddFertilizer from './PlantPageShowAddPouringModalAddFertilizer.vue'
 
 interface Props {
   fertilizers: Array<Fertilizer>
@@ -165,55 +162,18 @@ defineEmits<Emits>()
 
 const { showModal } = useModal()
 
-const DEFAULT_AMOUNT = 1
-const ERR_AMOUNT_REQUIRED = 'Es muss eine Menge angegeben werden'
-const ERR_AMOUNT_TYPE = 'Es muss eine Zahl angegeben werden'
-
-// Todo: replace
+// Todo: replace with proper fields
 const dateSample = ref(dayjs().format('YYYY-MM-DDTHH:mm'))
 const useFertilizer = ref(true)
 
-const fertilizerSchema = object({
-  id: number().required(),
-  name: string().required(),
-  manufacturer: string().optional(),
-})
-
-const fertilizerDataSchema = object({
-  fertilizer: fertilizerSchema,
-  recommended: number().optional(),
-  amount: number().required(ERR_AMOUNT_REQUIRED),
-})
-
-const pourSchema = object({
-  amount: number().typeError(ERR_AMOUNT_TYPE).required(ERR_AMOUNT_REQUIRED),
-  ph: number().optional(),
-  ec: number().optional(),
-  fertilizers: array().of(fertilizerDataSchema),
-})
-
-type FormFertilizerData = InferType<typeof fertilizerDataSchema>
-
-const validationSchema = toTypedSchema(pourSchema)
-
-const { errors, defineField, validate } = useForm({
-  validationSchema,
-  initialValues: {
-    amount: DEFAULT_AMOUNT,
-    fertilizers: plant.wateringSchema?.fertilizers
-      .map((item): FormFertilizerData => ({
-        fertilizer: item.fertilizer,
-        recommended: item.amount,
-        amount: item.amount * DEFAULT_AMOUNT,
-      }))
-      || [],
-  },
-})
-
-const [amount] = defineField<'amount', number>('amount')
-const [ph] = defineField('ph')
-const [ec] = defineField('ec')
-const [fertilizersData] = defineField<'fertilizers', Array<FormFertilizerData>>('fertilizers')
+const {
+  amount,
+  ph,
+  ec,
+  fertilizersData,
+  errors,
+  validate,
+} = usePouringForm(plant)
 
 const plantName = computed(() => plant.name !== undefined && plant.name !== '' ? `${plant.name} (${plant.strain})` : plant.strain)
 
@@ -232,7 +192,7 @@ function removeFertilizer(index: number) {
 
 function openAddFertilizerModal() {
   const { close } = showModal(PlantPageShowAddPouringModalAddFertilizer, {
-    foo: 'Bar'
+    foo: 'Bar',
   })
 }
 </script>
