@@ -1,24 +1,73 @@
 <template>
   <ICard
-    class="w-full max-w-3xl"
+    class="w-full max-w-2xl"
     justify-actions-between
   >
     <div class="flex items-center justify-between">
-      <ICardTitle class="text-3xl flex items-center">
-        Neuer Gießeintrag
-        <IBadge
-          variant="primary"
-          class="text-base-100"
-        >
-          {{ plantName }}
-        </IBadge>
+      <ICardTitle class="text-3xl">
+        Gießeintrag erstellen
       </ICardTitle>
 
-      <IInputDatetime v-model="dateSample" />
+      <IBtn
+        ghost
+        @click="addFertilizer"
+      >
+        <IconAdd />
+      </IBtn>
     </div>
 
-    <div class="my-5">
-      so!
+    <div class="my-4">
+      <InputTextFloat
+        v-model="amount"
+        label="Wie viel Liter hast du gegossen?"
+        type="number"
+        class="py-3 border-b border-gray-300"
+      />
+      <div
+        v-for="(fertilizer, i) in fertilizersData"
+        :key="i"
+        class="flex items-center justify-between border-b border-gray-300 py-3"
+      >
+        <div class="">
+          <label class="select">
+            <span class="label">Dünger</span>
+            <select
+              v-model="fertilizer.fertilizer"
+            >
+              <option
+                v-for="(item, j) in fertilizers"
+                :key="j"
+                :value="item"
+                :disabled="isSelected(item)"
+              >
+                {{ getFertilizerName(item) }}
+              </option>
+            </select>
+          </label>
+
+          <div>
+            <label class="input">
+              <span class="label">Menge</span>
+              <input
+                v-model.number="fertilizer.amount"
+                type="number"
+                placeholder="soso"
+              >
+            </label>
+            <span class="text-xs opacity-40">
+              sososo lala <span class="font-semibold opacity-60">bla bla</span> la haha
+            </span>
+          </div>
+        </div>
+
+        <IBtn
+          square
+          ghost
+          @click="removeItem(i)"
+        >
+          <IconClose />
+        </IBtn>
+      </div>
     </div>
 
     <template #actions>
@@ -26,8 +75,25 @@
         @click="$emit('back')"
       >
         <IconBack />
-        Zurück
+        Back
       </IBtn>
+
+      <div class="join">
+        <IBtn
+          :disabled="amount === undefined"
+          @click="applyRecommended"
+        >
+          Apply
+        </IBtn>
+
+        <IBtn
+          variant="primary"
+          class="text-base-100"
+        >
+          <IconSave />
+          Speichern
+        </IBtn>
+      </div>
     </template>
   </ICard>
 </template>
@@ -37,18 +103,18 @@ import type { InferType } from 'yup'
 import type { Fertilizer } from '../modules/nutrients/types'
 import type { Plant } from '../modules/plants/types'
 import { toTypedSchema } from '@vee-validate/yup'
-import dayjs from 'dayjs'
 import {
+  CirclePlus as IconAdd,
   MoveLeft as IconBack,
+  CircleMinus as IconClose,
+  Save as IconSave,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
-import { computed, ref } from 'vue'
 import { array, number, object, string } from 'yup'
-import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 import ICardTitle from './ICardTitle.vue'
-import IInputDatetime from './IInputDatetime.vue'
+import InputTextFloat from './InputTextFloat.vue'
 
 interface Props {
   fertilizers: Array<Fertilizer>
@@ -63,8 +129,6 @@ defineEmits<Emits>()
 
 const DEFAULT_AMOUNT = 1
 const ERR_AMOUNT_REQUIRED = 'Es muss eine Menge angegeben werden'
-
-const dateSample = ref(dayjs().format('YYYY-MM-DDTHH:mm'))
 
 const fertilizerSchema = object({
   id: number().required(),
@@ -104,8 +168,6 @@ const { errors, defineField, validate } = useForm({
 
 const [amount] = defineField<'amount', number>('amount')
 const [fertilizersData] = defineField<'fertilizers', Array<FormFertilizerData>>('fertilizers')
-
-const plantName = computed(() => plant.name !== undefined && plant.name !== '' ? `${plant.name} (${plant.strain})` : plant.strain)
 
 function addFertilizer() {
   const fertilizer = fertilizers.filter(
