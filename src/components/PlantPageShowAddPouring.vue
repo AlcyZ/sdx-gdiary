@@ -1,8 +1,11 @@
 <template>
   <ICard
     class="w-full max-w-3xl"
+    class-actions="border-t border-t-base-200 pt-1 mt-2"
     justify-actions-between
   >
+    <IMobileBack @back="$emit('back')" />
+
     <div class="px-4 py-4 border-b border-base-200">
       <div class="flex items-center justify-between">
         <h1 class="text-3xl font-semibold">
@@ -132,10 +135,19 @@
 
     <template #actions>
       <IBtn
+        class="hidden sm:flex"
         @click="$emit('back')"
       >
         <IconBack />
         Zurück
+      </IBtn>
+
+      <IBtn
+        variant="primary"
+        class="text-base-100 w-full sm:w-auto"
+      >
+        <IconSave />
+        Speichern
       </IBtn>
     </template>
   </ICard>
@@ -150,6 +162,7 @@ import {
   Plus as IconPlus,
   Zap as IconQuick,
   Trash as IconRemove,
+  Check as IconSave,
 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { useModal } from '../composables/useModal.ts'
@@ -160,6 +173,7 @@ import ICard from './ICard.vue'
 import IFieldset from './IFieldset.vue'
 import IInputDatetime from './IInputDatetime.vue'
 import IInputNumber from './IInputNumber.vue'
+import IMobileBack from './IMobileBack.vue'
 import PlantPageShowAddPouringModalAddFertilizer from './PlantPageShowAddPouringModalAddFertilizer.vue'
 
 interface Props {
