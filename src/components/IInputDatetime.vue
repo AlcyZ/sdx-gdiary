@@ -58,7 +58,6 @@ const labelClass = computed(() => [
 ])
 
 function openPicker() {
-  console.info('sososo!')
   input.value?.showPicker()
   input.value?.focus()
 }
