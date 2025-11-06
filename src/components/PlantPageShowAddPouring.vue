@@ -129,7 +129,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Fertilizer } from '../modules/nutrients/types'
+import type { Fertilizer, WateringSchemaFertilizer } from '../modules/nutrients/types'
 import type { Plant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
@@ -167,6 +167,7 @@ const dateSample = ref(dayjs().format('YYYY-MM-DDTHH:mm'))
 const useFertilizer = ref(true)
 
 const {
+  DEFAULT_AMOUNT,
   amount,
   ph,
   ec,
@@ -191,8 +192,29 @@ function removeFertilizer(index: number) {
 }
 
 function openAddFertilizerModal() {
+  const addSchemaFertilizer = (item: WateringSchemaFertilizer) => fertilizersData.value.push({
+    fertilizer: item.fertilizer,
+    amount: formatNumberToNumber(amount.value * item.amount),
+    recommended: item.amount,
+  })
+
+  const addFertilizer = (item: Fertilizer) => fertilizersData.value.push({
+    fertilizer: item,
+    amount: DEFAULT_AMOUNT,
+  })
+
   const { close } = showModal(PlantPageShowAddPouringModalAddFertilizer, {
-    foo: 'Bar',
+    fertilizers,
+    wateringSchema: plant.wateringSchema,
+    data: fertilizersData.value,
+    onAddSchemaFertilizer: async (item: WateringSchemaFertilizer) => {
+      addSchemaFertilizer(item)
+      await close()
+    },
+    onAddFertilizer: async (item: Fertilizer) => {
+      addFertilizer(item)
+      await close()
+    },
   })
 }
 </script>
