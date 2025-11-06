@@ -48,6 +48,67 @@
       />
     </div>
 
+    <div class="my-5">
+      <div class="flex items-center justify-between mb-1">
+        <h3 class="text-xl font-bold">
+          Verwendete Dünger
+        </h3>
+
+        <input v-model="useFertilizer" type="checkbox" class="toggle">
+      </div>
+
+      <!-- fertilizers container -->
+      <div
+        v-if="useFertilizer"
+      >
+        <div
+          v-for="(fertilizerData, i) in fertilizersData"
+          :key="i"
+          class="py-2 border-t border-t-base-200"
+          :class="{'': i !== 0}"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-lg font-semibold">{{ fertilizerData.fertilizer.name }}</span>
+
+            <IBtn
+              square
+              outline
+              variant="error"
+              size="sm"
+              @click="removeFertilizer(i)"
+            >
+              <IconRemove :size="20" />
+            </IBtn>
+          </div>
+
+          <div
+            v-if="fertilizerData.recommended"
+            class="text-xs opacity-60"
+          >
+            Empfohlene Menge des Schemas: {{ fertilizerData.recommended }}ml/L
+          </div>
+
+          <div class="flex items-center ">
+            <input
+              v-model="fertilizerData.amount"
+              type="number"
+              class="input mr-6"
+            >
+
+            <IBtn
+              v-if="fertilizerData.recommended"
+              outline
+              variant="accent"
+              @click="fertilizerData.amount = formatNumberToNumber(amount * fertilizerData.recommended)"
+            >
+              <IconQuick />
+              {{ formatNumber(amount * fertilizerData.recommended) }}ml/L
+            </IBtn>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <template #actions>
       <IBtn
         @click="$emit('back')"
@@ -67,6 +128,8 @@ import { toTypedSchema } from '@vee-validate/yup'
 import dayjs from 'dayjs'
 import {
   MoveLeft as IconBack,
+  Zap as IconQuick,
+  Trash as IconRemove,
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
@@ -91,8 +154,11 @@ defineEmits<Emits>()
 
 const DEFAULT_AMOUNT = 1
 const ERR_AMOUNT_REQUIRED = 'Es muss eine Menge angegeben werden'
+const ERR_AMOUNT_TYPE = 'Es muss eine Zahl angegeben werden'
 
+// Todo: replace
 const dateSample = ref(dayjs().format('YYYY-MM-DDTHH:mm'))
+const useFertilizer = ref(true)
 
 const fertilizerSchema = object({
   id: number().required(),
@@ -101,20 +167,19 @@ const fertilizerSchema = object({
 })
 
 const fertilizerDataSchema = object({
-  schemaFertilizerId: number().optional(),
-  amount: number().required(ERR_AMOUNT_REQUIRED),
   fertilizer: fertilizerSchema,
+  recommended: number().optional(),
+  amount: number().required(ERR_AMOUNT_REQUIRED),
 })
 
 const pourSchema = object({
-  amount: number().required(ERR_AMOUNT_REQUIRED),
+  amount: number().typeError(ERR_AMOUNT_TYPE).required(ERR_AMOUNT_REQUIRED),
   ph: number().optional(),
   ec: number().optional(),
   fertilizers: array().of(fertilizerDataSchema),
 })
 
 type FormFertilizerData = InferType<typeof fertilizerDataSchema>
-type _FormPourData = InferType<typeof pourSchema>
 
 const validationSchema = toTypedSchema(pourSchema)
 
@@ -124,9 +189,9 @@ const { errors, defineField, validate } = useForm({
     amount: DEFAULT_AMOUNT,
     fertilizers: plant.wateringSchema?.fertilizers
       .map((item): FormFertilizerData => ({
-        schemaFertilizerId: item.id,
-        amount: item.amount,
         fertilizer: item.fertilizer,
+        recommended: item.amount,
+        amount: item.amount * DEFAULT_AMOUNT,
       }))
       || [],
   },
@@ -139,61 +204,16 @@ const [fertilizersData] = defineField<'fertilizers', Array<FormFertilizerData>>(
 
 const plantName = computed(() => plant.name !== undefined && plant.name !== '' ? `${plant.name} (${plant.strain})` : plant.strain)
 
-function addFertilizer() {
-  const fertilizer = fertilizers.filter(
-    fertilizer => fertilizersData.value.every(dataset => dataset.fertilizer.id !== fertilizer.id),
-  )[0]
-  if (fertilizer === undefined)
-    return
-
-  fertilizersData.value.push({
-    amount: DEFAULT_AMOUNT,
-    fertilizer,
-  })
-}
-
-function removeItem(index: number) {
-  fertilizersData.value.splice(index, 1)
-}
-
-function isSelected(fertilizer: Fertilizer): boolean {
-  return fertilizersData.value.some(dataset => dataset.fertilizer.id === fertilizer.id)
-}
-
-function getRecommended(data: FormFertilizerData): number | undefined {
-  const recommendedPerLiter = plant.wateringSchema
-    ?.fertilizers
-    .find(item => item.id === data.schemaFertilizerId)
-    ?.amount
-
-  if (recommendedPerLiter === undefined || amount.value === undefined)
-    return undefined
-
-  return recommendedPerLiter * amount.value
-}
-
-function getFertilizerName(fertilizer: Fertilizer): string {
-  return fertilizer.manufacturer !== undefined && fertilizer.manufacturer !== ''
-    ? `${fertilizer.manufacturer} - ${fertilizer.name}`
-    : fertilizer.name
-}
-
-function getRecommendedFormatted(data: FormFertilizerData): string | undefined {
-  const value = getRecommended(data)
-  if (value === undefined)
-    return undefined
-
+function formatNumber(number: number): string {
   const format = new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
-  return format.format(value)
+  return format.format(number)
 }
 
-function applyRecommended() {
-  for (let i = 0; i < fertilizersData.value.length; i++) {
-    const recommended = getRecommended(fertilizersData.value[i]!)
-    if (recommended === undefined)
-      continue
+function formatNumberToNumber(number: number): number {
+  return Number(formatNumber(number))
+}
 
-    fertilizersData.value[i]!.amount = recommended
-  }
+function removeFertilizer(index: number) {
+  fertilizersData.value.splice(index, 1)
 }
 </script>
