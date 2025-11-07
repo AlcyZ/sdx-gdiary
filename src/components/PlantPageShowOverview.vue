@@ -1,48 +1,71 @@
 <template>
-  <IMobileBack @back="$emit('back')" />
-  <ICard
-    class="w-full max-w-3xl"
-  >
-    <div class="flex justify-between items-baseline">
-      <h1 class="text-3xl font-bold">
-        {{ plantName }}
-      </h1>
-      <span class="text-sm text-gray-400">Tag {{ plantAge }} ({{ currentPhase.label }})</span>
-    </div>
+  <div class="w-full flex flex-col items-center gap-y-5">
+    <IMobileBack @back="$emit('back')" />
+    <ICard
+      class="w-full max-w-3xl"
+    >
+      <div class="flex justify-between items-baseline">
+        <h1 class="text-3xl font-bold">
+          {{ plantName }}
+        </h1>
+        <span class="text-sm text-gray-400">Tag {{ plantAge }} ({{ currentPhase.label }})</span>
+      </div>
 
-    <div class="flex space-x-2 mt-3">
-      <IBadge variant="accent" class="text-base-100">
-        <component :is="currentPhase.icon" :size="14" />
-        {{ currentPhase.label }}
-      </IBadge>
+      <div class="flex space-x-2 mt-3">
+        <IBadge variant="accent" class="text-base-100">
+          <component :is="currentPhase.icon" :size="14" />
+          {{ currentPhase.label }}
+        </IBadge>
 
-      <IBadge variant="neutral" class="text-base-100">
-        <component :is="substrate.icon" :size="14" />
-        {{ substrate.label }} ({{ substrate.size }})
-      </IBadge>
-    </div>
+        <IBadge variant="neutral" class="text-base-100">
+          <component :is="substrate.icon" :size="14" />
+          {{ substrate.label }} ({{ substrate.size }})
+        </IBadge>
+      </div>
+    </ICard>
 
-    <template #actions>
+    <ICard
+      class="w-full max-w-3xl"
+    >
       <IBtn
+        variant="accent"
+        class="w-full text-base-100"
+        size="lg"
+        @click="$emit('addPour')"
+      >
+        <IconPlus />
+        Neuer Gieß-Eintrag
+      </IBtn>
+    </ICard>
+
+    <ICard
+      class="w-full max-w-3xl hidden sm:flex"
+    >
+      <IBtn
+        class="w-full"
         @click="$emit('back')"
-      >Zurück</IBtn>
-    </template>
-  </ICard>
+      >
+        Zurück
+      </IBtn>
+    </ICard>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
 import type { Plant, PlantPhase } from '../modules/plants/types'
-
+import dayjs from 'dayjs'
+import {
+  Plus as IconPlus,
+} from 'lucide-vue-next'
 import { formatDate } from 'sdx-php-date'
 import { computed } from 'vue'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import IBadge from './IBadge.vue'
+import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
-import dayjs from "dayjs";
-import IMobileBack from "./IMobileBack.vue";
-import IBtn from "./IBtn.vue";
+import IMobileBack from './IMobileBack.vue'
 
 interface Props {
   plant: Plant
