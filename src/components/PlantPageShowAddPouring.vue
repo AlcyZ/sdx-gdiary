@@ -260,6 +260,7 @@ async function save() {
   }
 
   const data: NewWateringLog = {
+    plantId: plant.id,
     date: new Date(date.value).getTime(),
     amount: amount.value,
     ph: ph.value,
