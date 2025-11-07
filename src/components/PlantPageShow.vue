@@ -3,6 +3,7 @@
     v-if="page === 'show'"
     :plant="plant"
     @add-pour="changePage('add-pour')"
+    @back="$emit('back')"
   />
   <PlantPageShowAddPouring
     v-else-if="page === 'add-pour'"
@@ -35,7 +36,7 @@ const emit = defineEmits<Emits>()
 
 type Subpage = 'show' | 'add-pour'
 
-const { page, changePage } = usePage<Subpage>('add-pour')
+const { page, changePage } = usePage<Subpage>('show')
 
 function back() {
   changePage('show')

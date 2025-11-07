@@ -1,89 +1,31 @@
 <template>
+  <IMobileBack @back="$emit('back')" />
   <ICard
-    class="w-full max-w-2xl"
-    class-actions="justify-between"
+    class="w-full max-w-3xl"
   >
-    <h1 class="text-4xl font-bold text-primary border-b border-b-base-200 mb-3">
-      {{ plantName }}
-    </h1>
+    <div class="flex justify-between items-baseline">
+      <h1 class="text-3xl font-bold">
+        {{ plantName }}
+      </h1>
+      <span class="text-sm text-gray-400">Tag {{ plantAge }} ({{ currentPhase.label }})</span>
+    </div>
 
-    <IStats class="shadow mt-2">
-      <IStat>
-        <IStatTitle>Substrat</IStatTitle>
-        <IStatValue>{{ plant.substrate.substrate }} ({{ plant.substrate.size }})</IStatValue>
-        <IStatDesc>{{ plant.substrate.info || 'Keine weiteren Informationen zum Substrat' }}</IStatDesc>
-      </IStat>
+    <div class="flex space-x-2 mt-3">
+      <IBadge variant="accent" class="text-base-100">
+        <component :is="currentPhase.icon" :size="14" />
+        {{ currentPhase.label }}
+      </IBadge>
 
-      <IStat>
-        <IStatTitle>Startdatum</IStatTitle>
-        <IStatValue>{{ plantStartDate }}</IStatValue>
-        <IStatDesc>Der Grow ist am {{ plantStartDate }} gestartet worden</IStatDesc>
-      </IStat>
-    </IStats>
-
-    <div class="mt-2 grid grid-cols-1 sm:grid-cols-2">
-      <div>
-        <h2 class="text-xl font-semibold">
-          Timeline
-        </h2>
-        <ITimeline
-          vertical
-          :items="plantPhases"
-        >
-          <template #item="{ item, key }: { item: PhaseData, key: number }">
-            <ITimelineItem
-              box-start
-              :hide-start-line="key === 0"
-              :hide-end-line="key === (plantPhases.length - 1)"
-            >
-              <template #start>
-                {{ item.started }}
-              </template>
-
-              <template #middle>
-                <div class="border rounded-full p-1.5 flex items-center justify-center bg-neutral text-base-200">
-                  <component
-                    :is="item.icon"
-                    size="18"
-                  />
-                </div>
-              </template>
-
-              <template #end>
-                {{ item.label }}
-              </template>
-            </ITimelineItem>
-          </template>
-        </ITimeline>
-      </div>
-      <div />
+      <IBadge variant="neutral" class="text-base-100">
+        <component :is="substrate.icon" :size="14" />
+        {{ substrate.label }} ({{ substrate.size }})
+      </IBadge>
     </div>
 
     <template #actions>
       <IBtn
         @click="$emit('back')"
-      >
-        <IconBack />
-        Zurück
-      </IBtn>
-
-      <div class="join">
-        <IBtn
-          class="join-item"
-        >
-          <IconImage />
-          Bild hinzufügen
-        </IBtn>
-
-        <IBtn
-          variant="neutral"
-          class="join-item"
-          @click="$emit('addPour')"
-        >
-          <IconWater />
-          Gießeintrag hinzufügen
-        </IBtn>
-      </div>
+      >Zurück</IBtn>
     </template>
   </ICard>
 </template>
@@ -91,24 +33,16 @@
 <script lang="ts" setup>
 import type { Component } from 'vue'
 import type { Plant, PlantPhase } from '../modules/plants/types'
-import {
-  MoveLeft as IconBack,
-  Image as IconImage,
-  Droplet as IconWater,
-} from 'lucide-vue-next'
+
 import { formatDate } from 'sdx-php-date'
 import { computed } from 'vue'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
-import { now } from '../util.ts'
-import IBtn from './IBtn.vue'
+import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
+import IBadge from './IBadge.vue'
 import ICard from './ICard.vue'
-import IStat from './IStat.vue'
-import IStatDesc from './IStatDesc.vue'
-import IStats from './IStats.vue'
-import IStatTitle from './IStatTitle.vue'
-import IStatValue from './IStatValue.vue'
-import ITimeline from './ITimeline.vue'
-import ITimelineItem from './ITimelineItem.vue'
+import dayjs from "dayjs";
+import IMobileBack from "./IMobileBack.vue";
+import IBtn from "./IBtn.vue";
 
 interface Props {
   plant: Plant
@@ -124,6 +58,7 @@ const { plant } = defineProps<Props>()
 defineEmits<Emits>()
 
 const { getPhaseIcon, getPhaseLabel } = usePlantPhase()
+const { getSubstrateIcon, getSubstrateLabel } = usePlantSubstrate()
 
 const plantName = computed(() => {
   const fallback = plant?.strain || 'Unknown'
@@ -133,6 +68,29 @@ const plantName = computed(() => {
   }
 
   return fallback
+})
+
+const currentPhase = computed(() => ({
+  phase: plant.phase.phase,
+  label: getPhaseLabel(plant.phase.phase),
+  icon: getPhaseIcon(plant.phase.phase),
+}))
+
+const substrate = computed(() => ({
+  substrate: plant.substrate.substrate,
+  label: getSubstrateLabel(plant.substrate.substrate),
+  icon: getSubstrateIcon(plant.substrate.substrate),
+  size: plant.substrate.size,
+}))
+
+const plantAge = computed(() => {
+  const startDateString = plant.phases.find(phase => phase.phase === 'germination')?.startedAt
+    || dayjs().format('YYYY-MM-DDTHH:mm')
+
+  const startDate = dayjs(startDateString)
+  const compareDate = plant.phase.phase === 'germination' ? dayjs() : dayjs(plant.phase.startedAt)
+
+  return compareDate.diff(startDate, 'days')
 })
 
 const plantPhases = computed(
@@ -145,13 +103,6 @@ const plantPhases = computed(
     }))
     || [],
 )
-
-const plantStartDate = computed(() => {
-  const dateString = plant?.phases.find(p => p.phase === 'germination')?.startedAt || now()
-  const date = new Date(dateString)
-
-  return formatDate('d.m.Y', date)
-})
 
 function formatStartedAt(startedAt: string): string {
   const date = new Date(startedAt)
