@@ -1,10 +1,24 @@
-import type { IDBPDatabase, IDBPTransaction } from 'idb'
+import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
-import type { GetPlantError, Plant, PlantPhaseRow, PlantRow, PlantSubstrate } from './types'
+import type { GetPlantError, Plant, PlantPhaseRow, PlantRow, PlantSubstrate, WateringLog } from './types'
 import { err, none, ok } from '../../util.ts'
-import { getDb, INDEX_PLANT_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANTS } from '../db'
+import {
+  getDb,
+  INDEX_PLANT_ID,
+  TABLE_PLANT_PHASES,
+  TABLE_PLANT_SUBSTRATES,
+  TABLE_PLANT_WATERING_LOGS,
+  TABLE_PLANTS,
+} from '../db'
 import WateringSchemaReadRepository from '../nutrients/watering_schema_read_repository.ts'
-import { isPlantPhaseRow, isPlantRow, isPlantSubstrateRow } from './guard.ts'
+import { isPlantPhaseRow, isPlantRow, isPlantSubstrateRow, isWateringLogRow } from './guard.ts'
+
+type PlantRepoTxStores
+  = (typeof TABLE_PLANTS
+    | typeof TABLE_PLANT_SUBSTRATES
+    | typeof TABLE_PLANT_PHASES
+    | typeof TABLE_PLANT_WATERING_LOGS
+  )[]
 
 export default class PlantReadRepository {
   private readonly db: IDBPDatabase
@@ -22,8 +36,12 @@ export default class PlantReadRepository {
   }
 
   public async getAll(): Promise<Array<Plant>> {
-    const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES])
-
+    const tx = this.db.transaction([
+      TABLE_PLANTS,
+      TABLE_PLANT_SUBSTRATES,
+      TABLE_PLANT_PHASES,
+      TABLE_PLANT_WATERING_LOGS,
+    ])
     const plantStore = tx.objectStore(TABLE_PLANTS)
 
     const plantData = await plantStore.getAll()
@@ -43,7 +61,12 @@ export default class PlantReadRepository {
   }
 
   public async getById(id: number): Promise<Result<Plant, GetPlantError>> {
-    const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES])
+    const tx = this.db.transaction([
+      TABLE_PLANTS,
+      TABLE_PLANT_SUBSTRATES,
+      TABLE_PLANT_PHASES,
+      TABLE_PLANT_WATERING_LOGS,
+    ])
     const store = tx.objectStore(TABLE_PLANTS)
 
     const plantData = await store.get(id)
@@ -64,10 +87,7 @@ export default class PlantReadRepository {
 
   private async createPlant(
     plantData: PlantRow,
-    tx: IDBPTransaction<
-      unknown,
-      (typeof TABLE_PLANTS | typeof TABLE_PLANT_SUBSTRATES | typeof TABLE_PLANT_PHASES)[]
-    >,
+    tx: IDBPTransaction<unknown, PlantRepoTxStores>,
   ): Promise<Result<Plant, string>> {
     const [substrateResult, phasesResult] = await Promise.all([
       this.fetchSubstrate(plantData, tx),
@@ -76,6 +96,9 @@ export default class PlantReadRepository {
 
     if (substrateResult.ok && phasesResult.ok) {
       const phase = this.getCurrentPhase(phasesResult.value)
+
+      const wateringLogsStore = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
+      const wateringLogs = await this.fetchWateringLogs(plantData.id, wateringLogsStore)
 
       const wateringSchemaResult = await this.wateringRepo.getById(plantData.id) || none()
       const wateringSchema = wateringSchemaResult.exist ? wateringSchemaResult.value : undefined
@@ -88,7 +111,7 @@ export default class PlantReadRepository {
         phases: phasesResult.value,
         phase,
         wateringSchema,
-        wateringLogs: [],
+        wateringLogs,
         createdAt: 'todo',
         updatedAt: 'todo',
       })
@@ -103,9 +126,27 @@ export default class PlantReadRepository {
     return err(message.join('. '))
   }
 
+  private async fetchWateringLogs(
+    plantId: number,
+    store: IDBPObjectStore<unknown, ArrayLike<string>, typeof TABLE_PLANT_WATERING_LOGS>,
+  ): Promise<Array<WateringLog>> {
+    const index = store.index(INDEX_PLANT_ID)
+    const logs = await index.getAll(plantId)
+
+    return logs.filter(isWateringLogRow)
+      .map((row): WateringLog => ({
+        id: row.id,
+        amount: row.amount,
+        ec: row.ec,
+        ph: row.ph,
+        date: row.date,
+        fertilizers: row.fertilizers,
+      }))
+  }
+
   private async fetchSubstrate(
     plant: PlantRow,
-    tx: IDBPTransaction<unknown, (typeof TABLE_PLANTS | typeof TABLE_PLANT_SUBSTRATES | typeof TABLE_PLANT_PHASES)[]>,
+    tx: IDBPTransaction<unknown, PlantRepoTxStores>,
   ): Promise<Result<PlantSubstrate, string>> {
     const store = tx.objectStore(TABLE_PLANT_SUBSTRATES)
     const index = store.index(INDEX_PLANT_ID)
@@ -141,7 +182,7 @@ export default class PlantReadRepository {
 
   private async fetchPhases(
     plant: PlantRow,
-    tx: IDBPTransaction<unknown, (typeof TABLE_PLANTS | typeof TABLE_PLANT_SUBSTRATES | typeof TABLE_PLANT_PHASES)[]>,
+    tx: IDBPTransaction<unknown, PlantRepoTxStores>,
   ): Promise<Result<Array<PlantPhaseRow>, string>> {
     const store = tx.objectStore(TABLE_PLANT_PHASES)
     const index = store.index(INDEX_PLANT_ID)
