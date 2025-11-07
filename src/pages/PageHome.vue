@@ -27,11 +27,14 @@ defineEmits<Emits>()
 const { showToast } = useToast()
 
 async function seedPlants() {
-  const count = 5
+  const count = 6
   const seeder = await DevSeeder.create()
 
-  await seeder.seed()
-
-  console.info('done?')
+  await seeder.seed(count)
+  showToast({
+    message: 'Seeder seed successfully!',
+    variant: 'success',
+    duration: 2000,
+  })
 }
 </script>
