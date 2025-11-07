@@ -29,46 +29,12 @@ export default class PlantReadRepository {
     const plantData = await plantStore.getAll()
     const plantRows = plantData.filter((row: any): boolean => isPlantRow(row)) as Array<PlantRow>
 
-    const plantResultsPromise = plantRows.map(async (row: PlantRow): Promise<Result<Plant, Array<string>>> => {
-      const [substrateResult, phasesResult] = await Promise.all([
-        this.fetchSubstrate(row, tx),
-        this.fetchPhases(row, tx),
-      ])
-
-      if (substrateResult.ok && phasesResult.ok) {
-        const phase = this.getCurrentPhase(phasesResult.value)
-        const wateringSchemaResult = row.wateringSchemaId
-          ? await this.wateringRepo.getById(row.wateringSchemaId)
-          : none()
-        const wateringSchema = wateringSchemaResult.exist ? wateringSchemaResult.value : undefined
-
-        return ok({
-          id: row.id,
-          strain: row.strain,
-          name: row.name,
-          substrate: substrateResult.value,
-          phases: phasesResult.value,
-          phase,
-          wateringSchema,
-          createdAt: 'todo',
-          updatedAt: 'todo',
-        })
-      }
-
-      const errors: Array<string> = []
-
-      if (!substrateResult.ok)
-        errors.push(substrateResult.error)
-      if (!phasesResult.ok)
-        errors.push(phasesResult.error)
-
-      return err(errors)
-    })
+    const plantResultsPromise = plantRows.map((row: PlantRow) => this.createPlant(row, tx))
 
     const plantResults = await Promise.all(plantResultsPromise)
     for (const result of plantResults) {
       if (!result.ok) {
-        console.warn('[PlantReadRepository.getAll] - Found some invalid datasets: ', result.error.join('. '))
+        console.warn('[PlantReadRepository.getAll] - Found some invalid datasets: ', result.error)
       }
     }
 
@@ -89,6 +55,20 @@ export default class PlantReadRepository {
       return err({ kind: 'invalid-data', message: 'Ungültiger Pflanzendatensatz' })
     }
 
+    const plantResult = await this.createPlant(plantData, tx)
+    if (plantResult.ok)
+      return ok(plantResult.value)
+
+    return err({ kind: 'invalid-data', message: plantResult.error })
+  }
+
+  private async createPlant(
+    plantData: PlantRow,
+    tx: IDBPTransaction<
+      unknown,
+      (typeof TABLE_PLANTS | typeof TABLE_PLANT_SUBSTRATES | typeof TABLE_PLANT_PHASES)[]
+    >,
+  ): Promise<Result<Plant, string>> {
     const [substrateResult, phasesResult] = await Promise.all([
       this.fetchSubstrate(plantData, tx),
       this.fetchPhases(plantData, tx),
@@ -96,6 +76,10 @@ export default class PlantReadRepository {
 
     if (substrateResult.ok && phasesResult.ok) {
       const phase = this.getCurrentPhase(phasesResult.value)
+
+      const wateringSchemaResult = await this.wateringRepo.getById(plantData.id) || none()
+      const wateringSchema = wateringSchemaResult.exist ? wateringSchemaResult.value : undefined
+
       return ok({
         id: plantData.id,
         strain: plantData.strain,
@@ -103,6 +87,8 @@ export default class PlantReadRepository {
         substrate: substrateResult.value,
         phases: phasesResult.value,
         phase,
+        wateringSchema,
+        wateringLogs: [],
         createdAt: 'todo',
         updatedAt: 'todo',
       })
@@ -114,10 +100,13 @@ export default class PlantReadRepository {
     if (!phasesResult.ok)
       message.push(phasesResult.error)
 
-    return err({ kind: 'invalid-data', message: message.join('. ') })
+    return err(message.join('. '))
   }
 
-  private async fetchSubstrate(plant: PlantRow, tx: IDBPTransaction): Promise<Result<PlantSubstrate, string>> {
+  private async fetchSubstrate(
+    plant: PlantRow,
+    tx: IDBPTransaction<unknown, (typeof TABLE_PLANTS | typeof TABLE_PLANT_SUBSTRATES | typeof TABLE_PLANT_PHASES)[]>,
+  ): Promise<Result<PlantSubstrate, string>> {
     const store = tx.objectStore(TABLE_PLANT_SUBSTRATES)
     const index = store.index(INDEX_PLANT_ID)
 
@@ -150,7 +139,10 @@ export default class PlantReadRepository {
     )
   }
 
-  private async fetchPhases(plant: PlantRow, tx: IDBPTransaction): Promise<Result<Array<PlantPhaseRow>, string>> {
+  private async fetchPhases(
+    plant: PlantRow,
+    tx: IDBPTransaction<unknown, (typeof TABLE_PLANTS | typeof TABLE_PLANT_SUBSTRATES | typeof TABLE_PLANT_PHASES)[]>,
+  ): Promise<Result<Array<PlantPhaseRow>, string>> {
     const store = tx.objectStore(TABLE_PLANT_PHASES)
     const index = store.index(INDEX_PLANT_ID)
 

@@ -37,6 +37,7 @@ type Plant = {
   phase: PlantPhase
   phases: Array<PlantPhase>
   wateringSchema?: WateringSchema
+  wateringLogs: Array<WateringLog>
 } & HasId<number> & HasTimestamps
 
 type PlantSubstrateType = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
@@ -90,6 +91,7 @@ interface WateringLogFertilizer {
 }
 
 interface NewWateringLog {
+  plantId: number
   date: number
   amount: number
   ph?: number
@@ -97,4 +99,5 @@ interface NewWateringLog {
   fertilizers: Array<WateringLogFertilizer>
 }
 
-type PourData = WithId<NewWateringLog, number>
+type WateringLogRow = WithId<NewWateringLog, number>
+type WateringLog = Omit<WateringLogRow, 'plantId'>
