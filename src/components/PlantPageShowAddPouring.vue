@@ -157,7 +157,7 @@
 
 <script lang="ts" setup>
 import type { Fertilizer, WateringSchemaFertilizer } from '../modules/nutrients/types'
-import type { Plant, PourData } from '../modules/plants/types'
+import type { NewWateringLog, Plant } from '../modules/plants/types'
 import {
   MoveLeft as IconBack,
   Plus as IconPlus,
@@ -259,7 +259,7 @@ async function save() {
     return
   }
 
-  const data: PourData = {
+  const data: NewWateringLog = {
     date: new Date(date.value).getTime(),
     amount: amount.value,
     ph: ph.value,

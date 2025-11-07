@@ -76,9 +76,9 @@ import {
 import { computed } from 'vue'
 import { removeArrayElement } from '../util.ts'
 import IBtn from './IBtn.vue'
+import IInputNumber from './IInputNumber.vue'
 import InputTextFloat from './InputTextFloat.vue'
 import ISelect from './ISelect.vue'
-import IInputNumber from "./IInputNumber.vue";
 
 interface Props {
   fertilizersData: Array<NewWateringSchemaFertilizer>

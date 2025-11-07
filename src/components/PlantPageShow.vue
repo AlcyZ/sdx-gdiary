@@ -9,6 +9,7 @@
     :fertilizers="fertilizers"
     :plant="plant"
     @back="back"
+    @back-and-sync="backAndSync"
   />
 </template>
 
@@ -26,10 +27,11 @@ interface Props {
 }
 interface Emits {
   back: []
+  syncPlant: [plant: Plant]
 }
 
 const { plant } = defineProps<Props>()
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
 
 type Subpage = 'show' | 'add-pour'
 
@@ -37,5 +39,10 @@ const { page, changePage } = usePage<Subpage>('add-pour')
 
 function back() {
   changePage('show')
+}
+
+function backAndSync() {
+  back()
+  emit('syncPlant', plant)
 }
 </script>
