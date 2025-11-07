@@ -82,17 +82,19 @@ interface GetPlantErrorInvalidData {
 
 type GetPlantError = GetPlantNotFoundError | GetPlantErrorInvalidData
 
-interface PourFertilizerData {
+interface WateringLogFertilizer {
   id?: number
   name: string
   manufacturer?: string
   amount: number
 }
 
-interface PourData {
+interface NewWateringLog {
   date: number
   amount: number
   ph?: number
   ec?: number
-  fertilizers: Array<PourFertilizerData>
+  fertilizers: Array<WateringLogFertilizer>
 }
+
+type PourData = WithId<NewWateringLog, number>

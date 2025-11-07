@@ -1,17 +1,9 @@
 import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
 import type { TABLE_PLANT_IMAGES } from '../db'
-import type { EditPlant, NewPlant, NewPlantPhase, NewPlantSubstrate, PlantSubstrate, PourData } from './types'
-import { ok, wrapSafe} from '../../util.ts'
-import {
-  getDb,
-  INDEX_PLANT_ID,
-  INDEX_WATERING_SCHEMA_ID,
-  TABLE_PLANT_PHASES,
-  TABLE_PLANT_SUBSTRATES,
-  TABLE_PLANTS,
-
-} from '../db'
+import type { EditPlant, NewPlant, NewPlantPhase, NewPlantSubstrate, NewWateringLog, PlantSubstrate } from './types'
+import { wrapSafe } from '../../util.ts'
+import { getDb, INDEX_PLANT_ID, INDEX_WATERING_SCHEMA_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_WATERING_LOGS, TABLE_PLANTS } from '../db'
 
 export default class PlantWriteRepository {
   private readonly db: IDBPDatabase
@@ -76,9 +68,14 @@ export default class PlantWriteRepository {
     })
   }
 
-  public async pourPlant(pourData: PourData): Promise<Result<undefined, unknown>> {
-    console.warn('need to implement saving', pourData)
-    return ok(undefined)
+  public async pourPlant(data: NewWateringLog): Promise<Result<undefined, unknown>> {
+    return wrapSafe(async () => {
+      const tx = this.db.transaction(TABLE_PLANT_WATERING_LOGS, 'readwrite')
+      const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
+
+      await store.put(data)
+      await tx.done
+    }, { method: 'pourPlant', message: 'Failed to save watering log', payload: data })
   }
 
   public async delete(plantId: number) {
