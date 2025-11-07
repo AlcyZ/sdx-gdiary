@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import { useToast } from '../composables/useToast.ts'
-import PlantSeeder from '../seeder/plantSeeder.ts'
+import DevSeeder from '../seeder/devSeeder.ts'
 
 interface Props {
 
@@ -28,15 +28,10 @@ const { showToast } = useToast()
 
 async function seedPlants() {
   const count = 5
-  const seeder = PlantSeeder.create()
+  const seeder = await DevSeeder.create()
 
-  for (let i = 0; i < count; i++) {
-    await seeder.seed()
-  }
-  showToast({
-    message: `${count} Pflanzen erstellt`,
-    variant: 'success',
-    duration: 1500,
-  })
+  await seeder.seed()
+
+  console.info('done?')
 }
 </script>
