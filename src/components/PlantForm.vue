@@ -3,17 +3,20 @@
     class="space-y-3"
     @submit.prevent="$emit('submit')"
   >
-    <InputTextFloat
+    <IInputText
       v-model="strain"
       label="Wähle die Sorte deiner Pflanze aus"
       :error="errors.strain"
       required
+      full-width
+      size="xl"
     />
 
-    <InputTextFloat
+    <IInputText
       v-model="name"
       label="Gib deiner Pflanze einen Namen (optional)"
       :error="errors.name"
+      full-width
     />
 
     <PlantFormSubstrate
@@ -32,23 +35,23 @@
       >
         Wähle dein Bewässerungsschema. Dadurch lässt sich beim erstellen eines Gießeintrags direkt die passenden Dünger auswählen
       </label>
-      <select
-        :id="schemaSelectId"
+      <ISelect
         v-model="wateringSchema"
-        class="select"
+        :options="wateringSchemas"
         :class="{ 'opacity-75': wateringSchema === undefined }"
       >
         <option class="opacity-75 text-xs" :value="undefined">
           - Kein Bewässerungsschema -
         </option>
-        <option
-          v-for="(schema, i) in wateringSchemas"
-          :key="i"
-          :value="schema"
-        >
-          {{ schema.name }}
-        </option>
-      </select>
+        <template #option="{ item, i }: { item: WateringSchema, i: number }">
+          <option
+            :key="i"
+            :value="item"
+          >
+            {{ item.name }}
+          </option>
+        </template>
+      </ISelect>
     </IFieldset>
 
     <PlantFormPhase
@@ -63,7 +66,8 @@ import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
 import { useId } from 'vue'
 import IFieldset from './IFieldset.vue'
-import InputTextFloat from './InputTextFloat.vue'
+import IInputText from './IInputText.vue'
+import ISelect from './ISelect.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
 
@@ -91,7 +95,7 @@ const name = defineModel<string>('name')
 const substrate = defineModel<string>('substrate')
 const substrateSize = defineModel<string>('substrateSize', { required: true })
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
-const wateringSchema = defineModel<WateringSchema>('wateringSchema')
+const wateringSchema = defineModel<WateringSchema>('wateringSchema', { required: true })
 
 const schemaSelectId = useId()
 </script>

@@ -107,6 +107,7 @@
             <input
               v-model="fertilizerData.amount"
               type="number"
+              inputmode="decimal"
               class="input mr-6"
             >
 
@@ -121,16 +122,16 @@
             </IBtn>
           </div>
         </ICard>
-      </div>
 
-      <IBtn
-        variant="secondary"
-        class="w-full mt-2"
-        @click="openAddFertilizerModal"
-      >
-        <IconPlus />
-        Weiteren Dünger hinzufügen
-      </IBtn>
+        <IBtn
+          variant="secondary"
+          class="w-full mt-2"
+          @click="openAddFertilizerModal"
+        >
+          <IconPlus />
+          Weiteren Dünger hinzufügen
+        </IBtn>
+      </div>
     </div>
 
     <template #actions>
@@ -156,7 +157,7 @@
 
 <script lang="ts" setup>
 import type { Fertilizer, WateringSchemaFertilizer } from '../modules/nutrients/types'
-import type {Plant, PourData} from '../modules/plants/types'
+import type { Plant, PourData } from '../modules/plants/types'
 import {
   MoveLeft as IconBack,
   Plus as IconPlus,

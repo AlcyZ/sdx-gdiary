@@ -97,6 +97,7 @@ type ButtonVariant = BaseVariant
 type ButtonSize = BaseSize
 
 type InputSize = BaseSize
+type SelectSize = BaseSize
 
 type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
 

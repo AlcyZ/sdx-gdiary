@@ -28,21 +28,24 @@
         class="flex items-center"
       >
         <div class="flex-1 flex items-center justify-between">
-          <select v-model="fertilizerData.fertilizer" class="select">
-            <option
-              v-for="(fertilizer, j) in sortedFertilizers"
-              :key="j"
-              :value="fertilizer"
-              :disabled="isSelected(fertilizer)"
-            >
-              {{ fertilizer.manufacturer ?? fallbackManufacturer }} - {{ fertilizer.name }}
-            </option>
-          </select>
+          <ISelect
+            v-model="fertilizerData.fertilizer"
+            :options="sortedFertilizers"
+          >
+            <template #option="{ item: fertilizer, i: j }: { item: Fertilizer, i: number }">
+              <option
+                :key="j"
+                :value="fertilizer"
+                :disabled="isSelected(fertilizer)"
+              >
+                {{ fertilizer.manufacturer ?? fallbackManufacturer }} - {{ fertilizer.name }}
+              </option>
+            </template>
+          </ISelect>
 
-          <InputTextFloat
+          <IInputNumber
             v-model="fertilizerData.amount"
             label="ML pro Liter"
-            type="number"
           />
         </div>
 
@@ -74,6 +77,8 @@ import { computed } from 'vue'
 import { removeArrayElement } from '../util.ts'
 import IBtn from './IBtn.vue'
 import InputTextFloat from './InputTextFloat.vue'
+import ISelect from './ISelect.vue'
+import IInputNumber from "./IInputNumber.vue";
 
 interface Props {
   fertilizersData: Array<NewWateringSchemaFertilizer>

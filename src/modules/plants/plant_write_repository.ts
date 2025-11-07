@@ -2,7 +2,7 @@ import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
 import type { TABLE_PLANT_IMAGES } from '../db'
 import type { EditPlant, NewPlant, NewPlantPhase, NewPlantSubstrate, PlantSubstrate, PourData } from './types'
-import {err, ok, wrapSafe} from '../../util.ts'
+import { ok, wrapSafe} from '../../util.ts'
 import {
   getDb,
   INDEX_PLANT_ID,
@@ -78,7 +78,7 @@ export default class PlantWriteRepository {
 
   public async pourPlant(pourData: PourData): Promise<Result<undefined, unknown>> {
     console.warn('need to implement saving', pourData)
-    return ok('todo')
+    return ok(undefined)
   }
 
   public async delete(plantId: number) {

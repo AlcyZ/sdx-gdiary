@@ -9,7 +9,8 @@
         <ISelect
           v-model="substrateInternal"
           :options="substrates"
-          class="w-full"
+          full-width
+          size="lg"
         >
           <template #option="{ item }">
             <option :value="item" :selected="item === substrate">
@@ -24,20 +25,23 @@
       </div>
     </div>
 
-    <InputTextFloat
+    <IInputText
       v-if="substrateInternal === 'Custom'"
       v-model="substrate"
       label="Eigener Substrat-Typ z.B. Steinwolle oder Spezialmischung"
       class="mt-2"
+      full-width
     />
 
-    <InputTextFloat
+    <IInputText
       v-model="size"
       label="Gib die Größe des Topfes oder Volumens des Substrats an (z.B. 12L, 15cm x 15cm x 15cm)"
       type="text"
       class="mt-2"
+      full-width
       :error="sizeError"
       required
+      size="lg"
     />
   </IFieldset>
 </template>
@@ -47,7 +51,7 @@ import type { PlantSubstrateType } from '../modules/plants/types'
 import { computed, ref, watch } from 'vue'
 import IFieldset from './IFieldset.vue'
 import IFloatingLabel from './IFloatingLabel.vue'
-import InputTextFloat from './InputTextFloat.vue'
+import IInputText from './IInputText.vue'
 import ISelect from './ISelect.vue'
 
 interface Props {
