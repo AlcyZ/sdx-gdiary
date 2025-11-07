@@ -5,9 +5,12 @@
       class="w-full max-w-3xl"
     >
       <div class="flex justify-between items-baseline">
-        <h1 class="text-3xl font-bold">
+        <ICardTitle
+          as="h1"
+          class="text-3xl"
+        >
           {{ plantName }}
-        </h1>
+        </ICardTitle>
         <span class="text-sm text-gray-400">Tag {{ plantAge }} ({{ currentPhase.label }})</span>
       </div>
 
@@ -39,6 +42,68 @@
     </ICard>
 
     <ICard
+      class="w-full max-w-3xl"
+    >
+      <ICardTitle
+        as="h2"
+        class="text-xl"
+      >
+        Phasen-Verlauf
+      </ICardTitle>
+
+      <ITimeline vertical>
+        <ITimelineItem
+          v-for="(phase, i) in plantPhases"
+          :key="i"
+          box-end
+          :hide-start-line="i === 0"
+          :hide-end-line="i === plantPhases.length - 1"
+        >
+          <template #end>
+            <template v-if="phase.phase === currentPhase.phase">
+              <span class="font-semibold">{{ phase.label }}</span>
+              <div class="text-xs">
+                Start: {{ phase.startedAt }}
+              </div>
+              <div
+                v-if="phase.info"
+                class="text-xs opacity-80 italic"
+              >
+                {{ phase.info }}
+              </div>
+            </template>
+            <template v-else>
+              <span class="opacity-80">{{ phase.label }}</span>
+              <div class="text-xs opacity-60">
+                Start: {{ phase.startedAt }}
+              </div>
+              <div
+                v-if="phase.info"
+                class="text-xs opacity-50 italic"
+              >
+                {{ phase.info }}
+              </div>
+            </template>
+          </template>
+          <template #middle>
+            <div
+              class="border rounded-full p-1.5 flex items-center justify-center"
+              :class="{
+                'bg-primary text-base-100': phase.phase === currentPhase.phase,
+                'bg-gray-200 text-gray-400 opacity-75': phase.phase !== currentPhase.phase,
+              }"
+            >
+              <component
+                :is="phase.icon"
+                :size="18"
+              />
+            </div>
+          </template>
+        </ITimelineItem>
+      </ITimeline>
+    </ICard>
+
+    <ICard
       class="w-full max-w-3xl hidden sm:flex"
     >
       <IBtn
@@ -65,7 +130,10 @@ import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import IBadge from './IBadge.vue'
 import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
+import ICardTitle from './ICardTitle.vue'
 import IMobileBack from './IMobileBack.vue'
+import ITimeline from './ITimeline.vue'
+import ITimelineItem from './ITimelineItem.vue'
 
 interface Props {
   plant: Plant
@@ -124,6 +192,7 @@ const plantPhases = computed(
       icon: getPhaseIcon(phase.phase),
       started: formatStartedAt(phase.startedAt),
     }))
+    .reverse()
     || [],
 )
 
