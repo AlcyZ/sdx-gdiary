@@ -26,8 +26,8 @@
 import IBtn from '../components/IBtn.vue'
 import ICard from '../components/ICard.vue'
 import ICardTitle from '../components/ICardTitle.vue'
-import {useToast} from "../composables/useToast.ts";
-import DevSeeder from "../seeder/devSeeder.ts";
+import { useToast } from '../composables/useToast.ts'
+import DevSeeder from '../seeder/devSeeder.ts'
 
 interface Props {
 

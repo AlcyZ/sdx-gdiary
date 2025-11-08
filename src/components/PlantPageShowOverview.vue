@@ -115,8 +115,12 @@
         :key="i"
         class="rounded-box border border-base-200 py-1 px-3"
       >
-        <div class="text-lg font-semibold">{{ log.formatted }}</div>
-        <div class="font-semibold opacity-75 ml-1">{{ log.amount }}Liter</div>
+        <div class="text-lg font-semibold">
+          {{ log.formatted }}
+        </div>
+        <div class="font-semibold opacity-75 ml-1">
+          {{ log.amount }}Liter
+        </div>
         <div class="ml-2 space-x-1">
           <IBadge
             v-for="(fertilizer, j) in log.fertilizers"
