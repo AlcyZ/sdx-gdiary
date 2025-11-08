@@ -54,6 +54,7 @@
           <IBtn
             square
             ghost
+            @click="$router.push(`/plants/${plant.id}/log/watering`)"
           >
             <IconWatering />
           </IBtn>
@@ -87,6 +88,12 @@
         </div>
       </div>
     </ICard>
+
+    <IFab
+      :actions="fabActions"
+      class="mb-14"
+      :icon="IconMenu"
+    />
   </div>
 </template>
 
@@ -95,6 +102,7 @@ import type { Plant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
   Edit as IconEdit,
+  Cog as IconMenu,
   EllipsisVertical as IconMore,
   Eye as IconShow,
   Trash as IconTrash,
@@ -105,10 +113,12 @@ import { useRouter } from 'vue-router'
 import IBadge from '../components/ui/IBadge.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
+import IFab from '../components/ui/IFab.vue'
 import { useModal } from '../composables/useModal.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
+import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_PLANT } from '../di_keys.ts'
 import PlantRepository from '../modules/plants/plant_repository.ts'
@@ -117,9 +127,6 @@ import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 interface Props {
 }
 interface Emits {
-  show: [plant: Plant]
-  edit: [plant: Plant]
-  delete: [plant: Plant]
 }
 
 defineProps<Props>()
@@ -133,11 +140,13 @@ const { showConfirmationModal } = useModal()
 const { getPlantAge } = usePlant()
 const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getSubstrateLabel, getSubstrateIcon } = usePlantSubstrate()
+const { fabActions } = usePlantView()
 
 const plants = ref<Array<Plant>>([])
 
 const plantsList = computed(
   () => plants.value.map(plant => ({
+    id: plant.id,
     image: PLANT_PLACEHOLDER_IMAGE,
     name: getPlantName(plant),
     status: {

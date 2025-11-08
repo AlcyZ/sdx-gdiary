@@ -56,7 +56,7 @@ import { useToast } from '../composables/useToast.ts'
 import { REPO_PLANT } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { err } from '../util.ts'
-import PlantForm from './PlantForm.vue'
+import PlantForm from '../components/PlantForm.vue'
 
 interface Props {
   plant: Plant

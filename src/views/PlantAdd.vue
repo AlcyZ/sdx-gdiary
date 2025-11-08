@@ -1,54 +1,56 @@
 <template>
-  <ICard
-    class="w-full max-w-2xl"
-    class-actions="justify-between"
-  >
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold">
-        Neue Pflanze anlegen
-      </h1>
-    </div>
-
-    <PlantForm
-      v-model:strain="strain"
-      v-model:name="name"
-      v-model:substrate="substrate"
-      v-model:substrate-size="substrateSize"
-      v-model:phases="phases"
-      v-model:watering-schema="wateringSchema"
-      :errors="errors"
-      :watering-schemas="wateringSchemas"
-    />
-
-    <template #actions>
-      <IBtn
-        @click="$emit('back')"
-      >
-        <IconBack />
-        Zurück
-      </IBtn>
-      <div class="join">
-        <IBtn
-          variant="neutral"
-          class="join-item"
-          :disabled="loading || hasFormErrors"
-          @click="saveAndNew"
-        >
-          <IconAdd />
-          Speichern & Neu
-        </IBtn>
-        <IBtn
-          variant="primary"
-          class="join-item text-base-100"
-          :disabled="loading || hasFormErrors"
-          @click="save"
-        >
-          <IconSave />
-          Speichern
-        </IBtn>
+  <div class="flex-1 flex items-center justify-center">
+    <ICard
+      class="w-full max-w-2xl"
+      class-actions="justify-between"
+    >
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold">
+          Neue Pflanze anlegen
+        </h1>
       </div>
-    </template>
-  </ICard>
+
+      <PlantForm
+        v-model:strain="strain"
+        v-model:name="name"
+        v-model:substrate="substrate"
+        v-model:substrate-size="substrateSize"
+        v-model:phases="phases"
+        v-model:watering-schema="wateringSchema"
+        :errors="errors"
+        :watering-schemas="wateringSchemas"
+      />
+
+      <template #actions>
+        <IBtn
+          @click="$emit('back')"
+        >
+          <IconBack />
+          Zurück
+        </IBtn>
+        <div class="join">
+          <IBtn
+            variant="neutral"
+            class="join-item"
+            :disabled="loading || hasFormErrors"
+            @click="saveAndNew"
+          >
+            <IconAdd />
+            Speichern & Neu
+          </IBtn>
+          <IBtn
+            variant="primary"
+            class="join-item text-base-100"
+            :disabled="loading || hasFormErrors"
+            @click="save"
+          >
+            <IconSave />
+            Speichern
+          </IBtn>
+        </div>
+      </template>
+    </ICard>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -60,18 +62,18 @@ import {
   MoveLeft as IconBack,
   Save as IconSave,
 } from 'lucide-vue-next'
-import { inject, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import PlantForm from '../components/PlantForm.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
 import { usePlantForm } from '../composables/usePlantForm.ts'
 import { useToast } from '../composables/useToast.ts'
-import { REPO_PLANT } from '../di_keys.ts'
+import { REPO_PLANT, REPO_WATERING_SCHEMA } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { err } from '../util.ts'
-import PlantForm from '../components/PlantForm.vue'
 
 interface Props {
-  wateringSchemas: Array<WateringSchema>
 }
 interface Emits {
   back: []
@@ -82,9 +84,13 @@ defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const plantRepo = inject(REPO_PLANT)
+const wateringRepo = inject(REPO_WATERING_SCHEMA)
+
+const router = useRouter()
 const { showToast } = useToast()
 
 const loading = ref(false)
+const wateringSchemas = ref<Array<WateringSchema>>([])
 
 const {
   strain,
@@ -96,13 +102,7 @@ const {
   validate,
   errors,
   hasFormErrors,
-} = usePlantForm({
-  strain: '',
-  name: '',
-  substrate: '',
-  substrateSize: '',
-  phases: [],
-})
+} = usePlantForm()
 
 function toast(message: string, variant: ToastVariant = 'error', close?: () => void) {
   showToast({
@@ -118,10 +118,8 @@ async function save() {
 
   if (result.ok) {
     loading.value = true
-    toast('Pflanze erfolgreich gespeichert', 'success', () => {
-      loading.value = false
-      emit('backAndSync')
-    })
+    toast('Pflanze erfolgreich gespeichert', 'success')
+    await router.push('/plants')
     return
   }
 
@@ -167,4 +165,8 @@ async function savePlant(): Promise<Result<undefined, string>> {
 
   return result.ok ? result : err('Pflanze konnte nicht gespeichert werden')
 }
+
+onMounted(async () => {
+  wateringSchemas.value = await wateringRepo?.getAll() || []
+})
 </script>

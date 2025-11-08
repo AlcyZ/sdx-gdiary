@@ -38,7 +38,7 @@ export default class PlantRepository {
     return this.read.getAll()
   }
 
-  public async _getById(id: number): Promise<Result<Plant, GetPlantError>> {
+  public async getById(id: number): Promise<Result<Plant, GetPlantError>> {
     return this.read.getById(id)
   }
 
