@@ -1,7 +1,8 @@
 import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
+import type { WateringSchema } from '../nutrients/types'
 import type { GetPlantError, Plant, PlantPhaseRow, PlantRow, PlantSubstrate, WateringLog } from './types'
-import { err, none, ok } from '../../util.ts'
+import { err, ok, unwrapOrUndefined } from '../../util.ts'
 import {
   getDb,
   INDEX_PLANT_ID,
@@ -100,8 +101,7 @@ export default class PlantReadRepository {
       const wateringLogsStore = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
       const wateringLogs = await this.fetchWateringLogs(plantData.id, wateringLogsStore)
 
-      const wateringSchemaResult = await this.wateringRepo.getById(plantData.id) || none()
-      const wateringSchema = wateringSchemaResult.exist ? wateringSchemaResult.value : undefined
+      const wateringSchema = await this.fetchPlantsWateringSchema(plantData)
 
       return ok({
         id: plantData.id,
@@ -124,6 +124,14 @@ export default class PlantReadRepository {
       message.push(phasesResult.error)
 
     return err(message.join('. '))
+  }
+
+  private async fetchPlantsWateringSchema(plant: PlantRow): Promise<WateringSchema | undefined> {
+    if (plant.wateringSchemaId === undefined)
+      return undefined
+
+    const schemaOption = await this.wateringRepo.getById(plant.wateringSchemaId)
+    return unwrapOrUndefined(schemaOption)
   }
 
   private async fetchWateringLogs(
