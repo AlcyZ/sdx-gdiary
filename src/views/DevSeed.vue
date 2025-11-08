@@ -23,9 +23,9 @@
 </template>
 
 <script lang="ts" setup>
-import IBtn from '../components/IBtn.vue'
-import ICard from '../components/ICard.vue'
-import ICardTitle from '../components/ICardTitle.vue'
+import IBtn from '../componentsBackup/IBtn.vue'
+import ICard from '../componentsBackup/ICard.vue'
+import ICardTitle from '../componentsBackup/ICardTitle.vue'
 import { useToast } from '../composables/useToast.ts'
 import DevSeeder from '../seeder/devSeeder.ts'
 

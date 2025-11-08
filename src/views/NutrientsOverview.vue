@@ -33,11 +33,11 @@ import {
   Cog as IconMenu,
 } from 'lucide-vue-next'
 import { inject, ref } from 'vue'
-import ICard from '../components/ICard.vue'
-import ICardTitle from '../components/ICardTitle.vue'
-import IFab from '../components/IFab.vue'
-import NutrientPageOverviewFertilizers from '../components/NutrientPageOverviewFertilizers.vue'
-import NutrientPageOverviewWateringSchemas from '../components/NutrientPageOverviewWateringSchemas.vue'
+import ICard from '../componentsBackup/ICard.vue'
+import ICardTitle from '../componentsBackup/ICardTitle.vue'
+import IFab from '../componentsBackup/IFab.vue'
+import NutrientPageOverviewFertilizers from '../componentsBackup/NutrientPageOverviewFertilizers.vue'
+import NutrientPageOverviewWateringSchemas from '../componentsBackup/NutrientPageOverviewWateringSchemas.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import { REPO_FERTILIZERS, REPO_WATERING_SCHEMA } from '../di_keys.ts'
 
@@ -63,4 +63,6 @@ async function syncData() {
   fertilizers.value = await fertilizerRepo?.getAll() || []
   wateringSchemas.value = await wateringRepo?.getAll() || []
 }
+
+onMounted(syncData)
 </script>
