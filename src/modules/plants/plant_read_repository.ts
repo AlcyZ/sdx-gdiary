@@ -180,9 +180,18 @@ export default class PlantReadRepository {
         if (!latest)
           return current
 
-        return new Date(current.startedAt) > new Date(latest.startedAt)
-          ? current
-          : latest
+        const currentDate = new Date(current.startedAt).getTime()
+        const latestDate = new Date(latest.startedAt).getTime()
+
+        if (currentDate > latestDate) {
+          return current
+        }
+
+        if (currentDate === latestDate && current.id > latest.id) {
+          return current
+        }
+
+        return latest
       },
       undefined,
     )
