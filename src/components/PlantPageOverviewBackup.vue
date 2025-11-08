@@ -1,7 +1,9 @@
 <template>
-  <div>
-    --- in development ---
-  </div>
+  <IList
+    label="Pflanzen"
+    :items="listItems"
+    class="w-full max-w-2xl"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -10,6 +12,7 @@ import type { ListItem } from '../types'
 import { Edit as IconEdit, Eye as IconShow, Trash as IconTrash } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
+import IList from './IListLegacy.vue'
 
 interface Props {
   plants: Array<Plant>
