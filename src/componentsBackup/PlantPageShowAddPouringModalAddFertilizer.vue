@@ -66,8 +66,8 @@ import {
   RotateCcw as IconRestore,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
-import IBtn from './IBtn.vue'
-import IModal from './IModal.vue'
+import IBtn from '../components/IBtn.vue'
+import IModal from '../components/IModal.vue'
 import PlantPageShowAddPouringModalAddFertilizerList from './PlantPageShowAddPouringModalAddFertilizerList.vue'
 
 interface Props {

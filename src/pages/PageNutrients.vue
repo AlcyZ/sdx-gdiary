@@ -55,7 +55,7 @@ import {
   Droplet as IconWateringSchema,
 } from 'lucide-vue-next'
 import { inject, onMounted, ref } from 'vue'
-import IFab from '../componentsBackup/IFab.vue'
+import IFab from '../components/IFab.vue'
 import ISelectionError from '../componentsBackup/ISelectionError.vue'
 import NutrientPageAddFertilizer from '../componentsBackup/NutrientPageAddFertilizer.vue'
 import NutrientPageAddSchema from '../componentsBackup/NutrientPageAddSchema.vue'

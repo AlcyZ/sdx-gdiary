@@ -75,10 +75,10 @@ import {
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { removeArrayElement } from '../util.ts'
-import IBtn from './IBtn.vue'
-import IInputNumber from './IInputNumber.vue'
+import IBtn from '../components/IBtn.vue'
+import IInputNumber from '../components/IInputNumber.vue'
 import InputTextFloat from './InputTextFloat.vue'
-import ISelect from './ISelect.vue'
+import ISelect from '../components/ISelect.vue'
 
 interface Props {
   fertilizersData: Array<NewWateringSchemaFertilizer>

@@ -54,8 +54,8 @@ import { useToast } from '../composables/useToast.ts'
 import { REPO_PLANT } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { err } from '../util.ts'
-import IBtn from './IBtn.vue'
-import ICard from './ICard.vue'
+import IBtn from '../components/IBtn.vue'
+import ICard from '../components/ICard.vue'
 import PlantForm from './PlantForm.vue'
 
 interface Props {

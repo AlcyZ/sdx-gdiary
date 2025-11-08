@@ -57,9 +57,9 @@ import { inject } from 'vue'
 import { useToast } from '../composables/useToast.ts'
 import { useWateringSchemaForm } from '../composables/useWateringSchemaForm.ts'
 import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
-import IBtn from './IBtn.vue'
-import ICard from './ICard.vue'
-import ICardTitle from './ICardTitle.vue'
+import IBtn from '../components/IBtn.vue'
+import ICard from '../components/ICard.vue'
+import ICardTitle from '../components/ICardTitle.vue'
 import WateringSchemaForm from './WateringSchemaForm.vue'
 
 interface Props {

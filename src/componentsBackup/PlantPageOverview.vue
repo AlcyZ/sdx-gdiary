@@ -105,9 +105,9 @@ import { usePlant } from '../composables/usePlant.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
-import IBadge from './IBadge.vue'
-import IBtn from './IBtn.vue'
-import ICard from './ICard.vue'
+import IBadge from '../components/IBadge.vue'
+import IBtn from '../components/IBtn.vue'
+import ICard from '../components/ICard.vue'
 
 interface Props {
   plants: Array<Plant>

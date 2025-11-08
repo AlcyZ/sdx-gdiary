@@ -65,9 +65,9 @@
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
 import { useId } from 'vue'
-import IFieldset from './IFieldset.vue'
-import IInputText from './IInputText.vue'
-import ISelect from './ISelect.vue'
+import IFieldset from '../components/IFieldset.vue'
+import IInputText from '../components/IInputText.vue'
+import ISelect from '../components/ISelect.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
 

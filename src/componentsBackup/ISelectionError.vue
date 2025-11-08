@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-import ICard from './ICard.vue'
+import ICard from '../components/ICard.vue'
 
 interface Props {
   text: string
