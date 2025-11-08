@@ -104,6 +104,34 @@
     </ICard>
 
     <ICard
+      class="w-full max-w-3xl"
+    >
+      <ICardTitle class="text-xl">
+        Gießtagebuch
+      </ICardTitle>
+
+      <div
+        v-for="(log, i) in sortedWateringLogs"
+        :key="i"
+        class="rounded-box border border-base-200 py-1 px-3"
+      >
+        <div class="text-lg font-semibold">{{ log.formatted }}</div>
+        <div class="font-semibold opacity-75 ml-1">{{ log.amount }}Liter</div>
+        <div class="ml-2 space-x-1">
+          <IBadge
+            v-for="(fertilizer, j) in log.fertilizers"
+            :key="j"
+            variant="info"
+            class="text-base-100"
+            size="sm"
+          >
+            {{ fertilizer.name }}: {{ fertilizer.amount }}ml
+          </IBadge>
+        </div>
+      </div>
+    </ICard>
+
+    <ICard
       class="w-full max-w-3xl hidden sm:flex"
     >
       <IBtn
@@ -119,6 +147,7 @@
 <script lang="ts" setup>
 import type { Component } from 'vue'
 import type { Plant, PlantPhase } from '../modules/plants/types'
+import dayjs from 'dayjs'
 import {
   Plus as IconPlus,
 } from 'lucide-vue-next'
@@ -187,6 +216,13 @@ const plantPhases = computed(
     }))
     .reverse()
     || [],
+)
+
+const sortedWateringLogs = computed(
+  () => [...plant.wateringLogs].sort((lhs, rhs) => rhs.date - lhs.date).map(log => ({
+    ...log,
+    formatted: dayjs(new Date(log.date)).format('DD.MM.YYYY HH:mm'),
+  })),
 )
 
 function formatStartedAt(startedAt: string): string {
