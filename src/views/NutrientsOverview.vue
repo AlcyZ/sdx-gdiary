@@ -1,30 +1,32 @@
 <template>
-  <ICard class="w-full max-w-2xl">
-    <ICardTitle class="text-2xl font-bold mb-5">
-      Nutrients
-    </ICardTitle>
+  <div class="flex-1 flex items-center justify-center">
+    <ICard class="w-full max-w-2xl">
+      <ICardTitle class="text-2xl font-bold mb-5">
+        Nutrients
+      </ICardTitle>
 
-    <NutrientPageOverviewWateringSchemas
-      :watering-schemas="wateringSchemas"
-      :fertilizers="fertilizers"
-      class="my-3"
-      @sync="$emit('sync')"
-      @add-schema="$emit('addSchema')"
-      @edit-schema="$emit('editSchema', $event)"
-    />
+      <NutrientPageOverviewWateringSchemas
+        :watering-schemas="wateringSchemas"
+        :fertilizers="fertilizers"
+        class="my-3"
+        @sync="$emit('sync')"
+        @add-schema="$emit('addSchema')"
+        @edit-schema="$emit('editSchema', $event)"
+      />
 
-    <NutrientPageOverviewFertilizers
-      :fertilizers="fertilizers"
-      class="my-3"
-      @sync="$emit('sync')"
-      @add-fertilizer="$emit('addFertilizer')"
+      <NutrientPageOverviewFertilizers
+        :fertilizers="fertilizers"
+        class="my-3"
+        @sync="$emit('sync')"
+        @add-fertilizer="$emit('addFertilizer')"
+      />
+    </ICard>
+    <IFab
+      :icon="IconMenu"
+      class="mb-14"
+      :actions="fabActions"
     />
-  </ICard>
-  <IFab
-    :icon="IconMenu"
-    class="mb-14"
-    :actions="fabActions"
-  />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -32,7 +34,7 @@ import type { Fertilizer, WateringSchema } from '../modules/nutrients/types'
 import {
   Cog as IconMenu,
 } from 'lucide-vue-next'
-import { inject, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import ICard from '../componentsBackup/ICard.vue'
 import ICardTitle from '../componentsBackup/ICardTitle.vue'
 import IFab from '../componentsBackup/IFab.vue'
