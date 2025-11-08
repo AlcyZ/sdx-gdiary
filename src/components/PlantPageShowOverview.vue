@@ -119,12 +119,12 @@
 <script lang="ts" setup>
 import type { Component } from 'vue'
 import type { Plant, PlantPhase } from '../modules/plants/types'
-import dayjs from 'dayjs'
 import {
   Plus as IconPlus,
 } from 'lucide-vue-next'
 import { formatDate } from 'sdx-php-date'
 import { computed } from 'vue'
+import { usePlant } from '../composables/usePlant.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import IBadge from './IBadge.vue'
@@ -148,6 +148,7 @@ type PhaseData = PlantPhase & { label: string, icon: Component, started: string 
 const { plant } = defineProps<Props>()
 defineEmits<Emits>()
 
+const { getPlantAge } = usePlant()
 const { getPhaseIcon, getPhaseLabel } = usePlantPhase()
 const { getSubstrateIcon, getSubstrateLabel } = usePlantSubstrate()
 
@@ -174,15 +175,7 @@ const substrate = computed(() => ({
   size: plant.substrate.size,
 }))
 
-const plantAge = computed(() => {
-  const startDateString = plant.phases.find(phase => phase.phase === 'germination')?.startedAt
-    || dayjs().format('YYYY-MM-DDTHH:mm')
-
-  const startDate = dayjs(startDateString)
-  const compareDate = plant.phase.phase === 'germination' ? dayjs() : dayjs(plant.phase.startedAt)
-
-  return compareDate.diff(startDate, 'days')
-})
+const plantAge = computed(() => getPlantAge(plant))
 
 const plantPhases = computed(
   (): Array<PhaseData> => plant?.phases
