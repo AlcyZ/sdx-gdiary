@@ -1,15 +1,75 @@
 <template>
-  <div>
-    --- in development ---
+  <div class="w-full flex flex-col items-center gap-y-5">
+    <header class="w-full max-w-3xl p-4">
+      <h1 class="text-4xl font-extrabold">
+        Pflanzen
+      </h1>
+    </header>
+
+    <ICard
+      v-for="(plant, i) in plantsList"
+      :key="i"
+      class="w-full max-w-3xl"
+    >
+      <div class="grid grid-cols-[6fr_2fr_2fr]">
+        <div class="flex items-center">
+          <img
+            :src="plant.image"
+            :alt="`image-${plant.name}`"
+            class="rounded-full w-14 h-14 mr-4"
+          >
+
+          <div class="flex flex-col">
+            <span class="text-xl font-semibold">{{ plant.name }}</span>
+
+            <IBadge
+              class="mt-0.5"
+              :class="plant.status.class"
+            >
+              <component
+                :is="plant.status.icon"
+                :size="16"
+              />
+              {{ plant.status.phase }}
+            </IBadge>
+
+            <span class="text-xs opacity-60">(Tag {{ plant.status.age }})</span>
+          </div>
+        </div>
+
+        <div class="text-xs flex flex-col items-center justify-center text-center">
+          <div class="font-semibold opacity-75">
+            {{ plant.lastWatering }}
+          </div>
+          <div class="flex items-center opacity-60">
+            <component
+              :is="plant.substrate.icon"
+              :size="14"
+            />
+            <span>{{ plant.substrate.label }} | {{ plant.substrate.size }}</span>
+          </div>
+        </div>
+
+        <div class="">
+          &nbsp;
+        </div>
+      </div>
+    </ICard>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
 import type { ListItem } from '../types'
+import dayjs from 'dayjs'
 import { Edit as IconEdit, Eye as IconShow, Trash as IconTrash } from 'lucide-vue-next'
 import { computed } from 'vue'
+import { usePlant } from '../composables/usePlant.ts'
+import { usePlantPhase } from '../composables/usePlantPhase.ts'
+import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
+import IBadge from './IBadge.vue'
+import ICard from './ICard.vue'
 
 interface Props {
   plants: Array<Plant>
@@ -22,6 +82,33 @@ interface Emits {
 
 const { plants } = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+const { getPlantAge } = usePlant()
+const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
+const { getSubstrateLabel, getSubstrateIcon } = usePlantSubstrate()
+
+const plantsList = computed(
+  () => plants.map(plant => ({
+    image: PLANT_PLACEHOLDER_IMAGE,
+    name: getPlantName(plant),
+    status: {
+      phase: getPhaseLabel(plant.phase.phase),
+      age: getPlantAge(plant),
+      icon: getPhaseIcon(plant.phase.phase),
+      class: getPlantStatusClass(plant),
+    },
+    substrate: {
+      label: getSubstrateLabel(plant.substrate.substrate),
+      size: plant.substrate.size,
+      icon: getSubstrateIcon(plant.substrate.substrate),
+    },
+    lastWatering: getLastWatering(plant),
+
+    // todo: remove dev stuff
+    edit: () => emit('edit', plant),
+    show: () => emit('show', plant),
+  })),
+)
 
 const listItems = computed(
   (): Array<ListItem> => plants.map((plant) => {
@@ -46,4 +133,27 @@ const listItems = computed(
     }
   }),
 )
+
+function getPlantName(plant: Plant): string {
+  return plant.name !== undefined && plant.name !== ''
+    ? `${plant.name} (${plant.strain})`
+    : plant.strain
+}
+
+function getPlantStatusClass(plant: Plant): string {
+  const colors = getPhaseColor(plant.phase.phase)
+
+  return `${colors.bg} ${colors.text}`
+}
+
+function getLastWatering(plant: Plant): string {
+  if (plant.wateringLogs.length === 0) {
+    return 'Kein Protokoll'
+  }
+
+  const latestLog = plant.wateringLogs.reduce((lhs, rhs) => lhs.date < rhs.date ? lhs : rhs)
+  const logDate = dayjs(new Date(latestLog.date)).format('DD.MM.YYYY')
+
+  return `Zuletzt gegossen: ${logDate}`
+}
 </script>
