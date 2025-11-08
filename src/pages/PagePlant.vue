@@ -168,5 +168,5 @@ async function backAndSync() {
   page.value = 'list'
 }
 
-onMounted(syncPlants)
+onMounted(syncData)
 </script>
