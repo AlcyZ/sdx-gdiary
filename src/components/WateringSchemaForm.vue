@@ -74,11 +74,11 @@ import {
   CircleMinus as IconRemove,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
+import InputTextFloat from '../componentsBackup/InputTextFloat.vue'
 import { removeArrayElement } from '../util.ts'
-import IBtn from '../components/ui/IBtn.vue'
-import IInputNumber from '../components/ui/IInputNumber.vue'
-import InputTextFloat from './InputTextFloat.vue'
-import ISelect from '../components/ui/ISelect.vue'
+import IBtn from './ui/IBtn.vue'
+import IInputNumber from './ui/IInputNumber.vue'
+import ISelect from './ui/ISelect.vue'
 
 interface Props {
   fertilizersData: Array<NewWateringSchemaFertilizer>

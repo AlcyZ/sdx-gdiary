@@ -1,28 +1,154 @@
 <template>
-  <div>
+  <div class="flex-1 flex items-center justify-center">
+    <ICard
+      class="w-full max-w-2xl"
+      class-actions="justify-between"
+    >
+      <ICardTitle class="text-3xl">
+        Düngerschema hinzufügen
+      </ICardTitle>
+
+      <WateringSchemaForm
+        v-model:name="name"
+        v-model:fertilizers-data="fertilizersData"
+        :error-name="errors.name"
+        :error-fertilizer-data="errors.fertilizersData"
+        class="my-5"
+        :fertilizers="fertilizers"
+        @submit="saveAndNew"
+      />
+
+      <template #actions>
+        <IBtn
+          @click="$router.push('/nutrients')"
+        >
+          <IconBack />
+          Zurück
+        </IBtn>
+        <div class="join">
+          <IBtn
+            variant="neutral"
+            class="join-item"
+            @click="saveAndNew"
+          >
+            <IconAdd />
+            Speichern & Neu
+          </IBtn>
+          <IBtn
+            variant="primary"
+            class="join-item text-base-100"
+            @click="save"
+          >
+            <IconSave />
+            Speichern
+          </IBtn>
+        </div>
+      </template>
+    </ICard>
     <IFab
       :icon="IconMenu"
       class="mb-14"
       :actions="fabActions"
     />
-    schema add
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Cog as IconMenu } from 'lucide-vue-next'
+import type { Fertilizer, NewWateringSchema } from '../modules/nutrients/types'
+import {
+  CirclePlus as IconAdd,
+  MoveLeft as IconBack,
+  Cog as IconMenu,
+  Save as IconSave,
+} from 'lucide-vue-next'
+import { inject, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import IBtn from '../components/ui/IBtn.vue'
+import ICard from '../components/ui/ICard.vue'
+import ICardTitle from '../components/ui/ICardTitle.vue'
 import IFab from '../components/ui/IFab.vue'
+import WateringSchemaForm from '../components/WateringSchemaForm.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
+import { useToast } from '../composables/useToast.ts'
+import { useWateringSchemaForm } from '../composables/useWateringSchemaForm.ts'
+import { REPO_FERTILIZERS, REPO_WATERING_SCHEMA } from '../di_keys.ts'
 
 interface Props {
-
 }
 interface Emits {
-
+  back: []
+  backAndSync: []
 }
 
 defineProps<Props>()
 defineEmits<Emits>()
 
+const fertilizerRepo = inject(REPO_FERTILIZERS)
+const wateringRepo = inject(REPO_WATERING_SCHEMA)
+
+const router = useRouter()
+const { toast } = useToast()
 const { fabActions } = useNutrientsView()
+
+const fertilizers = ref<Array<Fertilizer>>([])
+
+const {
+  name,
+  fertilizersData,
+  errors,
+  validate,
+} = useWateringSchemaForm({
+  fertilizersData: [],
+})
+
+async function save() {
+  if (!(await saveSchema()))
+    return
+
+  toast('Zuchtschema erfolgreich gespeichert', 'success')
+  await router.push('/nutrients')
+}
+
+async function saveAndNew() {
+  if (!(await saveSchema()))
+    return
+
+  toast('Zuchtschema erfolgreich gespeichert', 'success')
+  name.value = ''
+}
+
+async function saveSchema(): Promise<boolean> {
+  if (!wateringRepo)
+    return false
+
+  if (!(await validateForm()))
+    return false
+
+  const schema: NewWateringSchema = {
+    name: name.value!,
+    fertilizers: fertilizersData.value,
+  }
+
+  const result = await wateringRepo.save(schema)
+
+  if (!result.ok)
+    toast('Zuchtschema konnte nicht gespeichert werden', 'error')
+
+  return result.ok
+}
+
+async function validateForm(): Promise<boolean> {
+  const result = await validate()
+
+  if (!result.valid)
+    toast('Bitte fülle alle Pflichtfelder aus und weise mindestens einen Dünger zu', 'error')
+
+  return result.valid
+}
+
+async function syncFertilizers() {
+  fertilizers.value = await fertilizerRepo?.getAll() || []
+}
+
+onMounted(syncFertilizers)
 </script>

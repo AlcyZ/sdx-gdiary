@@ -5,7 +5,7 @@
         Dünger
       </h2>
 
-      <IBtn ghost @click="$emit('addFertilizer')">
+      <IBtn ghost @click="$router.push('/nutrients/fertilizer/add')">
         <IconAdd />
         Neu
       </IBtn>
@@ -64,17 +64,17 @@ import {
   Edit as IconEdit,
 } from 'lucide-vue-next'
 import { computed, inject } from 'vue'
-import { useModal } from '../composables/useModal.ts'
-import { useToast } from '../composables/useToast.ts'
-import { REPO_FERTILIZERS } from '../di_keys.ts'
-import { err } from '../util.ts'
-import FertilizerModalEdit from './FertilizerModalEdit.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICollapse from '../components/ui/ICollapse.vue'
 import ICollapseContent from '../components/ui/ICollapseContent.vue'
 import ICollapseTitle from '../components/ui/ICollapseTitle.vue'
 import IList from '../components/ui/IList.vue'
 import IListRow from '../components/ui/IListRow.vue'
+import { useModal } from '../composables/useModal.ts'
+import { useToast } from '../composables/useToast.ts'
+import { REPO_FERTILIZERS } from '../di_keys.ts'
+import { err } from '../util.ts'
+import NutrientsOverviewModalFertilizerEdit from './NutrientsOverviewModalFertilizerEdit.vue'
 
 interface Props {
   fertilizers: Array<Fertilizer>
@@ -129,7 +129,7 @@ function edit(fertilizer: Fertilizer) {
     close()
   }
 
-  const { close } = showModal(FertilizerModalEdit, {
+  const { close } = showModal(NutrientsOverviewModalFertilizerEdit, {
     fertilizer,
     onSave: async (update: NewFertilizer) => updateFertilizer(update, close),
   })

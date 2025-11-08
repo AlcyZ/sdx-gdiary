@@ -98,8 +98,6 @@ import {
 } from 'lucide-vue-next'
 import { formatDate } from 'sdx-php-date'
 import { computed } from 'vue'
-import { usePlantPhase } from '../composables/usePlantPhase.ts'
-import { now } from '../util.ts'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
 import IStat from '../components/ui/IStat.vue'
@@ -109,6 +107,8 @@ import IStatTitle from '../components/ui/IStatTitle.vue'
 import IStatValue from '../components/ui/IStatValue.vue'
 import ITimeline from '../components/ui/ITimeline.vue'
 import ITimelineItem from '../components/ui/ITimelineItem.vue'
+import { usePlantPhase } from '../composables/usePlantPhase.ts'
+import { now } from '../util.ts'
 
 interface Props {
   plant: Plant

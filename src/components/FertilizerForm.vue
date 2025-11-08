@@ -1,26 +1,29 @@
 <template>
   <div class="space-y-3">
-    <InputTextFloat
+    <IInputText
       ref="inputName"
       v-model="name"
       label="Name"
       required
       :error="errorName"
+      full-width
     />
 
-    <InputTextFloat
+    <IInputText
       ref="inputManufacturer"
       v-model="manufacturer"
       label="Hersteller"
       :error="errorManufacturer"
+      full-width
     />
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { NewFertilizer } from '../modules/nutrients/types'
+import type InputTextFloat from './InputTextFloat.vue'
 import { ref } from 'vue'
-import InputTextFloat from './InputTextFloat.vue'
+import IInputText from './ui/IInputText.vue'
 
 interface Props {
   errorName?: string

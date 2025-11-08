@@ -5,7 +5,7 @@
         Zuchtschema
       </h2>
 
-      <IBtn ghost @click="$emit('addSchema')">
+      <IBtn ghost @click="$router.push('/nutrients/schema/add')">
         <IconAdd />
         Neu
       </IBtn>
@@ -43,7 +43,7 @@
                 square
                 ghost
                 size="sm"
-                @click="$emit('editSchema', wateringSchema)"
+                @click="$router.push(`/nutrients/schema/${wateringSchema.id}/edit`)"
               >
                 <IconEdit :size="20" />
               </IBtn>
@@ -110,10 +110,6 @@ import {
   Edit as IconEdit,
 } from 'lucide-vue-next'
 import { inject } from 'vue'
-import { useModal } from '../composables/useModal.ts'
-import { useToast } from '../composables/useToast.ts'
-import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
-import { err } from '../util.ts'
 import IBadge from '../components/ui/IBadge.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICollapse from '../components/ui/ICollapse.vue'
@@ -121,8 +117,11 @@ import ICollapseContent from '../components/ui/ICollapseContent.vue'
 import ICollapseTitle from '../components/ui/ICollapseTitle.vue'
 import IList from '../components/ui/IList.vue'
 import IListRow from '../components/ui/IListRow.vue'
-import NutrientPageOverviewWateringSchemaModalEditFertilizer
-  from './NutrientPageOverviewWateringSchemaModalEditFertilizer.vue'
+import { useModal } from '../composables/useModal.ts'
+import { useToast } from '../composables/useToast.ts'
+import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
+import { err } from '../util.ts'
+import NutrientsOverviewModalSchemaEdit from './NutrientsOverviewModalSchemaEdit.vue'
 
 interface Props {
   wateringSchemas: Array<WateringSchema>
@@ -130,7 +129,6 @@ interface Props {
 }
 interface Emits {
   sync: []
-  addSchema: []
   editSchema: [wateringSchema: WateringSchema]
 }
 
@@ -144,7 +142,7 @@ const wateringRepo = inject(REPO_WATERING_SCHEMA)
 const fallbackManufacturer = 'Unbekannter Hersteller'
 
 async function editSchemaFertilizer(wateringSchema: WateringSchema, fertilizer: WateringSchemaFertilizer) {
-  const { close } = showModal(NutrientPageOverviewWateringSchemaModalEditFertilizer, {
+  const { close } = showModal(NutrientsOverviewModalSchemaEdit, {
     wateringSchema,
     fertilizer,
     fertilizers,

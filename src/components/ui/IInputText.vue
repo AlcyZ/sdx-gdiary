@@ -8,7 +8,7 @@
         :class="inputClass"
         :placeholder="label"
       >
-      <span>{{ label }}</span>
+      <span>{{ required ? `${label}*` : label }}</span>
     </label>
     <div
       v-if="error"
@@ -40,12 +40,13 @@ interface Props {
   info?: string
   fullWidth?: boolean
   size?: InputSize
+  required?: boolean
 }
 interface Emits {
 
 }
 
-const { fullWidth, size, type = 'text' } = defineProps<Props>()
+const { fullWidth, size, type = 'text', required = false } = defineProps<Props>()
 defineEmits<Emits>()
 
 const model = defineModel<string>()

@@ -5,20 +5,15 @@
         Nutrients
       </ICardTitle>
 
-      <NutrientPageOverviewWateringSchemas
+      <NutrientsOverviewWateringSchemas
         :watering-schemas="wateringSchemas"
         :fertilizers="fertilizers"
         class="my-3"
-        @sync="$emit('sync')"
-        @add-schema="$emit('addSchema')"
-        @edit-schema="$emit('editSchema', $event)"
       />
 
-      <NutrientPageOverviewFertilizers
+      <NutrientsOverviewFertilizers
         :fertilizers="fertilizers"
         class="my-3"
-        @sync="$emit('sync')"
-        @add-fertilizer="$emit('addFertilizer')"
       />
     </ICard>
     <IFab
@@ -35,11 +30,11 @@ import {
   Cog as IconMenu,
 } from 'lucide-vue-next'
 import { inject, onMounted, ref } from 'vue'
+import NutrientsOverviewFertilizers from '../components/NutrientsOverviewFertilizers.vue'
+import NutrientsOverviewWateringSchemas from '../components/NutrientsOverviewWateringSchemas.vue'
 import ICard from '../components/ui/ICard.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
 import IFab from '../components/ui/IFab.vue'
-import NutrientPageOverviewFertilizers from '../componentsBackup/NutrientPageOverviewFertilizers.vue'
-import NutrientPageOverviewWateringSchemas from '../componentsBackup/NutrientPageOverviewWateringSchemas.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import { REPO_FERTILIZERS, REPO_WATERING_SCHEMA } from '../di_keys.ts'
 

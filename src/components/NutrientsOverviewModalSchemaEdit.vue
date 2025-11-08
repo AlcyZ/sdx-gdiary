@@ -18,7 +18,7 @@
         </option>
       </select>
 
-      <InputTextFloat
+      <IInputNumber
         v-model="amount"
         label="ML pro Liter"
         type="number"
@@ -58,9 +58,9 @@ import {
 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import WateringSchemaRepository from '../modules/nutrients/watering_schema_repository.ts'
-import IBtn from '../components/ui/IBtn.vue'
-import IModal from '../components/ui/IModal.vue'
-import InputTextFloat from './InputTextFloat.vue'
+import IBtn from './ui/IBtn.vue'
+import IInputNumber from './ui/IInputNumber.vue'
+import IModal from './ui/IModal.vue'
 
 interface Props {
   wateringSchema: WateringSchema

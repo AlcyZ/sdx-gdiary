@@ -157,9 +157,6 @@ import {
 } from 'lucide-vue-next'
 import { formatDate } from 'sdx-php-date'
 import { computed } from 'vue'
-import { usePlant } from '../composables/usePlant.ts'
-import { usePlantPhase } from '../composables/usePlantPhase.ts'
-import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import IBadge from '../components/ui/IBadge.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
@@ -167,6 +164,9 @@ import ICardTitle from '../components/ui/ICardTitle.vue'
 import IMobileBack from '../components/ui/IMobileBack.vue'
 import ITimeline from '../components/ui/ITimeline.vue'
 import ITimelineItem from '../components/ui/ITimelineItem.vue'
+import { usePlant } from '../composables/usePlant.ts'
+import { usePlantPhase } from '../composables/usePlantPhase.ts'
+import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 
 interface Props {
   plant: Plant

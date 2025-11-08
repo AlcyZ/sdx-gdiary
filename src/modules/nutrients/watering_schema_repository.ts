@@ -1,8 +1,9 @@
-import type { Result } from '../../types'
+import type { Option, Result } from '../../types'
 import type {
   EditedWateringSchema,
   NewWateringSchema,
   NewWateringSchemaFertilizer,
+  WateringSchema,
   WateringSchemaFertilizer,
 } from './types'
 import WateringSchemaReadRepository from './watering_schema_read_repository.ts'
@@ -47,5 +48,9 @@ export default class WateringSchemaRepository {
 
   public async getAll() {
     return this.read.getAll()
+  }
+
+  public async getById(shemaId: number): Promise<Option<WateringSchema>> {
+    return this.read.getById(shemaId)
   }
 }

@@ -9,7 +9,7 @@
         :class="inputClass"
         :placeholder="label"
       >
-      <span>{{ label }}</span>
+      <span>{{ required ? `${label}*` : label }}</span>
     </label>
     <div
       v-if="error"
@@ -39,6 +39,7 @@ interface Props {
   label: string
   error?: string
   info?: string
+  required?: boolean
   fullWidth?: boolean
   size?: InputSize
   inputMode?: 'decimal' | 'numeric'
@@ -47,7 +48,7 @@ interface Emits {
   'update:modelValue': [value: number | undefined]
 }
 
-const { fullWidth, size, inputMode = 'decimal', modelValue } = defineProps<Props>()
+const { fullWidth, size, inputMode = 'decimal', modelValue, required = false } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const model = computed({

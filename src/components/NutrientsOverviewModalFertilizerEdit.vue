@@ -8,8 +8,8 @@
     </h2>
 
     <form @submit.prevent="save">
-      <InputFertilizer
-        ref="inputFertilizer"
+      <FertilizerForm
+        ref="form"
         v-model:name="name"
         v-model:manufacturer="manufacturer"
         :error-name="errors.name"
@@ -41,15 +41,15 @@
 
 <script lang="ts" setup>
 import type { Fertilizer, NewFertilizer } from '../modules/nutrients/types'
+import type FertilizerForm from './FertilizerForm.vue'
 import {
   X as IconClose,
   Save as IconSave,
 } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
-import IBtn from '../components/ui/IBtn.vue'
-import IModal from '../components/ui/IModal.vue'
-import InputFertilizer from './InputFertilizer.vue'
+import IBtn from './ui/IBtn.vue'
+import IModal from './ui/IModal.vue'
 
 interface Props {
   fertilizer: Fertilizer
@@ -62,7 +62,7 @@ interface Emits {
 const { fertilizer } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const inputFertilizer = ref<InstanceType<typeof InputFertilizer> | null>(null)
+const form = ref<InstanceType<typeof FertilizerForm> | null>(null)
 
 const { errors, defineField } = useFertilizerForm({
   name: fertilizer.name,
@@ -81,8 +81,8 @@ function save() {
  * out of the viewport. Focus another input first to make sure autoscroll works properly!
  */
 function workaroundFocusName() {
-  inputFertilizer.value?.focusManufacturer()
-  inputFertilizer.value?.focusName()
+  form.value?.focusManufacturer()
+  form.value?.focusName()
 }
 
 function applyInputNameFocusWorkaroundAfter(timeout: number = 250) {

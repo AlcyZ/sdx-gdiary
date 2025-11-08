@@ -39,7 +39,7 @@ const routes = [
             component: NutrientsSchemaAdd,
           },
           {
-            path: 'edit',
+            path: ':schemaId/edit',
             component: NutrientsSchemaEdit,
           },
         ],
