@@ -8,6 +8,7 @@ import { REPO_FERTILIZERS, REPO_PLANT, REPO_WATERING_SCHEMA } from './di_keys.ts
 import FertilizerRepository from './modules/nutrients/fertilizer_repository.ts'
 import WateringSchemaRepository from './modules/nutrients/watering_schema_repository.ts'
 import PlantRepository from './modules/plants/plant_repository.ts'
+import { router } from './router.ts'
 import './style.css'
 import 'vue3-toastify/dist/index.css'
 
@@ -25,6 +26,7 @@ if ('serviceWorker' in navigator) {
 async function bootstrap() {
   const app = createApp(App)
 
+  app.use(router)
   app.use(Vue3Toastify, {
     autoClose: 3000,
   } as ToastContainerOptions)
