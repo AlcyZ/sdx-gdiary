@@ -1,6 +1,6 @@
 import type { ToastProps, ToastVariant } from '../types'
 import { createApp, h } from 'vue'
-import IToast from '../components/IToast.vue'
+import IToast from '../components/ui/IToast.vue'
 
 interface ShowToastCallback {
   close: () => void | Promise<void>

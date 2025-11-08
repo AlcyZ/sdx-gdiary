@@ -29,13 +29,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { ResponsiveBreakpoint, ToastPosition, ToastVariant } from '../types'
+import type { ResponsiveBreakpoint, ToastPosition, ToastVariant } from '../../types'
 import {
   Info as IconInfo,
   X as IconX,
 } from 'lucide-vue-next'
 import { computed, onMounted } from 'vue'
-import { useProgressTimer } from '../composables/useProgressTimer.ts'
+import { useProgressTimer } from '../../composables/useProgressTimer.ts'
 
 interface Props {
   message: string

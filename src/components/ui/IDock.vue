@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { DockItem } from '../types'
+import type { DockItem } from '../../types'
 
 interface Props {
   items: Array<DockItem>

@@ -69,12 +69,12 @@ import { useToast } from '../composables/useToast.ts'
 import { REPO_FERTILIZERS } from '../di_keys.ts'
 import { err } from '../util.ts'
 import FertilizerModalEdit from './FertilizerModalEdit.vue'
-import IBtn from '../components/IBtn.vue'
-import ICollapse from '../components/ICollapse.vue'
-import ICollapseContent from '../components/ICollapseContent.vue'
-import ICollapseTitle from '../components/ICollapseTitle.vue'
-import IList from '../components/IList.vue'
-import IListRow from '../components/IListRow.vue'
+import IBtn from '../components/ui/IBtn.vue'
+import ICollapse from '../components/ui/ICollapse.vue'
+import ICollapseContent from '../components/ui/ICollapseContent.vue'
+import ICollapseTitle from '../components/ui/ICollapseTitle.vue'
+import IList from '../components/ui/IList.vue'
+import IListRow from '../components/ui/IListRow.vue'
 
 interface Props {
   fertilizers: Array<Fertilizer>

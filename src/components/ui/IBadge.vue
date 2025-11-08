@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import type { BadgeSize, BadgeVariant } from '../types'
+import type { BadgeSize, BadgeVariant } from '../../types'
 import { computed } from 'vue'
 
 interface Props {

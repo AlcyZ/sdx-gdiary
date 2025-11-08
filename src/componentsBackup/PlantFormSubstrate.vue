@@ -49,10 +49,10 @@
 <script lang="ts" setup>
 import type { PlantSubstrateType } from '../modules/plants/types'
 import { computed, ref, watch } from 'vue'
-import IFieldset from '../components/IFieldset.vue'
+import IFieldset from '../components/ui/IFieldset.vue'
 import IFloatingLabel from './IFloatingLabel.vue'
-import IInputText from '../components/IInputText.vue'
-import ISelect from '../components/ISelect.vue'
+import IInputText from '../components/ui/IInputText.vue'
+import ISelect from '../components/ui/ISelect.vue'
 
 interface Props {
   substrate?: string

@@ -24,8 +24,8 @@
 
 <script lang="ts" setup>
 import type { Fertilizer, WateringSchema } from '../modules/nutrients/types'
-import ICard from '../components/ICard.vue'
-import ICardTitle from '../components/ICardTitle.vue'
+import ICard from '../components/ui/ICard.vue'
+import ICardTitle from '../components/ui/ICardTitle.vue'
 import NutrientPageOverviewFertilizers from './NutrientPageOverviewFertilizers.vue'
 import NutrientPageOverviewWateringSchemas from './NutrientPageOverviewWateringSchemas.vue'
 

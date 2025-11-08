@@ -35,9 +35,9 @@ import {
   Cog as IconMenu,
 } from 'lucide-vue-next'
 import { inject, onMounted, ref } from 'vue'
-import ICard from '../components/ICard.vue'
-import ICardTitle from '../components/ICardTitle.vue'
-import IFab from '../components/IFab.vue'
+import ICard from '../components/ui/ICard.vue'
+import ICardTitle from '../components/ui/ICardTitle.vue'
+import IFab from '../components/ui/IFab.vue'
 import NutrientPageOverviewFertilizers from '../componentsBackup/NutrientPageOverviewFertilizers.vue'
 import NutrientPageOverviewWateringSchemas from '../componentsBackup/NutrientPageOverviewWateringSchemas.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'

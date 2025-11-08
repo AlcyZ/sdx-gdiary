@@ -2,10 +2,9 @@
   <div>
     <label class="floating-label">
       <input
-        v-model.number="model"
-        type="number"
+        v-model="model"
+        :type="type"
         class="input"
-        :inputmode="inputMode"
         :class="inputClass"
         :placeholder="label"
       >
@@ -30,36 +29,26 @@
 </template>
 
 <script lang="ts" setup>
-import type { InputSize } from '../types'
+import type { InputSize } from '../../types'
 import { XIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
 
 interface Props {
-  modelValue?: number
   label: string
+  type?: 'text' | 'password' | 'date'
   error?: string
   info?: string
   fullWidth?: boolean
   size?: InputSize
-  inputMode?: 'decimal' | 'numeric'
 }
 interface Emits {
-  'update:modelValue': [value: number | undefined]
+
 }
 
-const { fullWidth, size, inputMode = 'decimal', modelValue } = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const { fullWidth, size, type = 'text' } = defineProps<Props>()
+defineEmits<Emits>()
 
-const model = computed({
-  get(): number | undefined {
-    return modelValue
-  },
-  // Note: Might be string if user write '1.' instead of '1,'
-  set(value: number | string | undefined): void {
-    if (typeof value !== 'string')
-      emit('update:modelValue', value)
-  },
-})
+const model = defineModel<string>()
 
 const sizeMap: Record<InputSize, string> = {
   xs: 'input-xs',

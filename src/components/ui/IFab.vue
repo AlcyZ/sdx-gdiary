@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import type { FabAction } from '../types'
+import type { FabAction } from '../../types'
 import {
   Plus as IconPlus,
 } from 'lucide-vue-next'

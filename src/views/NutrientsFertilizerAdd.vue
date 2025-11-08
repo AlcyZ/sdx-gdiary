@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import { Cog as IconMenu } from 'lucide-vue-next'
-import IFab from '../components/IFab.vue'
+import IFab from '../components/ui/IFab.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 
 interface Props {

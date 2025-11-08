@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup generic="T">
-import type { SelectSize } from '../types'
+import type { SelectSize } from '../../types'
 import { computed } from 'vue'
 
 interface Props {

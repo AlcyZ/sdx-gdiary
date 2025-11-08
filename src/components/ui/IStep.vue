@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { StepVariant } from '../types'
+import type { StepVariant } from '../../types'
 import { computed } from 'vue'
 
 interface Props {

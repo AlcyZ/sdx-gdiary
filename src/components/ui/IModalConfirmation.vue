@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ShowConfirmationModalAction } from '../types'
+import type { ShowConfirmationModalAction } from '../../types'
 import { ArrowBigLeft as IconBack } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import IModal from './IModal.vue'

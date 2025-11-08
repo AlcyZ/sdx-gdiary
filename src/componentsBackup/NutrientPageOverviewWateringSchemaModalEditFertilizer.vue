@@ -58,8 +58,8 @@ import {
 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import WateringSchemaRepository from '../modules/nutrients/watering_schema_repository.ts'
-import IBtn from '../components/IBtn.vue'
-import IModal from '../components/IModal.vue'
+import IBtn from '../components/ui/IBtn.vue'
+import IModal from '../components/ui/IModal.vue'
 import InputTextFloat from './InputTextFloat.vue'
 
 interface Props {

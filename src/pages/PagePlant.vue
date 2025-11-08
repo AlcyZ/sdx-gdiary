@@ -57,7 +57,7 @@ import {
   CirclePlus as IconNew,
 } from 'lucide-vue-next'
 import { inject, onMounted, ref } from 'vue'
-import IFab from '../components/IFab.vue'
+import IFab from '../components/ui/IFab.vue'
 import PlantPageAdd from '../componentsBackup/PlantPageAdd.vue'
 import PlantPageEdit from '../componentsBackup/PlantPageEdit.vue'
 import PlantPageOverview from '../componentsBackup/PlantPageOverview.vue'

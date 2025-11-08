@@ -47,8 +47,8 @@ import {
 } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
-import IBtn from '../components/IBtn.vue'
-import IModal from '../components/IModal.vue'
+import IBtn from '../components/ui/IBtn.vue'
+import IModal from '../components/ui/IModal.vue'
 import InputFertilizer from './InputFertilizer.vue'
 
 interface Props {

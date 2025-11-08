@@ -16,7 +16,7 @@ import {
   Flower2 as IconPlant,
 } from 'lucide-vue-next'
 import { ref } from 'vue'
-import IDock from '../components/IDock.vue'
+import IDock from '../components/ui/IDock.vue'
 
 interface Props {
 
