@@ -39,11 +39,10 @@ interface HasTimestamps {
   updatedAt: string
 }
 
-interface DockItem<T = undefined> {
+interface DockItem {
   icon: Component
   label: string
-  active?: boolean
-  data?: T
+  to: string
 }
 
 interface ListItem {
