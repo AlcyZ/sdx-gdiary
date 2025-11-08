@@ -50,8 +50,40 @@
           </div>
         </div>
 
-        <div class="">
-          &nbsp;
+        <div class="flex flex-col sm:flex-row items-center justify-center">
+          <IBtn
+            square
+            ghost
+          >
+            <IconWatering />
+          </IBtn>
+
+          <div class="dropdown dropdown-end sm:dropdown-center">
+            <IBtn
+              square
+              ghost
+              tabindex="0"
+              role="button"
+              class="m1"
+            >
+              <IconMore />
+            </IBtn>
+            <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm">
+              <li
+                v-for="(action, j) in plant.actions"
+                :key="j"
+              >
+                <button
+                  type="button"
+                  role="button"
+                  @click="action.onClick"
+                >
+                  <component :is="action.icon" />
+                  {{ action.label }}
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </ICard>
@@ -60,15 +92,21 @@
 
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
-import type { ListItem } from '../types'
 import dayjs from 'dayjs'
-import { Edit as IconEdit, Eye as IconShow, Trash as IconTrash } from 'lucide-vue-next'
+import {
+  Edit as IconEdit,
+  EllipsisVertical as IconMore,
+  Eye as IconShow,
+  Trash as IconTrash,
+  Droplet as IconWatering,
+} from 'lucide-vue-next'
 import { computed } from 'vue'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import IBadge from './IBadge.vue'
+import IBtn from './IBtn.vue'
 import ICard from './ICard.vue'
 
 interface Props {
@@ -103,35 +141,24 @@ const plantsList = computed(
       icon: getSubstrateIcon(plant.substrate.substrate),
     },
     lastWatering: getLastWatering(plant),
-
-    // todo: remove dev stuff
-    edit: () => emit('edit', plant),
-    show: () => emit('show', plant),
+    actions: [
+      {
+        icon: IconShow,
+        label: 'Details',
+        onClick: () => emit('show', plant),
+      },
+      {
+        icon: IconEdit,
+        label: 'Bearbeiten',
+        onClick: () => emit('edit', plant),
+      },
+      {
+        icon: IconTrash,
+        label: 'Löschen',
+        onClick: () => emit('delete', plant),
+      },
+    ],
   })),
-)
-
-const listItems = computed(
-  (): Array<ListItem> => plants.map((plant) => {
-    return {
-      text: plant.name || '',
-      title: plant.strain,
-      image: PLANT_PLACEHOLDER_IMAGE,
-      actions: [
-        {
-          icon: IconShow,
-          onClick: () => emit('show', plant),
-        },
-        {
-          icon: IconEdit,
-          onClick: () => emit('edit', plant),
-        },
-        {
-          icon: IconTrash,
-          onClick: () => emit('delete', plant),
-        },
-      ],
-    }
-  }),
 )
 
 function getPlantName(plant: Plant): string {
