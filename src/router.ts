@@ -4,7 +4,7 @@ import NutrientsFertilizerAdd from './views/NutrientsFertilizerAdd.vue'
 import NutrientsOverview from './views/NutrientsOverview.vue'
 import NutrientsSchemaAdd from './views/NutrientsSchemaAdd.vue'
 import NutrientsSchemaEdit from './views/NutrientsSchemaEdit.vue'
-import ViewPlants from './views/ViewPlants.vue'
+import PlantListing from './views/PlantListing.vue'
 
 const routes = [
   {
@@ -13,7 +13,12 @@ const routes = [
   },
   {
     path: '/plants',
-    component: ViewPlants,
+    children: [
+      {
+        path: '',
+        component: PlantListing,
+      },
+    ],
   },
   {
     path: '/nutrients',
