@@ -1,4 +1,3 @@
-import type { PartialDeep } from 'type-fest'
 import type { InferType } from 'yup'
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
@@ -69,7 +68,7 @@ export function usePlantForm() {
       substrate: '',
       substrateSize: '',
       phases: [],
-    }
+    },
   })
 
   const hasFormErrors = computed(() => Object.keys(errors.value).length > 0)

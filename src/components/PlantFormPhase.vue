@@ -50,11 +50,11 @@ import type { Component } from 'vue'
 import type { NewPlantPhase, PlantPhaseType } from '../modules/plants/types'
 
 import { computed, onMounted, toRaw } from 'vue'
+import { usePlantPhase } from '../composables/usePlantPhase.ts'
+import { extractEventValue, now } from '../util.ts'
 import IFieldset from './ui/IFieldset.vue'
 import IStep from './ui/IStep.vue'
 import ISteps from './ui/ISteps.vue'
-import { usePlantPhase } from '../composables/usePlantPhase.ts'
-import { extractEventValue, now } from '../util.ts'
 
 interface Props {
   modelValue: Array<NewPlantPhase>

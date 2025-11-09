@@ -23,7 +23,7 @@
 
       <template #actions>
         <IBtn
-          @click="$emit('back')"
+          @click="$router.push('/plants')"
         >
           <IconBack />
           Zurück

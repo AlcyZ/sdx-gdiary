@@ -4,11 +4,11 @@ import NutrientsFertilizerAdd from './views/NutrientsFertilizerAdd.vue'
 import NutrientsOverview from './views/NutrientsOverview.vue'
 import NutrientsSchemaAdd from './views/NutrientsSchemaAdd.vue'
 import NutrientsSchemaEdit from './views/NutrientsSchemaEdit.vue'
+import PlantAdd from './views/PlantAdd.vue'
 import PlantDetails from './views/PlantDetails.vue'
+import PlantEdit from './views/PlantEdit.vue'
 import PlantListing from './views/PlantListing.vue'
 import PlantLogWatering from './views/PlantLogWatering.vue'
-import PlantAdd from "./views/PlantAdd.vue";
-import PlantEdit from "./views/PlantEdit.vue";
 
 const routes = [
   {

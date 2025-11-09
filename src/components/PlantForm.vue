@@ -65,11 +65,11 @@
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
 import { useId } from 'vue'
+import PlantFormPhase from './PlantFormPhase.vue'
+import PlantFormSubstrate from './PlantFormSubstrate.vue'
 import IFieldset from './ui/IFieldset.vue'
 import IInputText from './ui/IInputText.vue'
 import ISelect from './ui/ISelect.vue'
-import PlantFormPhase from './PlantFormPhase.vue'
-import PlantFormSubstrate from './PlantFormSubstrate.vue'
 
 interface Props {
   errors: FormError
@@ -95,7 +95,7 @@ const name = defineModel<string>('name')
 const substrate = defineModel<string>('substrate')
 const substrateSize = defineModel<string>('substrateSize', { required: true })
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
-const wateringSchema = defineModel<WateringSchema>('wateringSchema', { required: true })
+const wateringSchema = defineModel<WateringSchema | null>('wateringSchema', { required: true })
 
 const schemaSelectId = useId()
 </script>

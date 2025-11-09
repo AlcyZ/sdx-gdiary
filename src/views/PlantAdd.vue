@@ -81,7 +81,7 @@ interface Emits {
 }
 
 defineProps<Props>()
-const emit = defineEmits<Emits>()
+defineEmits<Emits>()
 
 const plantRepo = inject(REPO_PLANT)
 const wateringRepo = inject(REPO_WATERING_SCHEMA)

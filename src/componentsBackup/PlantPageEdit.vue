@@ -49,6 +49,7 @@ import {
   Save as IconSave,
 } from 'lucide-vue-next'
 import { computed, inject, ref } from 'vue'
+import PlantForm from '../components/PlantForm.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
 import { usePlantForm } from '../composables/usePlantForm.ts'
@@ -56,7 +57,6 @@ import { useToast } from '../composables/useToast.ts'
 import { REPO_PLANT } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { err } from '../util.ts'
-import PlantForm from '../components/PlantForm.vue'
 
 interface Props {
   plant: Plant
