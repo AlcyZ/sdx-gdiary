@@ -50,6 +50,11 @@
         </div>
       </template>
     </ICard>
+    <IFab
+      :actions="fabActions"
+      class="mb-14"
+      :icon="IconMenu"
+    />
   </div>
 </template>
 
@@ -60,6 +65,7 @@ import type { Result, ToastVariant } from '../types'
 import {
   CirclePlus as IconAdd,
   MoveLeft as IconBack,
+  Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'
 import { inject, onMounted, ref } from 'vue'
@@ -67,7 +73,9 @@ import { useRouter } from 'vue-router'
 import PlantForm from '../components/PlantForm.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
+import IFab from '../components/ui/IFab.vue'
 import { usePlantForm } from '../composables/usePlantForm.ts'
+import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_PLANT, REPO_WATERING_SCHEMA } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
@@ -88,6 +96,7 @@ const wateringRepo = inject(REPO_WATERING_SCHEMA)
 
 const router = useRouter()
 const { showToast } = useToast()
+const { fabActions } = usePlantView()
 
 const loading = ref(false)
 const wateringSchemas = ref<Array<WateringSchema>>([])

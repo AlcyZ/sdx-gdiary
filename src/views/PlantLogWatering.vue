@@ -138,7 +138,7 @@
       <template #actions>
         <IBtn
           class="hidden sm:flex"
-          @click="$emit('back')"
+          @click="$router.push(`/plants/${plant?.id}`)"
         >
           <IconBack />
           Zurück
@@ -175,6 +175,7 @@ import {
   Check as IconSave,
 } from 'lucide-vue-next'
 import { computed, inject, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import PlantLogWateringModal from '../components/PlantLogWateringModal.vue'
 import IBadge from '../components/ui/IBadge.vue'
 import IBtn from '../components/ui/IBtn.vue'
@@ -200,7 +201,7 @@ interface Emits {
 }
 
 defineProps<Props>()
-const emit = defineEmits<Emits>()
+defineEmits<Emits>()
 
 const plantRepo = inject(REPO_PLANT)
 const fertilizerRepo = inject(REPO_FERTILIZERS)
@@ -230,6 +231,7 @@ const {
 } = usePlant()
 
 const { fabActions } = usePlantView()
+const router = useRouter()
 
 const plantName = computed(
   () => plant.value === null
@@ -313,7 +315,7 @@ async function save() {
   }
 
   toast('Gießeintrag erfolgreich gespeichert', 'success')
-  emit('backAndSync')
+  await router.push(`/plants/${plant.value.id}`)
 }
 
 onMounted(async () => {

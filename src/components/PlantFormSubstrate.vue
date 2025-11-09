@@ -29,7 +29,7 @@
       v-if="substrateInternal === 'Custom'"
       v-model="substrate"
       label="Eigener Substrat-Typ z.B. Steinwolle oder Spezialmischung"
-      class="mt-2"
+      class="mt-5"
       full-width
     />
 
@@ -37,7 +37,7 @@
       v-model="size"
       label="Gib die Größe des Topfes oder Volumens des Substrats an (z.B. 12L, 15cm x 15cm x 15cm)"
       type="text"
-      class="mt-2"
+      class="mt-5"
       full-width
       :error="sizeError"
       required
@@ -48,7 +48,7 @@
 
 <script lang="ts" setup>
 import type { PlantSubstrateType } from '../modules/plants/types'
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import IFloatingLabel from './IFloatingLabel.vue'
 import IFieldset from './ui/IFieldset.vue'
 import IInputText from './ui/IInputText.vue'
@@ -69,8 +69,9 @@ const emit = defineEmits<Emits>()
 const substrates: Array<PlantSubstrateType> = ['Erde', 'Coco', 'Hydro', 'Custom']
 
 function getInitialSubstrate() {
-  if (substrateProp === undefined)
+  if (substrateProp === undefined) {
     return ''
+  }
 
   if (substrates.includes(substrateProp as PlantSubstrateType))
     return substrateProp
@@ -90,6 +91,19 @@ const substrate = computed({
     if (value !== undefined)
       emit('update:substrate', value)
   },
+})
+
+watch(() => substrateProp, (newVal?: string) => {
+  if (newVal === undefined || newVal === '')
+    return
+
+  if (substrates.includes(newVal as PlantSubstrateType)) {
+    substrateInternal.value = newVal
+  }
+  else {
+    substrateInternal.value = 'Custom'
+    nextTick(() => emit('update:substrate', newVal))
+  }
 })
 
 watch(substrateInternal, (newVal: string) => {
