@@ -17,6 +17,7 @@
     "idb": "^8.0.3",
     "install": "^0.13.0",
     "lucide-vue-next": "^0.548.0",
+    "pinia": "^3.0.4",
     "sdx-php-date": "^0.0.2",
     "type-fest": "^5.2.0",
     "vee-validate": "^4.15.1",
