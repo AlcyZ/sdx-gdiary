@@ -11,6 +11,7 @@ import PlantRepository from './modules/plants/plant_repository.ts'
 import { router } from './router.ts'
 import './style.css'
 import 'vue3-toastify/dist/index.css'
+import {createPinia} from "pinia";
 
 const debug = false
 
@@ -25,8 +26,10 @@ if ('serviceWorker' in navigator) {
 
 async function bootstrap() {
   const app = createApp(App)
+  const pinia = createPinia()
 
   app.use(router)
+  app.use(pinia)
   app.use(Vue3Toastify, {
     autoClose: 3000,
   } as ToastContainerOptions)
