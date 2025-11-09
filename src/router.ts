@@ -13,6 +13,10 @@ import PlantLogWatering from './views/PlantLogWatering.vue'
 const routes = [
   {
     path: '/',
+    component: PlantListing,
+  },
+  {
+    path: '/dev',
     component: DevSeed,
   },
   {
