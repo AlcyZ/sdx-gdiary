@@ -30,9 +30,9 @@ defineEmits<Emits>()
 
 const docks = ref<Array<DockItem>>([
   {
-    label: 'Home',
+    label: 'Dev',
     icon: IconHouse,
-    to: '/',
+    to: '/dev',
   },
   {
     label: 'Pflanzen',
