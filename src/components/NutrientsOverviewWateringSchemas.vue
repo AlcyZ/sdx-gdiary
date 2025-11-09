@@ -13,7 +13,7 @@
 
     <div class="join join-vertical w-full">
       <ICollapse
-        v-for="(wateringSchema, i) in wateringSchemas"
+        v-for="(wateringSchema, i) in wateringSchemaStore.wateringSchemas"
         :key="i"
         name="schema"
         class="border border-base-200 join-item"
@@ -103,7 +103,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Fertilizer, WateringSchema, WateringSchemaFertilizer } from '../modules/nutrients/types'
+import type { WateringSchema, WateringSchemaFertilizer } from '../modules/nutrients/types'
 import {
   CirclePlus as IconAdd,
   Trash as IconDelete,
@@ -120,19 +120,21 @@ import IListRow from '../components/ui/IListRow.vue'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
+import { useFertilizerStore } from '../stores/fertilizerStore.ts'
+import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
 import { err } from '../util.ts'
 import NutrientsOverviewModalSchemaEdit from './NutrientsOverviewModalSchemaEdit.vue'
 
 interface Props {
-  wateringSchemas: Array<WateringSchema>
-  fertilizers: Array<Fertilizer>
 }
 interface Emits {
-  sync: []
 }
 
-const { fertilizers } = defineProps<Props>()
-const emit = defineEmits<Emits>()
+defineProps<Props>()
+defineEmits<Emits>()
+
+const fertilizerStore = useFertilizerStore()
+const wateringSchemaStore = useWateringSchemaStore()
 
 const { toast } = useToast()
 const { showModal, showConfirmationModal } = useModal()
@@ -144,9 +146,9 @@ async function editSchemaFertilizer(wateringSchema: WateringSchema, fertilizer: 
   const { close } = showModal(NutrientsOverviewModalSchemaEdit, {
     wateringSchema,
     fertilizer,
-    fertilizers,
+    fertilizers: fertilizerStore.fertilizers,
     onSaved: async () => {
-      emit('sync')
+      await wateringSchemaStore.syncWateringSchemas()
       await close()
     },
   })
@@ -165,7 +167,7 @@ function showDeleteSchemaFertilizerModal(fertilizer: WateringSchemaFertilizer) {
     }
 
     toast('Dünger erfolgreich aus den Schema entfernt', 'success')
-    emit('sync')
+    await wateringSchemaStore.syncWateringSchemas()
   }
 
   showConfirmationModal({
@@ -195,7 +197,7 @@ function showDeleteSchemaModal(wateringSchema: WateringSchema) {
     }
 
     toast('Bewässerungsschema erfolgreich gelöscht', 'success')
-    emit('sync')
+    await wateringSchemaStore.syncWateringSchemas()
   }
 
   showConfirmationModal({

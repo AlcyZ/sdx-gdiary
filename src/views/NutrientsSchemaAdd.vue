@@ -14,7 +14,6 @@
         :error-name="errors.name"
         :error-fertilizer-data="errors.fertilizersData"
         class="my-5"
-        :fertilizers="fertilizers"
         @submit="saveAndNew"
       />
 
@@ -54,14 +53,14 @@
 </template>
 
 <script lang="ts" setup>
-import type { Fertilizer, NewWateringSchema } from '../modules/nutrients/types'
+import type { NewWateringSchema } from '../modules/nutrients/types'
 import {
   CirclePlus as IconAdd,
   MoveLeft as IconBack,
   Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'
-import { inject, onMounted, ref } from 'vue'
+import { inject } from 'vue'
 import { useRouter } from 'vue-router'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
@@ -71,7 +70,8 @@ import WateringSchemaForm from '../components/WateringSchemaForm.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import { useToast } from '../composables/useToast.ts'
 import { useWateringSchemaForm } from '../composables/useWateringSchemaForm.ts'
-import { REPO_FERTILIZERS, REPO_WATERING_SCHEMA } from '../di_keys.ts'
+import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
+import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
 
 interface Props {
 }
@@ -83,14 +83,12 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-const fertilizerRepo = inject(REPO_FERTILIZERS)
 const wateringRepo = inject(REPO_WATERING_SCHEMA)
+const wateringSchemaStore = useWateringSchemaStore()
 
 const router = useRouter()
 const { toast } = useToast()
 const { fabActions } = useNutrientsView()
-
-const fertilizers = ref<Array<Fertilizer>>([])
 
 const {
   name,
@@ -133,8 +131,12 @@ async function saveSchema(): Promise<boolean> {
 
   const result = await wateringRepo.save(schema)
 
-  if (!result.ok)
+  if (!result.ok) {
     toast('Zuchtschema konnte nicht gespeichert werden', 'error')
+  }
+  else {
+    await wateringSchemaStore.syncWateringSchemas()
+  }
 
   return result.ok
 }
@@ -147,10 +149,4 @@ async function validateForm(): Promise<boolean> {
 
   return result.valid
 }
-
-async function syncFertilizers() {
-  fertilizers.value = await fertilizerRepo?.getAll() || []
-}
-
-onMounted(syncFertilizers)
 </script>

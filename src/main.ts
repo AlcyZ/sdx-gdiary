@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import type { ToastContainerOptions } from 'vue3-toastify'
+import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import Vue3Toastify from 'vue3-toastify'
 import App from './App.vue'
@@ -11,7 +12,6 @@ import PlantRepository from './modules/plants/plant_repository.ts'
 import { router } from './router.ts'
 import './style.css'
 import 'vue3-toastify/dist/index.css'
-import {createPinia} from "pinia";
 
 const debug = false
 

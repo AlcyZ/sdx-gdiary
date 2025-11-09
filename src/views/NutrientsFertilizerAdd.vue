@@ -71,6 +71,7 @@ import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_FERTILIZERS } from '../di_keys.ts'
+import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 
 interface Props {
 
@@ -80,12 +81,12 @@ interface Emits {
 }
 
 interface Emits {
-  sync: []
-  back: []
 }
 
 defineProps<Props>()
 defineEmits<Emits>()
+
+const fertilizerStore = useFertilizerStore()
 
 const router = useRouter()
 const { fabActions } = useNutrientsView()
@@ -153,6 +154,9 @@ async function saveFertilizer() {
   if (!result.ok) {
     console.error('[NutrientPageAddFertilizer:saveFertilizer] - failed to save fertilizer due to error in repository:', result.error)
     toast('Dünger konnte nicht gespeichert werden')
+  }
+  else {
+    await fertilizerStore.syncFertilizers()
   }
 
   return result

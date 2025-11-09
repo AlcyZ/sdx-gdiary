@@ -74,6 +74,7 @@ import {
   CircleMinus as IconRemove,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
+import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { removeArrayElement } from '../util.ts'
 import IBtn from './ui/IBtn.vue'
 import IInputNumber from './ui/IInputNumber.vue'
@@ -84,22 +85,23 @@ interface Props {
   fertilizersData: Array<NewWateringSchemaFertilizer>
   errorName?: string
   errorFertilizerData?: string
-  fertilizers: Array<Fertilizer>
 }
 interface Emits {
   'update:fertilizersData': [data: Array<NewWateringSchemaFertilizer>]
   'submit': []
 }
 
-const { fertilizers, fertilizersData } = defineProps<Props>()
+const { fertilizersData } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const name = defineModel<string>('name')
 
+const fertilizerStore = useFertilizerStore()
+
 const fallbackManufacturer = 'Unbekannter Hersteller'
 
 const sortedFertilizers = computed(
-  () => [...fertilizers].sort(
+  () => [...fertilizerStore.fertilizers].sort(
     (lhs: Fertilizer, rhs: Fertilizer) =>
       (lhs.manufacturer ?? fallbackManufacturer).localeCompare(rhs.manufacturer ?? fallbackManufacturer),
   ),

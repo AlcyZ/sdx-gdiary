@@ -73,20 +73,20 @@ import IListRow from '../components/ui/IListRow.vue'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_FERTILIZERS } from '../di_keys.ts'
+import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { err } from '../util.ts'
 import NutrientsOverviewModalFertilizerEdit from './NutrientsOverviewModalFertilizerEdit.vue'
 
 interface Props {
-  fertilizers: Array<Fertilizer>
 }
 interface Emits {
-  sync: []
 }
 
-const { fertilizers } = defineProps<Props>()
-const emit = defineEmits<Emits>()
+defineProps<Props>()
+defineEmits<Emits>()
 
 const fertilizerRepo = inject(REPO_FERTILIZERS)
+const fertilizerStore = useFertilizerStore()
 
 const { toast } = useToast()
 const { showConfirmationModal, showModal } = useModal()
@@ -96,7 +96,7 @@ const fertilizersGroup = computed(() => {
 
   const data: Record<string, Array<Fertilizer>> = {}
 
-  for (const fertilizer of fertilizers) {
+  for (const fertilizer of fertilizerStore.fertilizers) {
     const manufacturer = fertilizer.manufacturer || unknown
 
     if (!(manufacturer in data)) {
@@ -124,7 +124,7 @@ function edit(fertilizer: Fertilizer) {
     }
 
     toast('Dünger aktualisiert', 'success')
-    emit('sync')
+    await fertilizerStore.syncFertilizers()
     close()
   }
 
@@ -145,7 +145,7 @@ function showDeleteConfirmation(fertilizer: Fertilizer) {
 
     if (result.ok) {
       toast('Dünger erfolgreich gelöscht', 'success')
-      emit('sync')
+      await fertilizerStore.syncFertilizers()
     }
     else {
       toast('Es ist ein Fehler beim löschen des Düngers aufgetreten', 'error')
