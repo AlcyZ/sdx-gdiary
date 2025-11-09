@@ -21,7 +21,6 @@
 
 <script lang="ts" setup>
 import type { NewFertilizer } from '../modules/nutrients/types'
-import type InputTextFloat from './InputTextFloat.vue'
 import { ref } from 'vue'
 import IInputText from './ui/IInputText.vue'
 
@@ -39,8 +38,8 @@ defineEmits<Emits>()
 const name = defineModel<string>('name', { required: true })
 const manufacturer = defineModel<string | undefined>('manufacturer')
 
-const inputName = ref<InstanceType<typeof InputTextFloat> | null>(null)
-const inputManufacturer = ref<InstanceType<typeof InputTextFloat> | null>(null)
+const inputName = ref<InstanceType<typeof IInputText> | null>(null)
+const inputManufacturer = ref<InstanceType<typeof IInputText> | null>(null)
 
 function focusName() {
   inputName.value?.focus()

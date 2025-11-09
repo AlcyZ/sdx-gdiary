@@ -93,13 +93,13 @@ const { showToast } = useToast()
 
 const inputFertilizer = ref<InstanceType<typeof FertilizerForm> | null>(null)
 
-const { errors, defineField, validate } = useFertilizerForm({
-  name: '',
-  manufacturer: undefined,
-})
-
-const [name] = defineField<'name', string>('name')
-const [manufacturer] = defineField<'manufacturer', string | undefined>('manufacturer')
+const {
+  name,
+  manufacturer,
+  errors,
+  validate,
+  resetForm,
+} = useFertilizerForm()
 
 function toast(message: string, variant: ToastVariant = 'error', close?: () => void) {
   showToast({ message, variant, duration: 1500 }, close ? { close } : undefined)
@@ -125,7 +125,7 @@ async function saveAndNew() {
 
   toast('Dünger erfolgreich gespeichert', 'success')
 
-  name.value = ''
+  resetForm({})
   inputFertilizer.value?.focusName()
 }
 

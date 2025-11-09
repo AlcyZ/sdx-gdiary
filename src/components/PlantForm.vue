@@ -95,7 +95,7 @@ const name = defineModel<string>('name')
 const substrate = defineModel<string>('substrate')
 const substrateSize = defineModel<string>('substrateSize', { required: true })
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
-const wateringSchema = defineModel<WateringSchema | null>('wateringSchema', { required: true })
+const wateringSchema = defineModel<WateringSchema>('wateringSchema')
 
 const schemaSelectId = useId()
 </script>

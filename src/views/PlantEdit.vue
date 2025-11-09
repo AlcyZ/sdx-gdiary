@@ -161,5 +161,6 @@ onMounted(async () => {
       phases: plant.value.phases,
     },
   })
+  wateringSchema.value = plant.value.wateringSchema
 })
 </script>

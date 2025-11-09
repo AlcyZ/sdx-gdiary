@@ -80,7 +80,6 @@ interface Props {
   fertilizers: Array<Fertilizer>
 }
 interface Emits {
-  addFertilizer: []
   sync: []
 }
 

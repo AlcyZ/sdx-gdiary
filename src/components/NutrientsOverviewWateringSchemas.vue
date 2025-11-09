@@ -129,7 +129,6 @@ interface Props {
 }
 interface Emits {
   sync: []
-  editSchema: [wateringSchema: WateringSchema]
 }
 
 const { fertilizers } = defineProps<Props>()

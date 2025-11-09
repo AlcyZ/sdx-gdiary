@@ -41,13 +41,13 @@
 
 <script lang="ts" setup>
 import type { Fertilizer, NewFertilizer } from '../modules/nutrients/types'
-import type FertilizerForm from './FertilizerForm.vue'
 import {
   X as IconClose,
   Save as IconSave,
 } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
+import FertilizerForm from './FertilizerForm.vue'
 import IBtn from './ui/IBtn.vue'
 import IModal from './ui/IModal.vue'
 
@@ -64,13 +64,10 @@ const emit = defineEmits<Emits>()
 
 const form = ref<InstanceType<typeof FertilizerForm> | null>(null)
 
-const { errors, defineField } = useFertilizerForm({
+const { name, manufacturer, errors } = useFertilizerForm({
   name: fertilizer.name,
   manufacturer: fertilizer.manufacturer,
 })
-
-const [name] = defineField<'name', string>('name')
-const [manufacturer] = defineField<'manufacturer', string>('manufacturer')
 
 function save() {
   emit('save', { name: name.value, manufacturer: manufacturer.value })

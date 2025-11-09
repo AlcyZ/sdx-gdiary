@@ -19,12 +19,12 @@ import { computed } from 'vue'
 
 interface Props {
   options: Array<T>
-  modelValue: T
+  modelValue?: T | undefined
   fullWidth?: boolean
   size?: SelectSize
 }
 interface Emits {
-  'update:modelValue': [value: T]
+  'update:modelValue': [value: T | undefined]
 }
 
 const { modelValue, fullWidth = false, size } = defineProps<Props>()
@@ -35,10 +35,10 @@ defineSlots<{
 }>()
 
 const model = computed({
-  get(): T {
+  get(): T | undefined {
     return modelValue
   },
-  set(value: T) {
+  set(value: T | undefined) {
     emit('update:modelValue', value)
   },
 })

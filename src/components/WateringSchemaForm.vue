@@ -2,7 +2,7 @@
   <form
     @submit.prevent="$emit('submit')"
   >
-    <InputTextFloat
+    <IInputText
       v-model="name"
       :error="errorName"
       label="Name des Zuchtschemas"
@@ -74,10 +74,10 @@ import {
   CircleMinus as IconRemove,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
-import InputTextFloat from '../componentsBackup/InputTextFloat.vue'
 import { removeArrayElement } from '../util.ts'
 import IBtn from './ui/IBtn.vue'
 import IInputNumber from './ui/IInputNumber.vue'
+import IInputText from './ui/IInputText.vue'
 import ISelect from './ui/ISelect.vue'
 
 interface Props {

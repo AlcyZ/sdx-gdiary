@@ -9,11 +9,13 @@
         :watering-schemas="wateringSchemas"
         :fertilizers="fertilizers"
         class="my-3"
+        @sync="syncData"
       />
 
       <NutrientsOverviewFertilizers
         :fertilizers="fertilizers"
         class="my-3"
+        @sync="syncData"
       />
     </ICard>
     <IFab

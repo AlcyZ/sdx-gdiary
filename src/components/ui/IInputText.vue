@@ -2,6 +2,7 @@
   <div>
     <label class="floating-label">
       <input
+        ref="input"
         v-model="model"
         :type="type"
         class="input"
@@ -31,7 +32,7 @@
 <script lang="ts" setup>
 import type { InputSize } from '../../types'
 import { XIcon } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 interface Props {
   label: string
@@ -50,6 +51,7 @@ const { fullWidth, size, type = 'text', required = false } = defineProps<Props>(
 defineEmits<Emits>()
 
 const model = defineModel<string>()
+const input = ref<HTMLInputElement | null>(null)
 
 const sizeMap: Record<InputSize, string> = {
   xs: 'input-xs',
@@ -63,4 +65,12 @@ const inputClass = computed(() => [
   fullWidth ? 'w-full' : undefined,
   size ? sizeMap[size] : undefined,
 ])
+
+function focus() {
+  input.value?.focus()
+}
+
+defineExpose({
+  focus,
+})
 </script>

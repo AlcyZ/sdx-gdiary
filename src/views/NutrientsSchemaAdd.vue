@@ -97,6 +97,7 @@ const {
   fertilizersData,
   errors,
   validate,
+  resetForm,
 } = useWateringSchemaForm({
   fertilizersData: [],
 })
@@ -114,7 +115,8 @@ async function saveAndNew() {
     return
 
   toast('Zuchtschema erfolgreich gespeichert', 'success')
-  name.value = ''
+
+  resetForm({ values: { name: '', fertilizersData: fertilizersData.value } })
 }
 
 async function saveSchema(): Promise<boolean> {

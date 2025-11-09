@@ -32,7 +32,7 @@
 <script lang="ts" setup>
 import type { InputSize } from '../../types'
 import { XIcon } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 interface Props {
   modelValue?: number
@@ -50,6 +50,8 @@ interface Emits {
 
 const { fullWidth, size, inputMode = 'decimal', modelValue, required = false } = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+const input = ref<HTMLInputElement | null>(null)
 
 const model = computed({
   get(): number | undefined {
@@ -74,4 +76,12 @@ const inputClass = computed(() => [
   fullWidth ? 'w-full' : undefined,
   size ? sizeMap[size] : undefined,
 ])
+
+function focus() {
+  input.value?.focus()
+}
+
+defineExpose({
+  focus,
+})
 </script>
