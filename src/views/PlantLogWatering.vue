@@ -21,7 +21,7 @@
             variant="primary"
             class="text-base-100 text-sm py-1 px-2"
           >
-            {{ plantStore.plantName }}
+            {{ plantName }}
           </IBadge>
         </div>
       </div>
@@ -174,7 +174,7 @@ import {
   Trash as IconRemove,
   Check as IconSave,
 } from 'lucide-vue-next'
-import { inject, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PlantLogWateringModal from '../components/PlantLogWateringModal.vue'
 import IBadge from '../components/ui/IBadge.vue'
@@ -186,6 +186,7 @@ import IInputDatetime from '../components/ui/IInputDatetime.vue'
 import IInputNumber from '../components/ui/IInputNumber.vue'
 import IMobileBack from '../components/ui/IMobileBack.vue'
 import { useModal } from '../composables/useModal.ts'
+import { usePlant } from '../composables/usePlant.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { usePouringForm } from '../composables/usePouringForm.ts'
 import { useToast } from '../composables/useToast.ts'
@@ -208,6 +209,7 @@ const plantRepo = inject(REPO_PLANT)
 
 const plantStore = usePlantStore()
 const fertilizerStore = useFertilizerStore()
+const { getPlantName } = usePlant()
 
 const { showModal } = useModal()
 const { toast } = useToast()
@@ -228,6 +230,8 @@ const {
 
 const { fabActions } = usePlantView()
 const router = useRouter()
+
+const plantName = computed(() => plantStore.plant ? getPlantName(plantStore.plant) : null)
 
 function formatNumber(number: number): string {
   const format = new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })

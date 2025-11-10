@@ -2,7 +2,13 @@ import type { Plant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 
 export function usePlant() {
-  const getPlantAge = (plant: Plant): number => {
+  function getPlantName(plant: Plant) {
+    return plant.name !== undefined && plant.name !== ''
+      ? `${plant.name} (${plant.strain})`
+      : plant.strain
+  }
+
+  function getPlantAge(plant: Plant): number {
     const startDateString = plant.phases.find(phase => phase.phase === 'germination')?.startedAt
       || dayjs().format('YYYY-MM-DDTHH:mm')
 
@@ -13,6 +19,7 @@ export function usePlant() {
   }
 
   return {
+    getPlantName,
     getPlantAge,
   }
 }
