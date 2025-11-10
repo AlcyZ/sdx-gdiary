@@ -258,7 +258,7 @@ function openAddFertilizerModal() {
   })
 
   const { close } = showModal(PlantLogWateringModal, {
-    fertilizers: fertilizerStore.fertilizers.value,
+    fertilizers: fertilizerStore.fertilizers,
     wateringSchema: plantStore.plant.wateringSchema,
     data: fertilizersData.value,
     onAddSchemaFertilizer: async (item: WateringSchemaFertilizer) => {
