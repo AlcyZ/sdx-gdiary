@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vue-tsc -b && vite build && node update_sw.js",
     "preview": "vite preview",
     "lint": "eslint",
     "lint:fix": "eslint --fix"
