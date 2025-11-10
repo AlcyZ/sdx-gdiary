@@ -117,3 +117,16 @@ interface ShowConfirmationModalProps {
   text?: string
   actions: Array<ShowConfirmationModalAction>
 }
+
+interface ParseJsonErrorParse {
+  kind: 'parse'
+  error: unknown
+}
+
+interface ParseJsonErrorTypeGuard {
+  kind: 'guard'
+}
+
+type ParseJsonError = (ParseJsonErrorParse | ParseJsonErrorTypeGuard) & {
+  payload?: any
+}

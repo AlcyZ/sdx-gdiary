@@ -56,11 +56,16 @@ function createTableWithIndices(
   }
 }
 
+let dbInstance: IDBPDatabase | null = null
+
 export async function getDb() {
+  if (dbInstance !== null)
+    return dbInstance
+
   const createPlantSubTable = (table: string, db: IDBPDatabase) =>
     createTableWithIndices(table, [INDEX_PLANT_ID], db)
 
-  return openDB(DB_NAME, 1, {
+  dbInstance = await openDB(DB_NAME, 1, {
     upgrade(db) {
       createTableWithIndices(TABLE_PLANTS, [INDEX_WATERING_SCHEMA_ID], db)
 
@@ -74,6 +79,8 @@ export async function getDb() {
       createTableWithIndices(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, [INDEX_FERTILIZER_ID, INDEX_WATERING_SCHEMA_ID], db)
     },
   })
+
+  return dbInstance
 }
 
 export function base64ToBlob(base64: string, type = TYPE_PNG): Blob {
