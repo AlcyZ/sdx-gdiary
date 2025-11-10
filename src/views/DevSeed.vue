@@ -82,7 +82,6 @@
       <IBtn
         variant="neutral"
         class="w-full"
-        disabled
         @click="seed"
       >
         Seed
@@ -299,7 +298,8 @@ async function updateServiceWorker() {
       count++
     }
 
-    toast(`Updated ${count} service worker`, 'success')
+    if (count > 1)
+      toast('App erfolgreich aktualisiert. Die App muss neugestartet werden, damit die Änderung funktionieren', 'success')
   }
   else {
     toast('Service worker object not available in navigator!', 'warning')

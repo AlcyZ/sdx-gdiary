@@ -16,6 +16,7 @@
 
 <script lang="ts" setup>
 import { Cog as IconMenu } from 'lucide-vue-next'
+import { onMounted } from 'vue'
 import PlantDetailsCards from '../components/PlantDetailsCards.vue'
 import IFab from '../components/ui/IFab.vue'
 import IMobileBack from '../components/ui/IMobileBack.vue'
@@ -33,4 +34,6 @@ defineEmits<Emits>()
 const { fabActions } = usePlantView()
 
 const plantStore = usePlantStore()
+
+onMounted(async () => await plantStore.syncPlantWithRoute())
 </script>
