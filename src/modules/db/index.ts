@@ -12,6 +12,16 @@ export const TABLE_PLANT_WATERING_LOGS = 'plantWateringLogs' as const
 export const TABLE_FERTILIZERS = 'fertilizers' as const
 export const TABLE_WATERING_SCHEMAS = 'wateringSchema' as const
 export const TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA = 'fertilizerWateringSchema' as const
+export const TABLES_DB = [
+  TABLE_PLANTS,
+  TABLE_PLANT_IMAGES,
+  TABLE_PLANT_SUBSTRATES,
+  TABLE_PLANT_PHASES,
+  TABLE_PLANT_WATERING_LOGS,
+  TABLE_FERTILIZERS,
+  TABLE_WATERING_SCHEMAS,
+  TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
+] as const
 
 export const INDEX_PLANT_ID = 'plantId' as const
 export const INDEX_FERTILIZER_ID = 'fertilizerId' as const
