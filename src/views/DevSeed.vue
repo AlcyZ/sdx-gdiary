@@ -7,6 +7,26 @@
         Daten exportieren
       </ICardTitle>
 
+      <p>
+        Hier können Updates für die App installiert werden
+      </p>
+
+      <IBtn
+        variant="neutral"
+        class="w-full"
+        @click="updateServiceWorker"
+      >
+        Update checken und installieren
+      </IBtn>
+    </ICard>
+
+    <ICard
+      class="w-full max-w-3xl"
+    >
+      <ICardTitle class="text-2xl">
+        Daten exportieren
+      </ICardTitle>
+
       <p class="my-5">
         Exportiere alle deine Daten zu einer JSON-Datei. Die Datei kann bei Bedarf einfach wieder importiert werden.
         Auch praktisch, um Backups von seinen Daten zu erhalten.
@@ -267,5 +287,22 @@ async function syncStores() {
     fertilizerStore.syncFertilizers(),
     wateringSchemaStore.syncWateringSchemas(),
   ])
+}
+
+async function updateServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations()
+    let count = 0
+
+    for (const registration of registrations) {
+      await registration.update()
+      count++
+    }
+
+    toast(`Updated ${count} service worker`, 'success')
+  }
+  else {
+    toast('Service worker object not available in navigator!', 'warning')
+  }
 }
 </script>
