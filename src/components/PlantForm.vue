@@ -27,7 +27,7 @@
     />
 
     <IFieldset
-      v-if="wateringSchemas.length > 0"
+      v-if="wateringSchemaStore.wateringSchemas.length > 0"
       legend="Bewässerungsschema"
     >
       <label
@@ -37,7 +37,7 @@
       </label>
       <ISelect
         v-model="wateringSchema"
-        :options="wateringSchemas"
+        :options="wateringSchemaStore.wateringSchemas"
         :class="{ 'opacity-75': wateringSchema === undefined }"
       >
         <option class="opacity-75 text-xs" :value="undefined">
@@ -65,6 +65,7 @@
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
 import { useId } from 'vue'
+import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
 import IFieldset from './ui/IFieldset.vue'
@@ -73,7 +74,6 @@ import ISelect from './ui/ISelect.vue'
 
 interface Props {
   errors: FormError
-  wateringSchemas: Array<WateringSchema>
 }
 interface Emits {
   submit: []
@@ -87,8 +87,10 @@ interface FormError {
   phases?: string
 }
 
-const { wateringSchemas } = defineProps<Props>()
+defineProps<Props>()
 defineEmits<Emits>()
+
+const wateringSchemaStore = useWateringSchemaStore()
 
 const strain = defineModel<string>('strain')
 const name = defineModel<string>('name')

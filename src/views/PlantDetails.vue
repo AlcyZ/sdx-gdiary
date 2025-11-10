@@ -3,8 +3,8 @@
     <IMobileBack @back="$router.push('/plants')" />
 
     <PlantDetailsCards
-      v-if="plant"
-      :plant="plant"
+      v-if="plantStore.plant"
+      :plant="plantStore.plant"
     />
     <IFab
       :actions="fabActions"
@@ -16,12 +16,11 @@
 
 <script lang="ts" setup>
 import { Cog as IconMenu } from 'lucide-vue-next'
-import { onMounted } from 'vue'
 import PlantDetailsCards from '../components/PlantDetailsCards.vue'
 import IFab from '../components/ui/IFab.vue'
 import IMobileBack from '../components/ui/IMobileBack.vue'
-import { usePlant } from '../composables/usePlant.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
+import { usePlantStore } from '../stores/plantStore.ts'
 
 interface Props {
 }
@@ -31,12 +30,7 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-const {
-  plant,
-  syncPlant,
-} = usePlant()
-
 const { fabActions } = usePlantView()
 
-onMounted(syncPlant)
+const plantStore = usePlantStore()
 </script>

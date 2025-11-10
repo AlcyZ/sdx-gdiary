@@ -108,7 +108,7 @@ import {
   Trash as IconTrash,
   Droplet as IconWatering,
 } from 'lucide-vue-next'
-import { computed, inject, onMounted, ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import IBadge from '../components/ui/IBadge.vue'
 import IBtn from '../components/ui/IBtn.vue'
@@ -120,8 +120,8 @@ import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
-import { REPO_PLANT } from '../di_keys.ts'
 import PlantRepository from '../modules/plants/plant_repository.ts'
+import { usePlantStore } from '../stores/plantStore.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 
 interface Props {
@@ -132,7 +132,7 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-const plantRepo = inject(REPO_PLANT)
+const plantStore = usePlantStore()
 
 const router = useRouter()
 const { showToast } = useToast()
@@ -142,10 +142,8 @@ const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getSubstrateLabel, getSubstrateIcon } = usePlantSubstrate()
 const { fabActions } = usePlantView()
 
-const plants = ref<Array<Plant>>([])
-
 const plantsList = computed(
-  () => plants.value.map(plant => ({
+  () => plantStore.plants.map(plant => ({
     id: plant.id,
     image: PLANT_PLACEHOLDER_IMAGE,
     name: getPlantName(plant),
@@ -220,7 +218,7 @@ async function showDeleteConfirmationModal(plant: Plant) {
         duration: 2000,
         variant: 'success',
       })
-      await syncData()
+      await plantStore.syncPlants()
       return
     }
 
@@ -241,10 +239,4 @@ async function showDeleteConfirmationModal(plant: Plant) {
     }],
   })
 }
-
-async function syncData() {
-  plants.value = await plantRepo?.getAll() || []
-}
-
-onMounted(syncData)
 </script>

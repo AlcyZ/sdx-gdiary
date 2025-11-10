@@ -5,7 +5,7 @@
       class-actions="border-t border-t-base-200 pt-1 mt-2"
       justify-actions-between
     >
-      <IMobileBack @back="$emit('back')" />
+      <IMobileBack @back="$router.back()" />
 
       <div class="px-4 py-4 border-b border-base-200">
         <div class="flex items-center justify-between">
@@ -21,7 +21,7 @@
             variant="primary"
             class="text-base-100 text-sm py-1 px-2"
           >
-            {{ plantName }}
+            {{ plantStore.plantName }}
           </IBadge>
         </div>
       </div>
@@ -138,7 +138,7 @@
       <template #actions>
         <IBtn
           class="hidden sm:flex"
-          @click="$router.push(`/plants/${plant?.id}`)"
+          @click="$router.back()"
         >
           <IconBack />
           Zurück
@@ -174,7 +174,7 @@ import {
   Trash as IconRemove,
   Check as IconSave,
 } from 'lucide-vue-next'
-import { computed, inject, onMounted, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PlantLogWateringModal from '../components/PlantLogWateringModal.vue'
 import IBadge from '../components/ui/IBadge.vue'
@@ -186,11 +186,12 @@ import IInputDatetime from '../components/ui/IInputDatetime.vue'
 import IInputNumber from '../components/ui/IInputNumber.vue'
 import IMobileBack from '../components/ui/IMobileBack.vue'
 import { useModal } from '../composables/useModal.ts'
-import { usePlant } from '../composables/usePlant.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { usePouringForm } from '../composables/usePouringForm.ts'
 import { useToast } from '../composables/useToast.ts'
-import { REPO_FERTILIZERS, REPO_PLANT } from '../di_keys.ts'
+import { REPO_PLANT } from '../di_keys.ts'
+import { useFertilizerStore } from '../stores/fertilizerStore.ts'
+import { usePlantStore } from '../stores/plantStore.ts'
 import { err } from '../util.ts'
 
 interface Props {
@@ -204,9 +205,9 @@ defineProps<Props>()
 defineEmits<Emits>()
 
 const plantRepo = inject(REPO_PLANT)
-const fertilizerRepo = inject(REPO_FERTILIZERS)
 
-const fertilizers = ref<Array<Fertilizer>>([])
+const plantStore = usePlantStore()
+const fertilizerStore = useFertilizerStore()
 
 const { showModal } = useModal()
 const { toast } = useToast()
@@ -225,21 +226,8 @@ const {
   resetPouringForm,
 } = usePouringForm()
 
-const {
-  plant,
-  syncPlant,
-} = usePlant()
-
 const { fabActions } = usePlantView()
 const router = useRouter()
-
-const plantName = computed(
-  () => plant.value === null
-    ? ''
-    : plant.value.name !== undefined && plant.value.name !== ''
-      ? `${plant.value.name} (${plant.value.strain})`
-      : plant.value.strain,
-)
 
 function formatNumber(number: number): string {
   const format = new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
@@ -255,7 +243,7 @@ function removeFertilizer(index: number) {
 }
 
 function openAddFertilizerModal() {
-  if (!plant.value)
+  if (!plantStore.plant)
     return
 
   const addSchemaFertilizer = (item: WateringSchemaFertilizer) => fertilizersData.value.push({
@@ -270,8 +258,8 @@ function openAddFertilizerModal() {
   })
 
   const { close } = showModal(PlantLogWateringModal, {
-    fertilizers: fertilizers.value,
-    wateringSchema: plant.value.wateringSchema,
+    fertilizers: fertilizerStore.fertilizers.value,
+    wateringSchema: plantStore.plant.wateringSchema,
     data: fertilizersData.value,
     onAddSchemaFertilizer: async (item: WateringSchemaFertilizer) => {
       addSchemaFertilizer(item)
@@ -285,7 +273,7 @@ function openAddFertilizerModal() {
 }
 
 async function save() {
-  if (!plant.value)
+  if (!plantStore.plant)
     return
 
   const validationResult = await validate()
@@ -295,7 +283,7 @@ async function save() {
   }
 
   const data: NewWateringLog = {
-    plantId: plant.value.id,
+    plantId: plantStore.plant.id,
     date: new Date(date.value).getTime(),
     amount: amount.value,
     ph: ph.value,
@@ -315,14 +303,13 @@ async function save() {
   }
 
   toast('Gießeintrag erfolgreich gespeichert', 'success')
-  await router.push(`/plants/${plant.value.id}`)
+  await router.push(`/plants/${plantStore.plant.id}`)
 }
 
 onMounted(async () => {
-  fertilizers.value = await fertilizerRepo?.getAll() || []
-  await syncPlant()
+  await plantStore.syncPlantWithRoute()
 
-  if (plant.value)
-    resetPouringForm(plant.value)
+  if (plantStore.plant)
+    resetPouringForm(plantStore.plant)
 })
 </script>

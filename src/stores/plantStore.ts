@@ -1,0 +1,48 @@
+import type { Plant } from '../modules/plants/types'
+import { defineStore } from 'pinia'
+import { computed, inject, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { REPO_PLANT } from '../di_keys.ts'
+import { err } from '../util.ts'
+
+export const usePlantStore = defineStore('store', () => {
+  const plantRepo = inject(REPO_PLANT)
+
+  const route = useRoute()
+
+  const plant = ref<Plant | null>(null)
+  const plants = ref<Array<Plant>>([])
+
+  const plantName = computed(
+    () => plant.value === null
+      ? ''
+      : plant.value.name !== undefined && plant.value.name !== ''
+        ? `${plant.value.name} (${plant.value.strain})`
+        : plant.value.strain,
+  )
+
+  const syncPlant = async (plantId: number) => {
+    const plantResult = await plantRepo?.getById(plantId) || err(undefined)
+    if (plantResult.ok)
+      plant.value = plantResult.value
+  }
+  const syncPlantWithRoute = async () => {
+    const plantId = Number(route.params.plantId)
+    if (Number.isNaN(plantId))
+      return
+
+    await syncPlant(plantId)
+  }
+  const syncPlants = async () => {
+    plants.value = await plantRepo?.getAll() || []
+  }
+
+  return {
+    plant,
+    plantName,
+    plants,
+    syncPlant,
+    syncPlantWithRoute,
+    syncPlants,
+  }
+})

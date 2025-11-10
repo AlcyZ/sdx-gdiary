@@ -18,7 +18,6 @@
         v-model:phases="phases"
         v-model:watering-schema="wateringSchema"
         :errors="errors"
-        :watering-schemas="wateringSchemas"
       />
 
       <template #actions>
@@ -59,7 +58,6 @@
 </template>
 
 <script lang="ts" setup>
-import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlant } from '../modules/plants/types'
 import type { Result, ToastVariant } from '../types'
 import {
@@ -68,7 +66,7 @@ import {
   Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'
-import { inject, onMounted, ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PlantForm from '../components/PlantForm.vue'
 import IBtn from '../components/ui/IBtn.vue'
@@ -77,8 +75,9 @@ import IFab from '../components/ui/IFab.vue'
 import { usePlantForm } from '../composables/usePlantForm.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
-import { REPO_PLANT, REPO_WATERING_SCHEMA } from '../di_keys.ts'
+import { REPO_PLANT } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
+import { usePlantStore } from '../stores/plantStore.ts'
 import { err } from '../util.ts'
 
 interface Props {
@@ -92,14 +91,14 @@ defineProps<Props>()
 defineEmits<Emits>()
 
 const plantRepo = inject(REPO_PLANT)
-const wateringRepo = inject(REPO_WATERING_SCHEMA)
+
+const plantStore = usePlantStore()
 
 const router = useRouter()
 const { showToast } = useToast()
 const { fabActions } = usePlantView()
 
 const loading = ref(false)
-const wateringSchemas = ref<Array<WateringSchema>>([])
 
 const {
   strain,
@@ -172,10 +171,9 @@ async function savePlant(): Promise<Result<undefined, string>> {
   const result = await plantRepo?.save(newPlant) || err(undefined)
   loading.value = false
 
+  if (result.ok)
+    await plantStore.syncPlants()
+
   return result.ok ? result : err('Pflanze konnte nicht gespeichert werden')
 }
-
-onMounted(async () => {
-  wateringSchemas.value = await wateringRepo?.getAll() || []
-})
 </script>
