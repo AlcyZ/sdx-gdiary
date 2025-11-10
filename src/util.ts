@@ -57,7 +57,7 @@ export function removeArrayElement<T>(array: Array<T>, compare: (item: T) => boo
   }
 }
 
-export function wrapSafe(
+export function wrapPromiseSafe(
   run: () => Promise<void>,
   errorLog?: {
     method?: string

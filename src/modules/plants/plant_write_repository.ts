@@ -2,7 +2,7 @@ import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
 import type { TABLE_PLANT_IMAGES } from '../db'
 import type { EditPlant, NewPlant, NewPlantPhase, NewPlantSubstrate, NewWateringLog, PlantSubstrate } from './types'
-import { wrapSafe } from '../../util.ts'
+import { wrapPromiseSafe } from '../../util.ts'
 import { getDb, INDEX_PLANT_ID, INDEX_WATERING_SCHEMA_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_WATERING_LOGS, TABLE_PLANTS } from '../db'
 
 export default class PlantWriteRepository {
@@ -18,7 +18,7 @@ export default class PlantWriteRepository {
   }
 
   public async save(plant: NewPlant): Promise<Result<undefined, unknown>> {
-    return await wrapSafe(async () => {
+    return await wrapPromiseSafe(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
@@ -43,7 +43,7 @@ export default class PlantWriteRepository {
   }
 
   public async update(plant: EditPlant) {
-    return await wrapSafe(async () => {
+    return await wrapPromiseSafe(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
@@ -69,7 +69,7 @@ export default class PlantWriteRepository {
   }
 
   public async pourPlant(data: NewWateringLog): Promise<Result<undefined, unknown>> {
-    return wrapSafe(async () => {
+    return wrapPromiseSafe(async () => {
       const tx = this.db.transaction(TABLE_PLANT_WATERING_LOGS, 'readwrite')
       const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
 
@@ -79,7 +79,7 @@ export default class PlantWriteRepository {
   }
 
   public async delete(plantId: number) {
-    return await wrapSafe(async () => {
+    return await wrapPromiseSafe(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
       await this.deletePlantAssociations(plantId, TABLE_PLANT_SUBSTRATES, tx)
