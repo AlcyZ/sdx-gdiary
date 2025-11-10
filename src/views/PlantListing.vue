@@ -33,7 +33,14 @@
               {{ plant.status.phase }}
             </IBadge>
 
-            <span class="text-xs opacity-60">(Tag {{ plant.status.age }})</span>
+            <span class="text-xs opacity-60">
+              <template v-if="plant.status.flowerDay.exist">
+                (Tag {{ plant.status.age }}, Blüte {{ plant.status.flowerDay.value }})
+              </template>
+              <template v-else>
+                (Tag {{ plant.status.age }})
+              </template>
+            </span>
           </div>
         </div>
 
@@ -137,7 +144,7 @@ const plantStore = usePlantStore()
 const router = useRouter()
 const { showToast } = useToast()
 const { showConfirmationModal } = useModal()
-const { getPlantAge } = usePlant()
+const { getPlantAge, getFlowerDay } = usePlant()
 const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getSubstrateLabel, getSubstrateIcon } = usePlantSubstrate()
 const { fabActions } = usePlantView()
@@ -150,6 +157,7 @@ const plantsList = computed(
     status: {
       phase: getPhaseLabel(plant.phase.phase),
       age: getPlantAge(plant),
+      flowerDay: getFlowerDay(plant),
       icon: getPhaseIcon(plant.phase.phase),
       class: getPlantStatusClass(plant),
     },

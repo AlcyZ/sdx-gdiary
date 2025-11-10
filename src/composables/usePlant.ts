@@ -1,5 +1,7 @@
 import type { Plant } from '../modules/plants/types'
+import type { Option } from '../types'
 import dayjs from 'dayjs'
+import { none, some } from '../util.ts'
 
 export function usePlant() {
   function getPlantName(plant: Plant) {
@@ -13,13 +15,23 @@ export function usePlant() {
       || dayjs().format('YYYY-MM-DDTHH:mm')
 
     const startDate = dayjs(startDateString)
-    const compareDate = plant.phase.phase === 'germination' ? dayjs() : dayjs(plant.phase.startedAt)
+    return dayjs().diff(startDate, 'days')
+  }
 
-    return compareDate.diff(startDate, 'days')
+  function getFlowerDay(plant: Plant): Option<number> {
+    const flowerStart = plant.phases.find(phase => phase.phase === 'pre-flower')?.startedAt
+    if (flowerStart === undefined)
+      return none()
+
+    const startDate = dayjs(flowerStart)
+    const diff = dayjs().diff(startDate, 'days')
+
+    return some(diff)
   }
 
   return {
     getPlantName,
     getPlantAge,
+    getFlowerDay,
   }
 }
