@@ -92,6 +92,16 @@ export default class PlantWriteRepository {
     }, { method: 'delete', message: 'Failed to delete plant', payload: { plantId } })
   }
 
+  public async deleteLog(logId: number) {
+    return wrapPromiseSafe(async () => {
+      const tx = this.db.transaction([TABLE_PLANT_WATERING_LOGS], 'readwrite')
+      const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
+
+      await store.delete(logId)
+      await tx.done
+    })
+  }
+
   private async deletePlantAssociations(
     plantId: number,
     table: typeof TABLE_PLANT_IMAGES | typeof TABLE_PLANT_PHASES | typeof TABLE_PLANT_SUBSTRATES,

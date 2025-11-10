@@ -52,4 +52,8 @@ export default class PlantRepository {
       return err('Es ist ein Fehler beim löschen der Pflanze aufgetreten')
     }
   }
+
+  public async deleteLog(logId: number): Promise<Result<undefined, unknown>> {
+    return this.write.deleteLog(logId)
+  }
 }

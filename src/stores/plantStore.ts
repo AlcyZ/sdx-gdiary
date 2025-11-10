@@ -37,6 +37,18 @@ export const usePlantStore = defineStore('store', () => {
     plants.value = await plantRepo?.getAll() || []
   }
 
+  const deleteWateringLog = async (logId: number) => {
+    const result = await plantRepo?.deleteLog(logId) || err(undefined)
+    if (result.ok) {
+      await Promise.all([
+        syncPlants(),
+        syncPlantWithRoute(),
+      ])
+    }
+
+    return result
+  }
+
   return {
     plant,
     plantName,
@@ -44,5 +56,6 @@ export const usePlantStore = defineStore('store', () => {
     syncPlant,
     syncPlantWithRoute,
     syncPlants,
+    deleteWateringLog,
   }
 })

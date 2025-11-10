@@ -111,25 +111,37 @@
     <div
       v-for="(log, i) in sortedWateringLogs"
       :key="i"
-      class="rounded-box border border-base-200 py-1 px-3"
+      class="rounded-box border border-base-200 py-1 px-3 flex gap-x-2"
     >
-      <div class="text-lg font-semibold">
-        {{ log.formatted }}
+      <div class="flex-1">
+        <div class="text-lg font-semibold">
+          {{ log.formatted }}
+        </div>
+        <div class="font-semibold opacity-75 ml-1">
+          {{ log.amount }}Liter
+        </div>
+        <div class="ml-2 space-x-1">
+          <IBadge
+            v-for="(fertilizer, j) in log.fertilizers"
+            :key="j"
+            variant="info"
+            class="text-base-100"
+            size="sm"
+          >
+            {{ fertilizer.name }}: {{ fertilizer.amount }}ml
+          </IBadge>
+        </div>
       </div>
-      <div class="font-semibold opacity-75 ml-1">
-        {{ log.amount }}Liter
-      </div>
-      <div class="ml-2 space-x-1">
-        <IBadge
-          v-for="(fertilizer, j) in log.fertilizers"
-          :key="j"
-          variant="info"
-          class="text-base-100"
-          size="sm"
-        >
-          {{ fertilizer.name }}: {{ fertilizer.amount }}ml
-        </IBadge>
-      </div>
+
+      <IBtn
+        ghost
+        square
+        size="sm"
+        variant="error"
+        @click="openDeleteLogModal(log)"
+      >
+        <IconDelete :size="20" />
+      </IBtn>
     </div>
   </ICard>
 
@@ -147,9 +159,10 @@
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import type { Plant, PlantPhase } from '../modules/plants/types'
+import type { Plant, PlantPhase, WateringLog } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
+  Trash as IconDelete,
   Plus as IconPlus,
 } from 'lucide-vue-next'
 import { formatDate } from 'sdx-php-date'
@@ -160,9 +173,12 @@ import ICard from '../components/ui/ICard.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
 import ITimeline from '../components/ui/ITimeline.vue'
 import ITimelineItem from '../components/ui/ITimelineItem.vue'
+import { useModal } from '../composables/useModal.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
+import { useToast } from '../composables/useToast.ts'
+import { usePlantStore } from '../stores/plantStore.ts'
 
 interface Props {
   plant: Plant
@@ -175,9 +191,13 @@ defineEmits<Emits>()
 
 type PhaseData = PlantPhase & { label: string, icon: Component, started: string }
 
+const plantStore = usePlantStore()
+
+const { toast } = useToast()
 const { getPlantAge } = usePlant()
 const { getPhaseIcon, getPhaseLabel } = usePlantPhase()
 const { getSubstrateIcon, getSubstrateLabel } = usePlantSubstrate()
+const { showConfirmationModal } = useModal()
 
 const plantName = computed(() => {
   const fallback = plant?.strain || 'Unknown'
@@ -226,5 +246,29 @@ const sortedWateringLogs = computed(
 function formatStartedAt(startedAt: string): string {
   const date = new Date(startedAt)
   return formatDate('d.m.Y', date)
+}
+
+function openDeleteLogModal(log: WateringLog) {
+  const date = dayjs(new Date(log.date)).format('DD.MM.YYYY HH:mm')
+  const text = `Bist du sicher, dass du den Gießeintrag vom ${date} löschen möchtest?`
+
+  const onClick = async () => {
+    const result = await plantStore.deleteWateringLog(log.id)
+    if (result)
+      toast('Gießeintrag gelöscht', 'success')
+  }
+
+  showConfirmationModal({
+    title: 'Gießeintrag löschen',
+    text,
+    actions: [
+      {
+        label: 'Löschen',
+        icon: IconDelete,
+        class: 'btn-error text-base-100',
+        onClick,
+      },
+    ],
+  })
 }
 </script>
