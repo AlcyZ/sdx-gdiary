@@ -76,7 +76,6 @@ import type { Plant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
   Edit as IconEdit,
-  EllipsisVertical as IconMore,
   Eye as IconShow,
   Trash as IconTrash,
   Droplet as IconWatering,
