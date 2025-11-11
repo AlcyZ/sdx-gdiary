@@ -1,7 +1,7 @@
 import type { IDBPDatabase, IDBPIndex, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Option } from '../../types'
 import type { WateringSchema, WateringSchemaFertilizer } from './types'
-import { none, some } from '../../util.ts'
+import { tryAsync } from '../../util.ts'
 import {
   getDb,
   INDEX_WATERING_SCHEMA_ID,
@@ -57,28 +57,30 @@ export default class WateringSchemaReadRepository {
       (typeof TABLE_WATERING_SCHEMAS | typeof TABLE_FERTILIZERS | typeof TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)[]
     >,
   ): Promise<Option<WateringSchema>> {
-    const tx = txArg || this.db.transaction([TABLE_WATERING_SCHEMAS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, TABLE_FERTILIZERS])
+    return tryAsync(async () => {
+      const tx = txArg || this.db.transaction([TABLE_WATERING_SCHEMAS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, TABLE_FERTILIZERS])
 
-    const schemaStore = tx.objectStore(TABLE_WATERING_SCHEMAS)
-    const fertilizerStore = tx.objectStore(TABLE_FERTILIZERS)
+      const schemaStore = tx.objectStore(TABLE_WATERING_SCHEMAS)
+      const fertilizerStore = tx.objectStore(TABLE_FERTILIZERS)
 
-    const pivotStore = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
-    const indexSchema = pivotStore.index(INDEX_WATERING_SCHEMA_ID)
+      const pivotStore = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
+      const indexSchema = pivotStore.index(INDEX_WATERING_SCHEMA_ID)
 
-    const data = await schemaStore.get(id)
-    if (!isWateringSchemaRow(data)) {
-      if (data !== undefined)
-        console.error('[WateringSchemaReadRepository.getById] - failed to fetch watering schema due to invalid data:', data)
+      const data = await schemaStore.get(id)
+      if (!isWateringSchemaRow(data)) {
+        if (data !== undefined)
+          console.error('[WateringSchemaReadRepository.getById] - failed to fetch watering schema due to invalid data:', data)
 
-      return none()
-    }
+        return undefined
+      }
 
-    const fertilizers = await this.fetchSchemaFertilizer(data.id, fertilizerStore, indexSchema)
+      const fertilizers = await this.fetchSchemaFertilizer(data.id, fertilizerStore, indexSchema)
 
-    return some({
-      id: data.id,
-      name: data.name,
-      fertilizers,
+      return {
+        id: data.id,
+        name: data.name,
+        fertilizers,
+      }
     })
   }
 

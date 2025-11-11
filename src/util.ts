@@ -57,30 +57,58 @@ export function removeArrayElement<T>(array: Array<T>, compare: (item: T) => boo
   }
 }
 
-export function wrapPromiseSafe(
-  run: () => Promise<void>,
-  errorLog?: {
-    method?: string
-    message?: string
-    payload?: any
-  },
-): Promise<Result<undefined, unknown>> {
-  const logError = (error: unknown) => {
-    const prefix = errorLog?.method ? `[PlantWriteRepository.${errorLog.method}]` : '[PlantWriteRepository]'
-    const message = errorLog?.message ? `${prefix} - ${errorLog.message}` : `${prefix} - Error:`
-    console.error(message, errorLog?.payload, error)
-  }
+interface LogConfig {
+  method?: string
+  message: string
+  payload?: any
+  kind?: 'warn' | 'error'
+}
 
+function tryLog(log?: LogConfig, error?: unknown) {
+  if (log === undefined)
+    return
+
+  const args: any[] = log.method ? [`[${log.method}]: ${log.message}`] : [log.message]
+  if (error !== undefined)
+    args.push(error)
+  log.kind === 'error' ? console.error(...args) : console.warn(...args)
+}
+
+export function safeAsync<T>(
+  run: () => Promise<T>,
+  log?: LogConfig,
+): Promise<Result<T, unknown>> {
   return new Promise((resolve) => {
+    const resolveErr = (error: unknown) => {
+      tryLog(log, error)
+      resolve(err(error))
+    }
     try {
-      run().then(() => resolve(ok(undefined))).catch((error) => {
-        logError(error)
-        resolve(err(error))
-      })
+      run().then(result => resolve(ok(result))).catch(error => resolveErr(error))
     }
     catch (error: unknown) {
-      logError(error)
-      resolve(err(error))
+      resolveErr(error)
+    }
+  })
+}
+
+export function tryAsync<T>(
+  run: () => Promise<T | undefined>,
+  log?: LogConfig,
+): Promise<Option<T>> {
+  return new Promise<Option<T>>((resolve) => {
+    const resolveNone = (error?: unknown) => {
+      tryLog(log, error)
+      resolve(none())
+    }
+
+    try {
+      run()
+        .then(result => result !== undefined ? resolve(some(result)) : resolveNone())
+        .catch((error: unknown) => resolveNone(error))
+    }
+    catch (error: unknown) {
+      resolveNone(error)
     }
   })
 }
