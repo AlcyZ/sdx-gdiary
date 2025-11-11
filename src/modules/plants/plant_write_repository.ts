@@ -139,7 +139,7 @@ export default class PlantWriteRepository {
       const tx = this.db.transaction(TABLE_PLANTS, 'readwrite')
       const store = tx.objectStore(TABLE_PLANTS)
 
-      const row = await store.get(9999)
+      const row = await store.get(plant.id)
       if (row === undefined)
         throw new Error(`Plant data (id: ${plant.id}) not found`)
 
