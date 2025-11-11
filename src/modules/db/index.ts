@@ -26,6 +26,7 @@ export const TABLES_DB = [
 export const INDEX_PLANT_ID = 'plantId' as const
 export const INDEX_FERTILIZER_ID = 'fertilizerId' as const
 export const INDEX_WATERING_SCHEMA_ID = 'wateringSchemaId' as const
+export const INDEX_PLANT_IMAGE_ID = 'plantImageId' as const
 
 const DEFAULT_KEY_PATH = 'id'
 const TYPE_PNG = 'image/png'
@@ -67,7 +68,7 @@ export async function getDb() {
 
   dbInstance = await openDB(DB_NAME, 1, {
     upgrade(db) {
-      createTableWithIndices(TABLE_PLANTS, [INDEX_WATERING_SCHEMA_ID], db)
+      createTableWithIndices(TABLE_PLANTS, [INDEX_WATERING_SCHEMA_ID, INDEX_PLANT_IMAGE_ID], db)
 
       createPlantSubTable(TABLE_PLANT_IMAGES, db)
       createPlantSubTable(TABLE_PLANT_SUBSTRATES, db)

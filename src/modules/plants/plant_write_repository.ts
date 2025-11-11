@@ -7,12 +7,14 @@ import type {
   NewPlantSubstrate,
   NewWateringLog,
   Plant,
+  PlantImage,
   PlantSubstrate,
 } from './types'
 import { wrapPromiseSafe } from '../../util.ts'
 import {
   getDb,
   INDEX_PLANT_ID,
+  INDEX_PLANT_IMAGE_ID,
   INDEX_WATERING_SCHEMA_ID,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
@@ -130,6 +132,21 @@ export default class PlantWriteRepository {
       }
       await store.add(data)
     }, { method: 'PlantWriteRepository.uploadPlantImage', message: 'Failed to upload plant' })
+  }
+
+  public async markFavorit(plant: Plant, image: PlantImage): Promise<Result<undefined, unknown>> {
+    return wrapPromiseSafe(async () => {
+      const tx = this.db.transaction(TABLE_PLANTS, 'readwrite')
+      const store = tx.objectStore(TABLE_PLANTS)
+
+      const row = await store.get(9999)
+      if (row === undefined)
+        throw new Error(`Plant data (id: ${plant.id}) not found`)
+
+      row[INDEX_PLANT_IMAGE_ID] = image.id
+      await store.put(row)
+      await tx.done
+    })
   }
 
   private async deletePlantAssociations(

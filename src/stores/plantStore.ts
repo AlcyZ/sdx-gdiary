@@ -1,4 +1,4 @@
-import type { Plant } from '../modules/plants/types'
+import type { Plant, PlantImage } from '../modules/plants/types'
 import { defineStore } from 'pinia'
 import { inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -47,7 +47,18 @@ export const usePlantStore = defineStore('plant', () => {
 
   const deleteWateringLog = async (logId: number) => {
     const result = await plantRepo?.deleteLog(logId) || err(undefined)
-    if (result?.ok)
+    if (result.ok)
+      await syncData()
+
+    return result
+  }
+
+  const markFavorit = async (image: PlantImage) => {
+    if (!plant.value)
+      return err(undefined)
+
+    const result = await plantRepo?.markFavorit(plant.value, image) || err(undefined)
+    if (result.ok)
       await syncData()
 
     return result
@@ -60,6 +71,7 @@ export const usePlantStore = defineStore('plant', () => {
     syncPlantWithRoute,
     syncPlants,
     uploadPlantImage,
+    markFavorit,
     deleteWateringLog,
   }
 })
