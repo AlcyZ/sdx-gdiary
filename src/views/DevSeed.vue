@@ -294,15 +294,12 @@ async function syncStores() {
 async function updateServiceWorker() {
   if ('serviceWorker' in navigator) {
     const registrations = await navigator.serviceWorker.getRegistrations()
-    let count = 0
 
     for (const registration of registrations) {
       await registration.update()
-      count++
     }
 
-    if (count > 1)
-      toast('App erfolgreich aktualisiert. Die App muss neugestartet werden, damit die Änderung funktionieren', 'success')
+    toast('App erfolgreich aktualisiert. Die App muss neugestartet werden, damit die Änderung funktionieren', 'success')
   }
   else {
     toast('Service worker object not available in navigator!', 'warning')

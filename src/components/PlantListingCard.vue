@@ -154,9 +154,14 @@ const plantsList = computed(
 )
 
 function getPlantImage(plant: Plant) {
-  return plant.favoritImage !== undefined
-    ? URL.createObjectURL(plant.favoritImage.file)
-    : PLANT_PLACEHOLDER_IMAGE
+  if (plant.favoritImage)
+    return URL.createObjectURL(plant.favoritImage.file)
+
+  const firstImage = plant.images[0]
+  if (firstImage !== undefined)
+    return URL.createObjectURL(firstImage.file)
+
+  return PLANT_PLACEHOLDER_IMAGE
 }
 
 function getPlantStatusClass(plant: Plant): string {

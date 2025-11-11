@@ -1,5 +1,6 @@
 <template>
   <ICard
+    v-if="images.length > 0"
     class="w-full max-w-3xl"
   >
     <ICardTitle class="text-3xl">
