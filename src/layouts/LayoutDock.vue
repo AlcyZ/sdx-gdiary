@@ -1,5 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen w-full pb-20 overflow-hidden">
+    <slot name="top-navigation" />
+
     <slot />
 
     <IDock
@@ -27,6 +29,10 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
+defineSlots<{
+  'default': (props: Record<string, never>) => any
+  'top-navigation': (props: Record<string, never>) => any
+}>()
 
 const docks = ref<Array<DockItem>>([
   {
