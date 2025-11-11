@@ -23,7 +23,7 @@
         >
           <IconStar
             class="w-6 h-6"
-            :class="i === 1 ? 'fill-amber-400 text-amber-400' : undefined"
+            :class="plant.favoritImage?.id === image.image.id ? 'fill-amber-400 text-amber-400' : undefined"
           />
         </IBtn>
       </ICarouselItem>

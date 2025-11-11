@@ -9,7 +9,7 @@ import type {
   WateringLogFertilizer,
   WateringLogRow,
 } from './types'
-import { INDEX_PLANT_ID, INDEX_WATERING_SCHEMA_ID } from '../db'
+import { INDEX_PLANT_ID, INDEX_PLANT_IMAGE_ID, INDEX_WATERING_SCHEMA_ID } from '../db'
 import { hasNumKey, hasOptionalNumKey, hasOptionalStrKey, hasStrKey } from '../type_guard'
 
 export function isPlantRow(value: any): value is PlantRow {
@@ -18,6 +18,7 @@ export function isPlantRow(value: any): value is PlantRow {
     && hasStrKey(value, 'strain')
     && hasOptionalStrKey(value, 'name')
     && hasOptionalNumKey(value, INDEX_WATERING_SCHEMA_ID)
+    && hasOptionalNumKey(value, INDEX_PLANT_IMAGE_ID)
 }
 
 export function isPlantImageRow(value: any): value is PlantImageRow {

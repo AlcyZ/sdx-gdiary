@@ -6,6 +6,7 @@ import { err, ok, unwrapOrUndefined } from '../../util.ts'
 import {
   getDb,
   INDEX_PLANT_ID,
+  INDEX_PLANT_IMAGE_ID,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_SUBSTRATES,
@@ -108,6 +109,7 @@ export default class PlantReadRepository {
 
     if (substrateResult.ok && phasesResult.ok) {
       const phase = this.getCurrentPhase(phasesResult.value)
+      const favoritImage = this.getFavoritImage(plantData, images)
 
       const wateringSchema = await this.fetchPlantsWateringSchema(plantData)
 
@@ -121,6 +123,7 @@ export default class PlantReadRepository {
         wateringSchema,
         wateringLogs,
         images,
+        favoritImage,
         createdAt: 'todo',
         updatedAt: 'todo',
       })
@@ -205,6 +208,10 @@ export default class PlantReadRepository {
       },
       undefined,
     )
+  }
+
+  private getFavoritImage(plantRow: PlantRow, images: Array<PlantImage>): PlantImage | undefined {
+    return images.find(image => image.id === plantRow[INDEX_PLANT_IMAGE_ID])
   }
 
   private async fetchPhases(
