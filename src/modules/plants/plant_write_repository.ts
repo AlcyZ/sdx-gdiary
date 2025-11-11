@@ -10,7 +10,7 @@ import type {
   PlantImage,
   PlantSubstrate,
 } from './types'
-import { wrapPromiseSafe } from '../../util.ts'
+import { safeAsync } from '../../util.ts'
 import {
   getDb,
   INDEX_PLANT_ID,
@@ -36,7 +36,7 @@ export default class PlantWriteRepository {
   }
 
   public async save(plant: NewPlant): Promise<Result<undefined, unknown>> {
-    return await wrapPromiseSafe(async () => {
+    return await safeAsync(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
@@ -61,7 +61,7 @@ export default class PlantWriteRepository {
   }
 
   public async update(plant: EditPlant) {
-    return await wrapPromiseSafe(async () => {
+    return await safeAsync(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
@@ -87,7 +87,7 @@ export default class PlantWriteRepository {
   }
 
   public async pourPlant(data: NewWateringLog): Promise<Result<undefined, unknown>> {
-    return wrapPromiseSafe(async () => {
+    return safeAsync(async () => {
       const tx = this.db.transaction(TABLE_PLANT_WATERING_LOGS, 'readwrite')
       const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
 
@@ -97,7 +97,7 @@ export default class PlantWriteRepository {
   }
 
   public async delete(plantId: number) {
-    return await wrapPromiseSafe(async () => {
+    return await safeAsync(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
       await this.deletePlantAssociations(plantId, TABLE_PLANT_SUBSTRATES, tx)
@@ -112,7 +112,7 @@ export default class PlantWriteRepository {
   }
 
   public async deleteLog(logId: number) {
-    return wrapPromiseSafe(async () => {
+    return safeAsync(async () => {
       const tx = this.db.transaction([TABLE_PLANT_WATERING_LOGS], 'readwrite')
       const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
 
@@ -122,7 +122,7 @@ export default class PlantWriteRepository {
   }
 
   public async uploadPlantImage(plant: Plant, image: File): Promise<Result<undefined, unknown>> {
-    return wrapPromiseSafe(async () => {
+    return safeAsync(async () => {
       const tx = this.db.transaction(TABLE_PLANT_IMAGES, 'readwrite')
       const store = tx.objectStore(TABLE_PLANT_IMAGES)
 
@@ -135,7 +135,7 @@ export default class PlantWriteRepository {
   }
 
   public async markFavorit(plant: Plant, image: PlantImage): Promise<Result<undefined, unknown>> {
-    return wrapPromiseSafe(async () => {
+    return safeAsync(async () => {
       const tx = this.db.transaction(TABLE_PLANTS, 'readwrite')
       const store = tx.objectStore(TABLE_PLANTS)
 

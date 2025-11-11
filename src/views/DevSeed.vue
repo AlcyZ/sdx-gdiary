@@ -94,7 +94,9 @@
 
 <script lang="ts" setup>
 import type { IDBPDatabase } from 'idb'
+import type { PlantImageRow } from '../modules/plants/types'
 import dayjs from 'dayjs'
+import JSZip from 'jszip'
 import { ref } from 'vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
@@ -102,6 +104,7 @@ import ICardTitle from '../components/ui/ICardTitle.vue'
 import IInputFileUpload from '../components/ui/IInputFileUpload.vue'
 import { useToast } from '../composables/useToast.ts'
 import LayoutDock from '../layouts/LayoutDock.vue'
+import BackupService from '../modules/backup/backup_service.ts'
 import {
   getDb,
   TABLE_FERTILIZERS,
@@ -114,11 +117,12 @@ import {
   TABLE_WATERING_SCHEMAS,
   TABLES_DB,
 } from '../modules/db'
+import { isPlantImageRow } from '../modules/plants/guard.ts'
 import DevSeeder from '../seeder/devSeeder.ts'
 import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
-import { downloadJsonString, safeParseJson, wrapPromiseSafe } from '../util.ts'
+import { safeAsync, safeParseJson } from '../util.ts'
 
 interface Props {
 
@@ -151,36 +155,22 @@ async function seed() {
 }
 
 async function exportData() {
-  const db = await getDb()
-
-  const tx = db.transaction(TABLES_DB)
-
-  const storePlants = tx.objectStore(TABLE_PLANTS)
-  const storePlantImages = tx.objectStore(TABLE_PLANT_IMAGES)
-  const storePlantSubstrates = tx.objectStore(TABLE_PLANT_SUBSTRATES)
-  const storePlantPhases = tx.objectStore(TABLE_PLANT_PHASES)
-  const storePlantWateringLogs = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
-  const storeFertilizers = tx.objectStore(TABLE_FERTILIZERS)
-  const storeWateringSchema = tx.objectStore(TABLE_WATERING_SCHEMAS)
-  const storeFertilizerWateringSchema = tx.objectStore(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA)
-
-  const results = await Promise.all([
-    storePlants.getAll().then(plants => ({ plants })),
-    storePlantImages.getAll().then(plantImages => ({ plantImages })),
-    storePlantSubstrates.getAll().then(plantSubstrates => ({ plantSubstrates })),
-    storePlantPhases.getAll().then(plantPhases => ({ plantPhases })),
-    storePlantWateringLogs.getAll().then(plantWateringLogs => ({ plantWateringLogs })),
-    storeFertilizers.getAll().then(fertilizers => ({ fertilizers })),
-    storeWateringSchema.getAll().then(wateringSchema => ({ wateringSchema })),
-    storeFertilizerWateringSchema.getAll().then(fertilizerWateringSchema => ({ fertilizerWateringSchema })),
-  ])
-  const data = Object.assign({}, ...results)
-  const content = JSON.stringify(data)
+  const service = await BackupService.create()
+  const result = await service.createBackup()
+  if (!result.ok)
+    return
 
   const prefix = dayjs().format('YYYY-MM-DD_HH:mm')
-  const filename = `${prefix}_grow_diary.json`
+  const filename = `${prefix}_grow_diary.zip`
 
-  downloadJsonString(content, filename)
+  const url = URL.createObjectURL(result.value)
+
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 interface ImportExportData {
@@ -218,7 +208,7 @@ function isImportExportData(value: unknown): value is ImportExportData {
 async function truncateDatabase(
   db: IDBPDatabase,
 ) {
-  return wrapPromiseSafe(async () => {
+  return safeAsync(async () => {
     const tx = db.transaction(TABLES_DB, 'readwrite')
     for (const storeName of TABLES_DB) {
       tx.objectStore(storeName).clear()
@@ -231,7 +221,7 @@ async function importDataSafe(
   data: ImportExportData,
   db: IDBPDatabase,
 ) {
-  return wrapPromiseSafe(async () => {
+  return safeAsync(async () => {
     const tx = db.transaction(TABLES_DB, 'readwrite')
 
     const storePlants = tx.objectStore(TABLE_PLANTS)

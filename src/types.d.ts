@@ -8,6 +8,8 @@ import type { Component } from 'vue'
  */
 type Result<T, E> = Ok<T> | Err<E>
 
+type AsyncResult<T, E> = Promise<Result<T, E>>
+
 /**
  * Represents a successful result value containing a value of type `T`.
  *

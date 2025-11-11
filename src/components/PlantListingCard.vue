@@ -93,7 +93,7 @@ import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
-import IDropdown from "./ui/IDropdown.vue";
+import IDropdown from './ui/IDropdown.vue'
 
 interface Props {
 
