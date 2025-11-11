@@ -1,5 +1,8 @@
 <template>
   <div class="flex-1 flex items-center justify-center">
+    <IMobileBack
+      @back="$router.back()"
+    />
     <ICard
       class="w-full max-w-2xl"
       class-actions="justify-between"
@@ -66,6 +69,7 @@ import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
 import IFab from '../components/ui/IFab.vue'
+import IMobileBack from '../components/ui/IMobileBack.vue'
 import WateringSchemaForm from '../components/WateringSchemaForm.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import { useToast } from '../composables/useToast.ts'

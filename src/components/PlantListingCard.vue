@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts" setup>
-import type {Plant, WateringLog} from '../modules/plants/types'
+import type { Plant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
   Edit as IconEdit,
