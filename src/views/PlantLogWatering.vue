@@ -1,12 +1,13 @@
 <template>
+  <TopNavigation
+    @back="$router.back()"
+  />
   <div class="flex-1 flex justify-center items-center mt-4">
     <ICard
       class="w-full max-w-3xl"
       class-actions="border-t border-t-base-200 pt-1 mt-2"
       justify-actions-between
     >
-      <IMobileBack @back="$router.back()" />
-
       <div class="px-4 py-4 border-b border-base-200">
         <div class="flex items-center justify-between">
           <h1 class="text-3xl font-semibold">
@@ -176,6 +177,7 @@ import {
 } from 'lucide-vue-next'
 import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import TopNavigation from '../components/layout/TopNavigation.vue'
 import PlantLogWateringModal from '../components/PlantLogWateringModal.vue'
 import IBadge from '../components/ui/IBadge.vue'
 import IBtn from '../components/ui/IBtn.vue'
@@ -184,7 +186,6 @@ import IFab from '../components/ui/IFab.vue'
 import IFieldset from '../components/ui/IFieldset.vue'
 import IInputDatetime from '../components/ui/IInputDatetime.vue'
 import IInputNumber from '../components/ui/IInputNumber.vue'
-import IMobileBack from '../components/ui/IMobileBack.vue'
 import { useModal } from '../composables/useModal.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
