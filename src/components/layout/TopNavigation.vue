@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-[#16a34a] flex items-center justify-between">
+  <div class="bg-[#16a34a] flex items-center justify-between h-12">
     <IBtn
       ghost
       square
       variant="neutral"
-      class="rounded-none text-base-100"
+      class="rounded-none text-base-100 w-12 h-12"
       @click="$emit('back')"
     >
       <IconBack />
@@ -18,7 +18,7 @@
     <IDropdown
       v-if="actions"
       :items="actions"
-      btn-class="rounded-none text-base-100"
+      btn-class="rounded-none text-base-100 w-12 h-12"
       position="end"
     />
   </div>

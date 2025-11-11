@@ -3,7 +3,7 @@
     <div class="modal-box bg-[#fafafa]" :class="modalBoxClass">
       <slot />
 
-      <div class="modal-action">
+      <div v-if="!!$slots.action" class="modal-action">
         <slot name="action" />
       </div>
     </div>
