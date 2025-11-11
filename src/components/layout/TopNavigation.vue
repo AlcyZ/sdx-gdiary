@@ -19,7 +19,7 @@
       v-if="actions"
       :items="actions"
       btn-class="rounded-none text-base-100 w-12 h-12"
-      position="end"
+      class="dropdown-end"
     />
   </div>
 </template>

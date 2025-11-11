@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown" :class="dropdownClass">
+  <div class="dropdown">
     <IBtn
       square
       ghost
@@ -30,62 +30,23 @@
 </template>
 
 <script lang="ts" setup>
-import type { DropdownItem, DropdownPosition } from '../../types'
+import type { DropdownItem } from '../../types'
 import {
   EllipsisVertical as IconMore,
 } from 'lucide-vue-next'
-import { computed } from 'vue'
 import IBtn from './IBtn.vue'
 
 interface Props {
   items: Array<DropdownItem>
   btnClass?: string
-  position?: DropdownPosition | undefined
-  positionSm?: DropdownPosition | undefined
-  positionMd?: DropdownPosition | undefined
-  positionLg?: DropdownPosition | undefined
-  positionXl?: DropdownPosition | undefined
 }
 interface Emits {
 
 }
 
-const {
-  position,
-  positionSm,
-  positionMd,
-  positionLg,
-  positionXl,
-} = defineProps<Props>()
+defineProps<Props>()
 defineEmits<Emits>()
 defineSlots<{
   btn: (props: Record<never, string>) => any
 }>()
-
-const positionMap: Record<DropdownPosition, string> = {
-  start: 'dropdown-start',
-  center: 'dropdown-center',
-  end: 'dropdown-end',
-  top: 'dropdown-top',
-  bottom: 'dropdown-bottom',
-  left: 'dropdown-left',
-  right: 'dropdown-right',
-}
-
-function toResponsive(pos?: DropdownPosition, responsive?: 'sm' | 'md' | 'lg' | 'xl'): string | undefined {
-  if (!pos)
-    return undefined
-
-  return responsive !== undefined
-    ? `${responsive}:${positionMap[pos]}`
-    : positionMap[pos]
-}
-
-const dropdownClass = computed(() => [
-  toResponsive(position),
-  toResponsive(positionSm, 'sm'),
-  toResponsive(positionMd, 'md'),
-  toResponsive(positionLg, 'lg'),
-  toResponsive(positionXl, 'xl'),
-])
 </script>
