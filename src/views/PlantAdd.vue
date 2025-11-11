@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 flex items-center justify-center">
+  <div class="flex-1 flex items-center justify-center mt-4">
     <ICard
       class="w-full max-w-2xl"
       class-actions="justify-between"

@@ -1,10 +1,11 @@
 <template>
-  <LayoutDock />
+  <div class="flex flex-col min-h-screen bg-neutral-100 overflow-x-hidden">
+    <RouterView />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import LayoutDock from './layouts/LayoutDock.vue'
 import { useFertilizerStore } from './stores/fertilizerStore.ts'
 import { usePlantStore } from './stores/plantStore.ts'
 import { useWateringSchemaStore } from './stores/wateringSchemaStore.ts'

@@ -1,93 +1,95 @@
 <template>
-  <div class="flex-1 flex flex-col justify-center items-center gap-y-4">
-    <ICard
-      class="w-full max-w-3xl"
-    >
-      <ICardTitle class="text-2xl">
-        Daten exportieren
-      </ICardTitle>
-
-      <p>
-        Hier können Updates für die App installiert werden
-      </p>
-
-      <IBtn
-        variant="neutral"
-        class="w-full"
-        @click="updateServiceWorker"
+  <LayoutDock>
+    <div class="flex-1 flex flex-col justify-center items-center gap-y-4">
+      <ICard
+        class="w-full max-w-3xl"
       >
-        Update checken und installieren
-      </IBtn>
-    </ICard>
+        <ICardTitle class="text-2xl">
+          Daten exportieren
+        </ICardTitle>
 
-    <ICard
-      class="w-full max-w-3xl"
-    >
-      <ICardTitle class="text-2xl">
-        Daten exportieren
-      </ICardTitle>
+        <p>
+          Hier können Updates für die App installiert werden
+        </p>
 
-      <p class="my-5">
-        Exportiere alle deine Daten zu einer JSON-Datei. Die Datei kann bei Bedarf einfach wieder importiert werden.
-        Auch praktisch, um Backups von seinen Daten zu erhalten.
-      </p>
+        <IBtn
+          variant="neutral"
+          class="w-full"
+          @click="updateServiceWorker"
+        >
+          Update checken und installieren
+        </IBtn>
+      </ICard>
 
-      <IBtn
-        variant="neutral"
-        class="w-full"
-        @click="exportData"
+      <ICard
+        class="w-full max-w-3xl"
       >
-        Exportieren
-      </IBtn>
-    </ICard>
+        <ICardTitle class="text-2xl">
+          Daten exportieren
+        </ICardTitle>
 
-    <ICard
-      class="w-full max-w-3xl"
-    >
-      <ICardTitle class="text-2xl">
-        Daten importieren
-      </ICardTitle>
+        <p class="my-5">
+          Exportiere alle deine Daten zu einer JSON-Datei. Die Datei kann bei Bedarf einfach wieder importiert werden.
+          Auch praktisch, um Backups von seinen Daten zu erhalten.
+        </p>
 
-      <p class="my-3 text-center">
-        Wähle eine Datei aus und importiere die Daten.<br>
-        <span class="text-error">ACHTUNG: Dabei werden alle vorhandenen Daten entfernt</span>
-      </p>
+        <IBtn
+          variant="neutral"
+          class="w-full"
+          @click="exportData"
+        >
+          Exportieren
+        </IBtn>
+      </ICard>
 
-      <IInputFileUpload
-        v-model="importFile"
-      />
-
-      <IBtn
-        variant="neutral"
-        class="w-full"
-        :disabled="importFile === undefined"
-        @click="importData"
+      <ICard
+        class="w-full max-w-3xl"
       >
-        Importieren
-      </IBtn>
-    </ICard>
+        <ICardTitle class="text-2xl">
+          Daten importieren
+        </ICardTitle>
 
-    <ICard
-      class="w-full max-w-3xl"
-    >
-      <ICardTitle class="text-2xl">
-        Testdaten importieren
-      </ICardTitle>
+        <p class="my-3 text-center">
+          Wähle eine Datei aus und importiere die Daten.<br>
+          <span class="text-error">ACHTUNG: Dabei werden alle vorhandenen Daten entfernt</span>
+        </p>
 
-      <p class="my-5">
-        Bei einen Klick auf den Button werden 6 zufällige Pflanzen, sowie das Hesi-Starterpack, und BioBizz CalMag/PH+-
-        angelegt.
-      </p>
+        <IInputFileUpload
+          v-model="importFile"
+        />
 
-      <IBtn
-        variant="neutral"
-        class="w-full"
-        @click="seed"
+        <IBtn
+          variant="neutral"
+          class="w-full"
+          :disabled="importFile === undefined"
+          @click="importData"
+        >
+          Importieren
+        </IBtn>
+      </ICard>
+
+      <ICard
+        class="w-full max-w-3xl"
       >
-        Seed
-      </IBtn>
-    </ICard>
-  </div>
+        <ICardTitle class="text-2xl">
+          Testdaten importieren
+        </ICardTitle>
+
+        <p class="my-5">
+          Bei einen Klick auf den Button werden 6 zufällige Pflanzen, sowie das Hesi-Starterpack, und BioBizz CalMag/PH+-
+          angelegt.
+        </p>
+
+        <IBtn
+          variant="neutral"
+          class="w-full"
+          @click="seed"
+        >
+          Seed
+        </IBtn>
+      </ICard>
+    </div>
+  </LayoutDock>
 </template>
 
 <script lang="ts" setup>
@@ -99,6 +101,7 @@ import ICard from '../components/ui/ICard.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
 import IInputFileUpload from '../components/ui/IInputFileUpload.vue'
 import { useToast } from '../composables/useToast.ts'
+import LayoutDock from '../layouts/LayoutDock.vue'
 import {
   getDb,
   TABLE_FERTILIZERS,

@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-neutral-100 w-full pb-16 overflow-x-hidden">
-    <RouterView />
+  <div class="flex flex-col min-h-screen w-full pb-20 overflow-hidden">
+    <slot />
 
     <IDock
       :items="docks"
