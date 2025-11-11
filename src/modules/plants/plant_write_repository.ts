@@ -1,9 +1,25 @@
 import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
-import type { TABLE_PLANT_IMAGES } from '../db'
-import type { EditPlant, NewPlant, NewPlantPhase, NewPlantSubstrate, NewWateringLog, PlantSubstrate } from './types'
+import type {
+  EditPlant,
+  NewPlant,
+  NewPlantPhase,
+  NewPlantSubstrate,
+  NewWateringLog,
+  Plant,
+  PlantSubstrate,
+} from './types'
 import { wrapPromiseSafe } from '../../util.ts'
-import { getDb, INDEX_PLANT_ID, INDEX_WATERING_SCHEMA_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_WATERING_LOGS, TABLE_PLANTS } from '../db'
+import {
+  getDb,
+  INDEX_PLANT_ID,
+  INDEX_WATERING_SCHEMA_ID,
+  TABLE_PLANT_IMAGES,
+  TABLE_PLANT_PHASES,
+  TABLE_PLANT_SUBSTRATES,
+  TABLE_PLANT_WATERING_LOGS,
+  TABLE_PLANTS,
+} from '../db'
 
 export default class PlantWriteRepository {
   private readonly db: IDBPDatabase
@@ -84,6 +100,7 @@ export default class PlantWriteRepository {
 
       await this.deletePlantAssociations(plantId, TABLE_PLANT_SUBSTRATES, tx)
       await this.deletePlantAssociations(plantId, TABLE_PLANT_PHASES, tx)
+      await this.deletePlantAssociations(plantId, TABLE_PLANT_IMAGES, tx)
 
       const plantsStore = tx.objectStore(TABLE_PLANTS)
       await plantsStore.delete(plantId)
@@ -100,6 +117,19 @@ export default class PlantWriteRepository {
       await store.delete(logId)
       await tx.done
     })
+  }
+
+  public async uploadPlantImage(plant: Plant, image: File): Promise<Result<undefined, unknown>> {
+    return wrapPromiseSafe(async () => {
+      const tx = this.db.transaction(TABLE_PLANT_IMAGES, 'readwrite')
+      const store = tx.objectStore(TABLE_PLANT_IMAGES)
+
+      const data = {
+        [INDEX_PLANT_ID]: plant.id,
+        image,
+      }
+      await store.add(data)
+    }, { method: 'PlantWriteRepository.uploadPlantImage', message: 'Failed to upload plant' })
   }
 
   private async deletePlantAssociations(
