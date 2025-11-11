@@ -307,6 +307,7 @@ async function save() {
   }
 
   toast('Gießeintrag erfolgreich gespeichert', 'success')
+  await plantStore.syncPlants()
   await router.push(`/plants/${plantStore.plant.id}`)
 }
 
