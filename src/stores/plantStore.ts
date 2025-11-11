@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router'
 import { REPO_PLANT } from '../di_keys.ts'
 import { err } from '../util.ts'
 
-export const usePlantStore = defineStore('store', () => {
+export const usePlantStore = defineStore('plant', () => {
   const plantRepo = inject(REPO_PLANT)
 
   const route = useRoute()
@@ -29,14 +29,26 @@ export const usePlantStore = defineStore('store', () => {
     plants.value = await plantRepo?.getAll() || []
   }
 
+  const syncData = async () => await Promise.all([
+    syncPlants(),
+    syncPlantWithRoute(),
+  ])
+
+  const uploadPlantImage = async (file: File) => {
+    if (!plant.value)
+      return err(undefined)
+
+    const result = await plantRepo?.uploadPlantImage(plant.value, file) || err(undefined)
+    if (result.ok)
+      await syncData()
+
+    return result
+  }
+
   const deleteWateringLog = async (logId: number) => {
     const result = await plantRepo?.deleteLog(logId) || err(undefined)
-    if (result.ok) {
-      await Promise.all([
-        syncPlants(),
-        syncPlantWithRoute(),
-      ])
-    }
+    if (result?.ok)
+      await syncData()
 
     return result
   }
@@ -47,6 +59,7 @@ export const usePlantStore = defineStore('store', () => {
     syncPlant,
     syncPlantWithRoute,
     syncPlants,
+    uploadPlantImage,
     deleteWateringLog,
   }
 })
