@@ -2,7 +2,8 @@
   <ICard
     v-for="(plant, i) in plantsList"
     :key="i"
-    class="w-full max-w-3xl"
+    class="w-full max-w-3xl cursor-pointer"
+    @click="navigateToDetails(plant.id)"
   >
     <div class="grid grid-cols-[6fr_2fr_2fr]">
       <div class="flex items-center">
@@ -54,12 +55,12 @@
         <IBtn
           square
           ghost
-          @click="$router.push(`/plants/${plant.id}/log/watering`)"
+          @click.stop="$router.push(`/plants/${plant.id}/log/watering`)"
         >
           <IconWatering />
         </IBtn>
 
-        <div class="dropdown dropdown-end sm:dropdown-center">
+        <div class="dropdown dropdown-end sm:dropdown-center" @click.stop>
           <IBtn
             square
             ghost
@@ -224,5 +225,9 @@ async function showDeleteConfirmationModal(plant: Plant) {
       class: 'btn-error text-base-100',
     }],
   })
+}
+
+function navigateToDetails(plantId: number) {
+  router.push(`/plants/${plantId}`)
 }
 </script>
