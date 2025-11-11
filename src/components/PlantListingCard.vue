@@ -60,32 +60,12 @@
           <IconWatering />
         </IBtn>
 
-        <div class="dropdown dropdown-end sm:dropdown-center" @click.stop>
-          <IBtn
-            square
-            ghost
-            tabindex="0"
-            role="button"
-            class="m1"
-          >
-            <IconMore />
-          </IBtn>
-          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm">
-            <li
-              v-for="(action, j) in plant.actions"
-              :key="j"
-            >
-              <button
-                type="button"
-                role="button"
-                @click="action.onClick"
-              >
-                <component :is="action.icon" />
-                {{ action.label }}
-              </button>
-            </li>
-          </ul>
-        </div>
+        <IDropdown
+          :items="plant.actions"
+          class="dropdown-end sm:dropdown-center"
+          :class="i === plantsList.length - 1 ? 'dropdown-top' : undefined"
+          @click.stop
+        />
       </div>
     </div>
   </ICard>
@@ -114,6 +94,7 @@ import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
+import IDropdown from "./ui/IDropdown.vue";
 
 interface Props {
 
@@ -137,7 +118,7 @@ const { getSubstrateLabel, getSubstrateIcon } = usePlantSubstrate()
 const plantsList = computed(
   () => plantStore.plants.map(plant => ({
     id: plant.id,
-    image: PLANT_PLACEHOLDER_IMAGE,
+    image: getPlantImage(plant),
     name: getPlantName(plant),
     status: {
       phase: getPhaseLabel(plant.phase.phase),
@@ -171,6 +152,12 @@ const plantsList = computed(
     ],
   })),
 )
+
+function getPlantImage(plant: Plant) {
+  return plant.favoritImage !== undefined
+    ? URL.createObjectURL(plant.favoritImage.file)
+    : PLANT_PLACEHOLDER_IMAGE
+}
 
 function getPlantStatusClass(plant: Plant): string {
   const colors = getPhaseColor(plant.phase.phase)
