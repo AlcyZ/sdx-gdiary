@@ -54,9 +54,17 @@ interface ListItem {
 
 interface DropdownItem {
   label: string
-  icon: Component
-  onClick?: () => void
+  icon?: Component
+  onClick?: () => unknown
 }
+
+type DropdownPosition = 'start'
+  | 'center'
+  | 'end'
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
 
 interface StepItem {
 
@@ -69,6 +77,12 @@ interface ListItemAction {
 
 interface FabAction {
   icon: Component
+  onClick?: () => unknown
+}
+
+interface TopNavigationAction {
+  icon?: Component
+  label: string
   onClick?: () => unknown
 }
 
