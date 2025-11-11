@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Plant } from '../modules/plants/types'
+import type {Plant, WateringLog} from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
   Edit as IconEdit,
@@ -182,7 +182,7 @@ function getLastWatering(plant: Plant): string {
     return 'Kein Protokoll'
   }
 
-  const latestLog = plant.wateringLogs.reduce((lhs, rhs) => lhs.date < rhs.date ? lhs : rhs)
+  const latestLog = plant.wateringLogs.reduce((lhs, rhs) => lhs.date > rhs.date ? lhs : rhs)
   const logDate = dayjs(new Date(latestLog.date)).format('DD.MM.YYYY')
 
   return `Zuletzt gegossen: ${logDate}`
