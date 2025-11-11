@@ -56,4 +56,8 @@ export default class PlantRepository {
   public async deleteLog(logId: number): Promise<Result<undefined, unknown>> {
     return this.write.deleteLog(logId)
   }
+
+  public async uploadPlantImage(plant: Plant, image: File): Promise<Result<undefined, unknown>> {
+    return this.write.uploadPlantImage(plant, image)
+  }
 }

@@ -1,5 +1,6 @@
 import type {
   NewWateringLog,
+  PlantImageRow,
   PlantPhaseRow,
   PlantPhaseType,
   PlantRow,
@@ -8,7 +9,7 @@ import type {
   WateringLogFertilizer,
   WateringLogRow,
 } from './types'
-import { INDEX_WATERING_SCHEMA_ID } from '../db'
+import { INDEX_PLANT_ID, INDEX_WATERING_SCHEMA_ID } from '../db'
 import { hasNumKey, hasOptionalNumKey, hasOptionalStrKey, hasStrKey } from '../type_guard'
 
 export function isPlantRow(value: any): value is PlantRow {
@@ -19,10 +20,18 @@ export function isPlantRow(value: any): value is PlantRow {
     && hasOptionalNumKey(value, INDEX_WATERING_SCHEMA_ID)
 }
 
+export function isPlantImageRow(value: any): value is PlantImageRow {
+  return typeof value === 'object'
+    && value !== null
+    && hasNumKey(value, 'id')
+    && hasNumKey(value, INDEX_PLANT_ID)
+    && value.image instanceof Blob
+}
+
 export function isPlantSubstrateRow(value: any): value is PlantSubstrateRow {
   return typeof value === 'object'
     && hasNumKey(value, 'id')
-    && hasNumKey(value, 'plantId')
+    && hasNumKey(value, INDEX_PLANT_ID)
     && hasStrKey(value, 'substrate')
     && hasStrKey(value, 'size')
     && hasOptionalStrKey(value, 'info')
@@ -31,7 +40,7 @@ export function isPlantSubstrateRow(value: any): value is PlantSubstrateRow {
 export function isPlantPhaseRow(value: any): value is PlantPhaseRow {
   return typeof value === 'object'
     && hasNumKey(value, 'id')
-    && hasNumKey(value, 'plantId')
+    && hasNumKey(value, INDEX_PLANT_ID)
     && 'phase' in value && isPlantPhaseType(value.phase)
     && hasStrKey(value, 'startedAt')
     && hasOptionalStrKey(value, 'info')
@@ -49,7 +58,7 @@ export function isWateringLogFertilizer(value: any): value is WateringLogFertili
 export function isNewWateringLog(value: any): value is NewWateringLog {
   return typeof value === 'object'
     && value !== null
-    && hasNumKey(value, 'plantId')
+    && hasNumKey(value, INDEX_PLANT_ID)
     && hasNumKey(value, 'date')
     && hasNumKey(value, 'amount')
     && hasOptionalNumKey(value, 'ph')
