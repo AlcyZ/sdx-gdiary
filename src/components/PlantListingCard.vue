@@ -82,12 +82,9 @@ import {
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useModal } from '../composables/useModal.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
-import { useToast } from '../composables/useToast.ts'
-import PlantRepository from '../modules/plants/plant_repository.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import IBadge from './ui/IBadge.vue'
@@ -108,9 +105,7 @@ defineEmits<Emits>()
 const plantStore = usePlantStore()
 
 const router = useRouter()
-const { showToast } = useToast()
-const { showConfirmationModal } = useModal()
-const { getPlantAge, getFlowerDay, getPlantName } = usePlant()
+const { getPlantAge, getFlowerDay, getPlantName, showDeleteConfirmationModal } = usePlant()
 const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getSubstrateLabel, getSubstrateIcon } = usePlantSubstrate()
 
@@ -178,44 +173,6 @@ function getLastWatering(plant: Plant): string {
   const logDate = dayjs(new Date(latestLog.date)).format('DD.MM.YYYY')
 
   return `Zuletzt gegossen: ${logDate}`
-}
-
-async function showDeleteConfirmationModal(plant: Plant) {
-  const plantName = plant.name !== undefined && plant.name !== ''
-    ? `${plant.name} (${plant.strain})`
-    : plant.strain
-  const text = `Bist du sicher, dass die Pflanze '${plantName}' gelöscht werden soll? Diese Aktion kann nicht rückgängig gemacht werden.`
-
-  const deleteAndSync = async () => {
-    const repo = await PlantRepository.create()
-    const result = await repo.delete(plant.id)
-
-    if (result.ok) {
-      showToast({
-        message: `${plantName} ist gelöscht worden.`,
-        duration: 2000,
-        variant: 'success',
-      })
-      await plantStore.syncPlants()
-      return
-    }
-
-    showToast({
-      message: 'Es ist ein Fehler beim löschen der Pflanze aufgetreten',
-      duration: 2000,
-      variant: 'error',
-    })
-  }
-
-  showConfirmationModal({
-    title: 'Pflanze löschen',
-    text,
-    actions: [{
-      label: 'Löschen',
-      onClick: async () => await deleteAndSync(),
-      class: 'btn-error text-base-100',
-    }],
-  })
 }
 
 function navigateToDetails(plantId: number) {

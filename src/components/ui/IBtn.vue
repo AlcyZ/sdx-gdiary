@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import type {ButtonSize, ButtonVariant, LoadingType} from '../../types'
+import type { ButtonSize, ButtonVariant, LoadingType } from '../../types'
 import { computed, ref, watch } from 'vue'
 import ILoading from './ILoading.vue'
 

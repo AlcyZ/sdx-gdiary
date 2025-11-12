@@ -38,6 +38,7 @@ import {
   Camera as IconPhoto,
 } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import TopNavigation from '../components/layout/TopNavigation.vue'
 import PlantDetailsCards from '../components/PlantDetailsCards.vue'
 import IFab from '../components/ui/IFab.vue'
@@ -56,11 +57,11 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-const { fabActions } = usePlantView()
-
 const plantStore = usePlantStore()
 
-const { getPlantName } = usePlant()
+const router = useRouter()
+const { fabActions } = usePlantView()
+const { getPlantName, showDeleteConfirmationModal } = usePlant()
 const { toast } = useToast()
 
 const inputImage = ref<HTMLInputElement | undefined>()
@@ -76,12 +77,15 @@ const actions = ref<Array<TopNavigationAction>>([
   {
     label: 'Bearbeiten',
     icon: IconEdit,
-    onClick: () => console.warn('todo: implement edit plant'),
+    onClick: () => router.push(`/plants/${plantStore.plant?.id}/edit`),
   },
   {
     label: 'Löschen',
     icon: IconDelete,
-    onClick: () => console.warn('todo: implement delete plant'),
+    onClick: () => {
+      if (plantStore.plant)
+        showDeleteConfirmationModal(plantStore.plant, () => router.push('/plants'))
+    },
   },
 ])
 

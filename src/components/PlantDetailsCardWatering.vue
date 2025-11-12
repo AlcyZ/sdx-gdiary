@@ -1,5 +1,6 @@
 <template>
   <ICard
+    v-if="sortedWateringLogs.length > 0"
     class="w-full max-w-3xl"
   >
     <ICardTitle class="text-2xl flex items-center text-gray-900/70">
