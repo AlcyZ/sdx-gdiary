@@ -11,6 +11,8 @@
     <IBtn
       variant="primary"
       class="w-full mt-4"
+      :loading="isLoading"
+      loading-type="ring"
       @click="exportData"
     >
       Exportieren
@@ -21,6 +23,7 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
 import { Upload as IconExport } from 'lucide-vue-next'
+import { ref } from 'vue'
 import { useToast } from '../composables/useToast.ts'
 import BackupService from '../modules/backup/backup_service.ts'
 import SettingsCard from './SettingsCard.vue'
@@ -39,9 +42,15 @@ defineEmits<Emits>()
 
 const { toast } = useToast()
 
+const isLoading = ref(false)
+
 async function exportData() {
+  isLoading.value = true
+
   const service = await BackupService.create()
   const result = await service.createBackupZip()
+  isLoading.value = false
+
   if (!result.ok)
     return
 

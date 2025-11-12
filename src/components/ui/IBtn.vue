@@ -1,16 +1,29 @@
 <template>
-  <component :is="as" class="btn" :class="btnClass" :type="as === 'button' ? 'button' : undefined">
-    <slot />
+  <component
+    :is="as"
+    ref="button"
+    class="btn"
+    :class="btnClass"
+    :style="btnStyle"
+    :type="as === 'button' ? 'button' : undefined"
+    :disabled="loading"
+  >
+    <ILoading
+      v-if="loading"
+      :type="loadingType"
+      spinner
+    />
+    <slot v-else />
   </component>
 </template>
 
 <script lang="ts" setup>
-import type { Component } from 'vue'
-import type { ButtonSize, ButtonVariant } from '../../types'
-import { computed } from 'vue'
+import type {ButtonSize, ButtonVariant, LoadingType} from '../../types'
+import { computed, ref, watch } from 'vue'
+import ILoading from './ILoading.vue'
 
 interface Props {
-  as?: 'button' | 'a' | Component
+  as?: 'button' | 'a'
   wide?: boolean
   block?: boolean
   square?: boolean
@@ -21,6 +34,8 @@ interface Props {
   ghost?: boolean
   variant?: ButtonVariant | undefined
   size?: ButtonSize | undefined
+  loading?: boolean
+  loadingType?: LoadingType
 }
 interface Emits {
 
@@ -38,8 +53,12 @@ const {
   ghost = false,
   variant,
   size,
+  loading,
 } = defineProps<Props>()
 defineEmits<Emits>()
+
+const button = ref<HTMLButtonElement | HTMLAnchorElement | undefined>()
+const btnStyle = ref('')
 
 const variantMap: Record<ButtonVariant, string> = {
   neutral: 'btn-neutral',
@@ -74,4 +93,11 @@ const btnClass = computed((): Array<string> => [
   soft ? 'btn-soft' : undefined,
   ghost ? 'btn-ghost' : undefined,
 ].filter((className: string | undefined): className is string => className !== undefined))
+
+watch(
+  () => loading,
+  isLoading => btnStyle.value = isLoading && button.value !== undefined
+    ? `width: ${button.value.offsetWidth}px`
+    : '',
+)
 </script>

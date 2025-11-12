@@ -116,6 +116,9 @@ type SelectSize = BaseSize
 
 type AlertVariant = Exclude<BaseVariant, 'neutral' | 'primary' | 'secondary' | 'accent'>
 
+type LoadingSize = BaseSize
+type LoadingType = 'spinner' | 'dots' | 'ring' | 'ball' | 'bars' | 'infinity'
+
 type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
 
 type FormError<T extends object> = {

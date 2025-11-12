@@ -28,6 +28,8 @@
       variant="secondary"
       class="w-full mt-4"
       :disabled="importFile === undefined"
+      :loading="isLoading"
+      loading-type="ring"
       @click="importData"
     >
       Importieren
@@ -65,12 +67,16 @@ const wateringSchemaStore = useWateringSchemaStore()
 const { toast } = useToast()
 const importFile = ref<File | undefined>()
 
+const isLoading = ref(false)
+
 async function importData() {
   if (!importFile.value)
     return
 
+  isLoading.value = true
   const service = await BackupService.create()
   const result = await service.importBackup(importFile.value)
+  isLoading.value = false
 
   if (result.ok) {
     toast('Backup erfolgreich importiert', 'success')
