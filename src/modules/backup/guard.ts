@@ -1,3 +1,4 @@
+import type { ImportExportData } from './types'
 import {
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,

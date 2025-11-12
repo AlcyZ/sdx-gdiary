@@ -201,7 +201,7 @@ async function showDeleteConfirmationModal(plant: Plant) {
     }
 
     showToast({
-      message: result.error,
+      message: 'Es ist ein Fehler beim löschen der Pflanze aufgetreten',
       duration: 2000,
       variant: 'error',
     })
