@@ -39,7 +39,7 @@ const { toast } = useToast()
 
 async function exportData() {
   const service = await BackupService.create()
-  const result = await service.createBackup()
+  const result = await service.createBackupZip()
   if (!result.ok)
     return
 
