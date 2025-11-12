@@ -3,7 +3,7 @@
     <RouterLink
       v-for="(item, i) in items"
       :key="i"
-      :class="{ 'dock-active': false }"
+      :class="{ 'dock-active': $route.path.startsWith(item.to) }"
       :to="item.to"
     >
       <component :is="item.icon" />
