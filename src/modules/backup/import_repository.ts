@@ -53,7 +53,10 @@ export default class ImportRepository {
   }
 
   private async importData(data: ImportExportData, zip: JSZip) {
-    await this.loadImages(data, zip)
+    await Promise.all([
+      this.loadImages(data, zip),
+      this.truncateStores(),
+    ])
 
     const tx = this.db.transaction(TABLES_DB, 'readwrite')
     const {
@@ -112,5 +115,16 @@ export default class ImportRepository {
     data: ImportExportData,
   ) {
     data[table].forEach(row => store.add(row))
+  }
+
+  private async truncateStores() {
+    const tx = this.db.transaction(TABLES_DB, 'readwrite')
+    const promises: Array<Promise<void>> = []
+
+    for (const storeName of TABLES_DB)
+      promises.push(tx.objectStore(storeName).clear())
+
+    await Promise.all(promises)
+    await tx.done
   }
 }
