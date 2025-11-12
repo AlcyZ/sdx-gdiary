@@ -8,7 +8,7 @@
     @click="fileInput?.click()"
   >
     <template v-if="modelValue === undefined">
-      Drag & drop JSON
+      {{ label !== undefined ? label : 'Drag & drop file' }}
     </template>
     <template v-else>
       <IconFile class="mr-1" /> {{ modelValue.name }}
@@ -16,7 +16,7 @@
     <input
       ref="fileInput"
       type="file"
-      accept="application/json"
+      :accept="accept"
       class="hidden"
       @change="onFileSelect"
     >
@@ -28,6 +28,8 @@ import { File as IconFile } from 'lucide-vue-next'
 import { ref } from 'vue'
 
 interface Props {
+  label?: string
+  accept?: string
   modelValue?: File
 }
 interface Emits {
