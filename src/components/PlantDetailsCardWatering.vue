@@ -76,17 +76,14 @@
 </template>
 
 <script lang="ts" setup>
-import type { Plant, WateringLog } from '../modules/plants/types'
+import type { Plant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
   Trash as IconDelete,
   Droplet as IconWater,
-    Droplets as IconWatering,
+  Droplets as IconWatering,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
-import { useModal } from '../composables/useModal.ts'
-import { useToast } from '../composables/useToast.ts'
-import { usePlantStore } from '../stores/plantStore.ts'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
@@ -102,11 +99,6 @@ interface Emits {
 const { plant } = defineProps<Props>()
 defineEmits<Emits>()
 
-const plantStore = usePlantStore()
-
-const { showConfirmationModal } = useModal()
-const { toast } = useToast()
-
 function getDayAndTime(timestamp: number) {
   const formatted = dayjs(new Date(timestamp)).format('DD.MM.YYYY HH:mm')
   const [day, time] = formatted.split(' ')
@@ -120,28 +112,4 @@ const sortedWateringLogs = computed(
     ...getDayAndTime(log.date),
   })),
 )
-
-function openDeleteLogModal(log: WateringLog) {
-  const date = dayjs(new Date(log.date)).format('DD.MM.YYYY HH:mm')
-  const text = `Bist du sicher, dass du den Gießeintrag vom ${date} löschen möchtest?`
-
-  const onClick = async () => {
-    const result = await plantStore.deleteWateringLog(log.id)
-    if (result)
-      toast('Gießeintrag gelöscht', 'success')
-  }
-
-  showConfirmationModal({
-    title: 'Gießeintrag löschen',
-    text,
-    actions: [
-      {
-        label: 'Löschen',
-        icon: IconDelete,
-        class: 'btn-error text-base-100',
-        onClick,
-      },
-    ],
-  })
-}
 </script>
