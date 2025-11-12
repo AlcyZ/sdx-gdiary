@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DevSeed from './views/DevSeed.vue'
+import NotFound from './views/NotFound.vue'
 import NutrientsFertilizerAdd from './views/NutrientsFertilizerAdd.vue'
 import NutrientsOverview from './views/NutrientsOverview.vue'
 import NutrientsSchemaAdd from './views/NutrientsSchemaAdd.vue'
@@ -24,10 +25,12 @@ const routes = [
     children: [
       {
         path: '',
+        name: 'plant.listing',
         component: PlantListing,
       },
       {
         path: 'add',
+        name: 'plant.add',
         component: PlantAdd,
       },
       {
@@ -35,10 +38,12 @@ const routes = [
         children: [
           {
             path: '',
+            name: 'plant.show',
             component: PlantDetails,
           },
           {
             path: 'edit',
+            name: 'plant.edit',
             component: PlantEdit,
           },
           {
@@ -46,6 +51,7 @@ const routes = [
             children: [
               {
                 path: 'watering',
+                name: 'plant.log.watering',
                 component: PlantLogWatering,
               },
             ],
@@ -59,6 +65,7 @@ const routes = [
     children: [
       {
         path: '',
+        name: 'nutrients.overview',
         component: NutrientsOverview,
       },
       {
@@ -66,6 +73,7 @@ const routes = [
         children: [
           {
             path: 'add',
+            name: 'nutrients.fertilizer.add',
             component: NutrientsFertilizerAdd,
           },
         ],
@@ -75,15 +83,22 @@ const routes = [
         children: [
           {
             path: 'add',
+            name: 'nutrients.schema.add',
             component: NutrientsSchemaAdd,
           },
           {
             path: ':schemaId/edit',
+            name: 'nutrients.schema.edit',
             component: NutrientsSchemaEdit,
           },
         ],
       },
     ],
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound,
   },
 ]
 
