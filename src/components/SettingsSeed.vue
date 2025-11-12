@@ -1,15 +1,17 @@
 <template>
   <SettingsCard
     title="Testdaten seeden"
+    :icon="IconSeed"
+    class="opacity-75"
   >
-    <p class="my-5">
+    <p class="mt-4">
       Bei einen Klick auf den Button werden 6 zufällige Pflanzen, sowie das Hesi-Starterpack, und BioBizz CalMag/PH+-
       angelegt.
     </p>
 
     <IBtn
       variant="neutral"
-      class="w-full"
+      class="w-full mt-4"
       @click="openSeedModal"
     >
       Seed
@@ -18,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Check as IconCheck } from 'lucide-vue-next'
+import { Check as IconCheck, TestTube as IconSeed } from 'lucide-vue-next'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
 import DevSeeder from '../seeder/devSeeder.ts'

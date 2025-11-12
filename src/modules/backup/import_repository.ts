@@ -2,7 +2,7 @@ import type { IDBPDatabase, IDBPObjectStore } from 'idb'
 import type BackupServiceUtil from './backup_service_util.ts'
 import type { BackupStoreNames, BackupTxStores, ImportExportData } from './types'
 import JSZip from 'jszip'
-import {safeAsync, safeParseJson, some, wrapOption} from '../../util.ts'
+import { safeAsync, safeParseJson, some, wrapOption } from '../../util.ts'
 import {
   getDb,
   TABLE_FERTILIZERS,

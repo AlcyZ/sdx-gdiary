@@ -1,15 +1,16 @@
 <template>
   <SettingsCard
     title="Daten exportieren"
+    :icon="IconExport"
   >
-    <p class="my-5">
+    <p class="mt-4">
       Exportiere alle deine Daten zu einer JSON-Datei. Die Datei kann bei Bedarf einfach wieder importiert werden. Auch
       praktisch, um Backups von seinen Daten zu erhalten.
     </p>
 
     <IBtn
-      variant="neutral"
-      class="w-full"
+      variant="primary"
+      class="w-full mt-4"
       @click="exportData"
     >
       Exportieren
@@ -19,6 +20,7 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs'
+import { Upload as IconExport } from 'lucide-vue-next'
 import { useToast } from '../composables/useToast.ts'
 import BackupService from '../modules/backup/backup_service.ts'
 import SettingsCard from './SettingsCard.vue'

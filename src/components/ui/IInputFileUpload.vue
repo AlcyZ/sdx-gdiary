@@ -1,14 +1,14 @@
 <template>
   <div
     class="border-2 border-dashed rounded-field p-6 text-center cursor-pointer transition duration-200 flex items-center justify-center"
-    :class="isDragging ? 'border-info bg-blue-50' : 'border-gray-300'"
+    :class="isDragging ? 'border-info bg-blue-50' : 'border-primary'"
     @dragover.prevent="onDragOver"
     @dragleave.prevent="onDragLeave"
     @drop.prevent="onDrop"
     @click="fileInput?.click()"
   >
     <template v-if="modelValue === undefined">
-      {{ label !== undefined ? label : 'Drag & drop file' }}
+      <span class="font-semibold opacity-80">{{ label !== undefined ? label : 'Drag & drop file' }}</span>
     </template>
     <template v-else>
       <IconFile class="mr-1" /> {{ modelValue.name }}

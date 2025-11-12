@@ -1,14 +1,15 @@
 <template>
   <SettingsCard
     title="Updates installieren"
+    :icon="IconUpdate"
   >
-    <p class="my-2">
+    <p class="mt-4">
       Hier kann die App aktualisiert werden
     </p>
 
     <IBtn
       variant="neutral"
-      class="w-full"
+      class="w-full mt-4"
       @click="updateServiceWorker"
     >
       Updates installieren
@@ -17,6 +18,7 @@
 </template>
 
 <script lang="ts" setup>
+import { RefreshCw as IconUpdate } from 'lucide-vue-next'
 import { useToast } from '../composables/useToast.ts'
 import SettingsCard from './SettingsCard.vue'
 import IBtn from './ui/IBtn.vue'

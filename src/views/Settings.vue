@@ -1,11 +1,15 @@
 <template>
   <LayoutDock>
     <div class="flex flex-col gap-3 items-center justify-center flex-1 my-4">
-      <SettingsUpdate />
-
       <SettingsDataExport />
 
       <SettingsDataImport />
+
+      <SettingsUpdate />
+
+      <div class="divider text-gray-900/30">
+        Entwickler Tools
+      </div>
 
       <SettingsSeed />
     </div>
