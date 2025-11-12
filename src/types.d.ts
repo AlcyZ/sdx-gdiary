@@ -114,6 +114,8 @@ type ButtonSize = BaseSize
 type InputSize = BaseSize
 type SelectSize = BaseSize
 
+type AlertVariant = Exclude<BaseVariant, 'neutral' | 'primary' | 'secondary' | 'accent'>
+
 type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
 
 type FormError<T extends object> = {
