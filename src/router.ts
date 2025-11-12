@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import DevSeed from './views/DevSeed.vue'
 import NotFound from './views/NotFound.vue'
 import NutrientsFertilizerAdd from './views/NutrientsFertilizerAdd.vue'
 import NutrientsOverview from './views/NutrientsOverview.vue'
@@ -10,15 +9,12 @@ import PlantDetails from './views/PlantDetails.vue'
 import PlantEdit from './views/PlantEdit.vue'
 import PlantListing from './views/PlantListing.vue'
 import PlantLogWatering from './views/PlantLogWatering.vue'
+import Settings from './views/Settings.vue'
 
 const routes = [
   {
     path: '/',
     component: PlantListing,
-  },
-  {
-    path: '/dev',
-    component: DevSeed,
   },
   {
     path: '/plants',
@@ -94,6 +90,11 @@ const routes = [
         ],
       },
     ],
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: Settings,
   },
   {
     path: '/:pathMatch(.*)*',

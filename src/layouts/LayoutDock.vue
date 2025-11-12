@@ -13,9 +13,9 @@
 <script lang="ts" setup>
 import type { DockItem } from '../types'
 import {
-  House as IconHouse,
   Apple as IconNutrients,
   Flower2 as IconPlant,
+  Settings as IconSettings,
 } from 'lucide-vue-next'
 import { ref } from 'vue'
 import IDock from '../components/ui/IDock.vue'
@@ -36,11 +36,6 @@ defineSlots<{
 
 const docks = ref<Array<DockItem>>([
   {
-    label: 'Dev',
-    icon: IconHouse,
-    to: '/dev',
-  },
-  {
     label: 'Pflanzen',
     icon: IconPlant,
     to: '/plants',
@@ -49,6 +44,11 @@ const docks = ref<Array<DockItem>>([
     label: 'Dünger',
     icon: IconNutrients,
     to: '/nutrients',
+  },
+  {
+    label: 'Einstellungen',
+    icon: IconSettings,
+    to: '/settings',
   },
 ])
 </script>
