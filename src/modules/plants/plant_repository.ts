@@ -1,5 +1,5 @@
-import type { Result } from '../../types'
-import type { EditPlant, GetPlantError, NewPlant, NewWateringLog, Plant, PlantImage } from './types'
+import type { Option, Result } from '../../types'
+import type { EditPlant, GetPlantError, NewPlant, NewWateringLog, Plant, PlantImage, PlantImageData } from './types'
 import PlantReadRepository from './plant_read_repository.ts'
 import PlantWriteRepository from './plant_write_repository.ts'
 
@@ -39,6 +39,10 @@ export default class PlantRepository {
 
   public async getById(id: number): Promise<Result<Plant, GetPlantError>> {
     return this.read.getById(id)
+  }
+
+  public async getImageByImageId(plantImageId: number): Promise<Option<PlantImageData>> {
+    return this.read.getImageByImageId(plantImageId)
   }
 
   public async delete(plantId: number): Promise<Result<void, unknown>> {

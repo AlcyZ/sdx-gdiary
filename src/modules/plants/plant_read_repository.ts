@@ -1,8 +1,17 @@
 import type { IDBPDatabase, IDBPTransaction } from 'idb'
-import type { Result } from '../../types'
+import type { Option, Result } from '../../types'
 import type { WateringSchema } from '../nutrients/types'
-import type { GetPlantError, Plant, PlantImage, PlantPhaseRow, PlantRow, PlantSubstrate, WateringLog } from './types'
-import { err, ok, unwrapOrUndefined } from '../../util.ts'
+import type {
+  GetPlantError,
+  Plant,
+  PlantImage,
+  PlantImageData,
+  PlantPhaseRow,
+  PlantRow,
+  PlantSubstrate,
+  WateringLog,
+} from './types'
+import { err, none, ok, some, unwrapOrUndefined } from '../../util.ts'
 import {
   getDb,
   INDEX_PLANT_ID,
@@ -89,6 +98,24 @@ export default class PlantReadRepository {
       return ok(plantResult.value)
 
     return err({ kind: 'invalid-data', message: plantResult.error })
+  }
+
+  public async getImageByImageId(plantImageId: number): Promise<Option<PlantImageData>> {
+    const tx = this.db.transaction(TABLE_PLANT_IMAGES)
+    const store = tx.objectStore(TABLE_PLANT_IMAGES)
+
+    const row = await store.get(plantImageId)
+    if (!isPlantImageRow(row)) {
+      if (row !== undefined)
+        console.error(`[PlantReadRepository.getImageByImageId]: Found image dataset (id: ${plantImageId}), but invalid data`, row)
+
+      return none()
+    }
+
+    return some({
+      id: row.id,
+      image: row.image,
+    })
   }
 
   private async createPlant(
@@ -243,7 +270,6 @@ export default class PlantReadRepository {
     return data.filter(row => isPlantImageRow(row))
       .map((row): PlantImage => ({
         id: row.id,
-        file: row.image,
       }))
   }
 }

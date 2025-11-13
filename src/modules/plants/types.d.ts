@@ -29,9 +29,10 @@ type EditPlant = Omit<WithId<NewPlant, number>, 'substrate'> & {
 
 type PlantSubstrate = WithId<NewPlantSubstrate, number>
 type PlantPhase = WithId<NewPlantPhase, number>
-type PlantImage = WithId<{
-  file: Blob
-}, number>
+type PlantImage = HasId<number>
+type PlantImageData = PlantImage & {
+  image: Blob
+}
 
 type Plant = {
   strain: string
@@ -70,7 +71,8 @@ interface PlantImageRow {
   image: Blob
 }
 
-type WithPlantId<T> = WithId<T, number> & { [INDEX_PLANT_ID]: number }
+interface HasPlantId { [INDEX_PLANT_ID]: number }
+type WithPlantId<T> = WithId<T, number> & HasPlantId
 
 type PlantSubstrateRow = WithPlantId<{
   substrate: string
