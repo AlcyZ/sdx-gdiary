@@ -54,6 +54,7 @@ try {
   }).catch((error) => {
     console.error('Critical application error:', error)
   })
-} catch (error: unknown) {
+}
+catch (error: unknown) {
   console.error('Critical application error:', error)
 }
