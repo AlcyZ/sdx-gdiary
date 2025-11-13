@@ -47,7 +47,13 @@ async function bootstrap() {
   app.mount('#app')
 }
 
-bootstrap().then(() => {
-  if (import.meta.env.DEV && debug)
-    console.info('[Mounted VueApp!]')
-})
+try {
+  bootstrap().then(() => {
+    if (import.meta.env.DEV && debug)
+      console.info('[Mounted VueApp!] (new version!)')
+  }).catch((error) => {
+    console.error('Critical application error:', error)
+  })
+} catch (error: unknown) {
+  console.error('Critical application error:', error)
+}
