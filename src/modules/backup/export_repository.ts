@@ -3,7 +3,7 @@ import type { AsyncResult } from '../../types'
 import type { PlantImageRow } from '../plants/types'
 import type BackupServiceUtil from './backup_service_util.ts'
 import JSZip from 'jszip'
-import { ok, safeAsync } from '../../util.ts'
+import { mapMimeToExtension, ok, safeAsync } from '../../util.ts'
 import {
   getDb,
   TABLES_DB,
@@ -33,7 +33,9 @@ export default class ExportRepository {
     const zip = new JSZip()
 
     data.value.plantImages.filter((row: any) => isPlantImageRow(row))
-      .forEach((row: PlantImageRow) => zip.file(`${BACKUP_FILENAME_IMAGE}${row.id}${this.getExtension(row.image)}`, row.image))
+      .forEach(
+        (row: PlantImageRow) => zip.file(`${BACKUP_FILENAME_IMAGE}${row.id}${mapMimeToExtension(row.image.type)}`, row.image),
+      )
 
     const content = JSON.stringify(data.value)
     zip.file(BACKUP_FILENAME_DATA, content)
@@ -71,17 +73,5 @@ export default class ExportRepository {
 
       return Object.assign({}, ...results)
     })
-  }
-
-  private getExtension(image: Blob) {
-    switch (image.type) {
-      case 'image/jpeg':
-        return '.jpg'
-      case 'image/webp':
-        return '.webp'
-      case 'image/png':
-      default:
-        return '.png'
-    }
   }
 }

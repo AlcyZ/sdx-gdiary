@@ -14,7 +14,6 @@ import {
   TABLE_PLANTS,
   TABLE_WATERING_SCHEMAS,
   TABLES_DB,
-
 } from '../db'
 import { BACKUP_FILENAME_DATA, BACKUP_FILENAME_IMAGE } from './constants.ts'
 import { isImportExportData } from './guard.ts'
@@ -93,6 +92,11 @@ export default class ImportRepository {
 
       const file = await option.value.async('blob')
       return some(file)
+      //
+      // const ext = unwrapOr(getExtension(option.value.name), '')
+      // const mime = mapExtensionToMime(`.${ext}`)
+      //
+      // return some(new Blob([file], { type: mime }))
     }
 
     for (const image of data[TABLE_PLANT_IMAGES]) {
