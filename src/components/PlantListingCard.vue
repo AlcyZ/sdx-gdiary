@@ -7,8 +7,15 @@
   >
     <div class="grid grid-cols-[6fr_2fr_2fr]">
       <div class="flex items-center">
+        <PlantImageAsync
+          v-if="plant.image"
+          :image="plant.image"
+          class="rounded-full mr-4"
+          size-class="w-14 h-14"
+        />
         <img
-          :src="plant.image"
+          v-else
+          :src="PLANT_PLACEHOLDER_IMAGE"
           :alt="`image-${plant.name}`"
           class="rounded-full w-14 h-14 mr-4"
         >
@@ -87,6 +94,7 @@ import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
+import PlantImageAsync from './PlantImageAsync.vue'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
@@ -149,13 +157,12 @@ const plantsList = computed(
 
 function getPlantImage(plant: Plant) {
   if (plant.favoritImage)
-    return URL.createObjectURL(plant.favoritImage.file)
+    return plant.favoritImage
 
   const firstImage = plant.images[0]
   if (firstImage !== undefined)
-    return URL.createObjectURL(firstImage.file)
-
-  return PLANT_PLACEHOLDER_IMAGE
+    return firstImage
+  return undefined
 }
 
 function getPlantStatusClass(plant: Plant): string {

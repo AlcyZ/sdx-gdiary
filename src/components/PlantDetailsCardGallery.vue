@@ -15,8 +15,9 @@
         :key="i"
         class="w-full aspect-square md:aspect-video overflow-auto relative"
       >
-        <PlantDetailsCardGalleryImage
+        <PlantImageAsync
           :image="image"
+          size-class="w-full h-full"
         />
 
         <div class="join join-vertical absolute top-2 left-2">
@@ -58,7 +59,7 @@ import { inject } from 'vue'
 import { useModal } from '../composables/useModal.ts'
 import { REPO_PLANT } from '../di_keys.ts'
 import { doThen, mapMimeToExtension } from '../util.ts'
-import PlantDetailsCardGalleryImage from './PlantDetailsCardGalleryImage.vue'
+import PlantImageAsync from './PlantImageAsync.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'

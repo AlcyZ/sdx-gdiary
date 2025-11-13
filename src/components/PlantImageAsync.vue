@@ -2,6 +2,7 @@
   <IImgAsync
     :img-src="imgSrc"
     :loading="isLoading"
+    :size-class="sizeClass"
   />
 </template>
 
@@ -14,6 +15,7 @@ import IImgAsync from './ui/IImgAsync.vue'
 
 interface Props {
   image: PlantImage
+  sizeClass: string
 }
 interface Emits {
 

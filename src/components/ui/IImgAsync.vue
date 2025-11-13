@@ -1,10 +1,12 @@
 <template>
   <div
-    class="w-full h-full inline-block relative overflow-hidden bg-[#E0E0E0]"
+    class="inline-block relative overflow-hidden bg-[#E0E0E0]"
+    :class="sizeClass"
   >
     <div
       v-if="loading"
-      class="absolute top-0 left-0 w-full h-full flex items-center justify-center z-10 bg-white/50"
+      class="absolute top-0 left-0 flex items-center justify-center z-10 bg-white/50"
+      :class="sizeClass"
     >
       <ILoading
         ring
@@ -14,7 +16,8 @@
     <img
       :src="imgSrc"
       alt=""
-      class="w-full h-full object-cover"
+      class="object-cover"
+      :class="sizeClass"
       loading="lazy"
     >
   </div>
@@ -26,6 +29,7 @@ import ILoading from './ILoading.vue'
 interface Props {
   imgSrc: string
   loading: boolean
+  sizeClass: string
 }
 interface Emits {
 
