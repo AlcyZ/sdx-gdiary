@@ -31,7 +31,8 @@ type PlantSubstrate = WithId<NewPlantSubstrate, number>
 type PlantPhase = WithId<NewPlantPhase, number>
 type PlantImage = HasId<number>
 type PlantImageData = PlantImage & {
-  image: Blob
+  data: ArrayBuffer
+  mime: string
 }
 
 type Plant = {
@@ -68,7 +69,8 @@ interface PlantRow {
 interface PlantImageRow {
   id: number
   plantId: number
-  image: Blob
+  data: ArrayBuffer
+  mime: string
 }
 
 interface HasPlantId { [INDEX_PLANT_ID]: number }

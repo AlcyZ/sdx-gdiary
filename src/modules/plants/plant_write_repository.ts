@@ -130,14 +130,18 @@ export default class PlantWriteRepository {
 
   public async uploadPlantImage(plant: Plant, image: File): Promise<Result<void, unknown>> {
     return safeAsync(async () => {
+      const data = await image.arrayBuffer()
+      const mime = image.type
+
+      const dataset = {
+        [INDEX_PLANT_ID]: plant.id,
+        data,
+        mime,
+      }
+
       const tx = this.db.transaction(TABLE_PLANT_IMAGES, 'readwrite')
       const store = tx.objectStore(TABLE_PLANT_IMAGES)
-
-      const data = {
-        [INDEX_PLANT_ID]: plant.id,
-        image,
-      }
-      await store.add(data)
+      await store.add(dataset)
     }, { method: 'PlantWriteRepository.uploadPlantImage', message: 'Failed to upload plant' })
   }
 

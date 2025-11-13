@@ -26,7 +26,8 @@ export function isPlantImageRow(value: any): value is PlantImageRow {
     && value !== null
     && hasNumKey(value, 'id')
     && hasNumKey(value, INDEX_PLANT_ID)
-    && value.image instanceof Blob
+    && hasStrKey(value, 'mime')
+    && value.data instanceof ArrayBuffer
 }
 
 export function isPlantSubstrateRow(value: any): value is PlantSubstrateRow {

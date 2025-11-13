@@ -114,7 +114,8 @@ export default class PlantReadRepository {
 
     return some({
       id: row.id,
-      image: row.image,
+      data: row.data,
+      mime: row.mime,
     })
   }
 
