@@ -31,6 +31,7 @@ interface None { exist: false }
 type Option<T> = Some<T> | None
 
 type ResultOrOption<T, E = any> = Result<T, E> | Option<T>
+
 interface HasId<T> {
   id: T
 }

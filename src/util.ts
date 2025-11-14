@@ -177,7 +177,7 @@ export function mapExtensionToMime(extension: string): string {
 export function getExtension(filename: string): Option<string> {
   const extension = filename.split('.')[1]
 
-  return extension !== undefined ? some(extension) : none()
+  return extension !== undefined ? some(`.${extension}`) : none()
 }
 
 export function safeParseJson<T>(content: string, guard: (value: any) => value is T): Result<T, ParseJsonError> {
@@ -216,7 +216,15 @@ export function unwrapOr<T>(value: ResultOrOption<T>, or: T): T {
     : value.exist ? value.value : or
 }
 
-export function andThen<T, M extends ResultOrOption<T>>(value: M, then: (value: T) => M): M {
+export function andThen<T, E, R>(value: Result<T, E>, then: (value: T) => Result<R, E>): Result<R, E>
+export function andThen<T, R>(value: Option<T>, then: (value: T) => Option<R>): Option<R>
+
+export function andThen<T, E, R>(value: Result<T, E>, then: (value: T) => Promise<Result<R, E>>): Promise<Result<R, E>>
+export function andThen<T, R>(value: Option<T>, then: (value: T) => Promise<Option<R>>): Promise<Option<R>>
+export function andThen<T, E, R>(
+  value: ResultOrOption<T, E>,
+  then: (value: T) => Promise<ResultOrOption<R, E>> | ResultOrOption<R, E>,
+): Promise<ResultOrOption<R, E>> | ResultOrOption<R, E> {
   return isResult(value)
     ? value.ok ? then(value.value) : value
     : value.exist ? then(value.value) : value
