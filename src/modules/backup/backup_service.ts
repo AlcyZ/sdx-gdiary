@@ -1,5 +1,6 @@
 import type { AsyncResult } from '../../types'
 
+import type ExportBackupError from './export_backup_error.ts'
 import BackupServiceUtil from './backup_service_util.ts'
 import ExportRepository from './export_repository.ts'
 import ImportRepository from './import_repository.ts'
@@ -22,7 +23,7 @@ export default class BackupService {
     return new BackupService(importRepo, exportRepo)
   }
 
-  public async createBackupZip(): AsyncResult<Blob, unknown> {
+  public async createBackupZip(): AsyncResult<Blob, ExportBackupError> {
     return this.exportRepo.createBackupZip()
   }
 

@@ -51,8 +51,11 @@ async function exportData() {
   const result = await service.createBackupZip()
   isLoading.value = false
 
-  if (!result.ok)
+  if (!result.ok) {
+    toast('Es ist ein Fehler beim exportieren aufgetreten', 'error')
+    result.error.log()
     return
+  }
 
   const prefix = dayjs().format('YYYY-MM-DD_HH:mm')
   const filename = `${prefix}_grow_diary.zip`

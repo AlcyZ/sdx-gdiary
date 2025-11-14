@@ -3,13 +3,15 @@ import type { AsyncResult } from '../../types'
 import type { PlantImageRow } from '../plants/types'
 import type BackupServiceUtil from './backup_service_util.ts'
 import JSZip from 'jszip'
-import { mapMimeToExtension, ok, safeAsync } from '../../util.ts'
+import { mapMimeToExtension, safeAsync } from '../../util.ts'
 import {
   getDb,
   TABLES_DB,
 } from '../db'
 import { isPlantImageRow } from '../plants/guard.ts'
 import { BACKUP_FILENAME_DATA, BACKUP_FILENAME_IMAGE } from './constants.ts'
+import ExportBackupError from './export_backup_error.ts'
+import { isImportExportData } from './guard.ts'
 
 export default class ExportRepository {
   private readonly db: IDBPDatabase
@@ -25,28 +27,36 @@ export default class ExportRepository {
     return new ExportRepository(db, util)
   }
 
-  public async createBackupZip(): AsyncResult<Blob, unknown> {
-    const data = await this.fetchStoresData()
-    if (!data.ok)
-      return data
+  public async createBackupZip(): AsyncResult<Blob, ExportBackupError> {
+    return safeAsync<Blob, ExportBackupError>(async () => {
+      const result = await this.fetchStoresData()
+      if (!result.ok)
+        throw ExportBackupError.error(result.error)
 
-    const zip = new JSZip()
+      if (!isImportExportData(result.value))
+        throw ExportBackupError.invalidStoreData(result.value)
 
-    data.value.plantImages.filter((row: any) => isPlantImageRow(row))
-      .forEach(
-        (row: PlantImageRow) => zip.file(`${BACKUP_FILENAME_IMAGE}${row.id}${mapMimeToExtension(row.image.type)}`, row.image),
-      )
+      const zip = new JSZip()
 
-    const content = JSON.stringify(data.value)
-    zip.file(BACKUP_FILENAME_DATA, content)
+      result.value.plantImages.filter((row: any) => isPlantImageRow(row))
+        .forEach(image => this.addImgToZip(image, zip))
 
-    return ok(
-      await zip.generateAsync({ type: 'blob' }),
-    )
+      const content = JSON.stringify(result.value)
+      zip.file(BACKUP_FILENAME_DATA, content)
+
+      return await zip.generateAsync({ type: 'blob' })
+    })
+  }
+
+  private addImgToZip(image: PlantImageRow, zip: JSZip) {
+    const ext = mapMimeToExtension(image.mime)
+    const filename = `${BACKUP_FILENAME_IMAGE}${image.id}${ext}`
+
+    zip.file(filename, image.data)
   }
 
   private async fetchStoresData() {
-    return safeAsync(async () => {
+    return safeAsync<any, DOMException>(async () => {
       const tx = this.db.transaction(TABLES_DB)
 
       const {
