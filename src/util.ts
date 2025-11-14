@@ -1,4 +1,4 @@
-import type { Err, None, Ok, Option, ParseJsonError, Result, ResultOrOption, Some } from './types'
+import type { AsyncResult, Err, None, Ok, Option, ParseJsonError, Result, ResultOrOption, Some } from './types'
 
 /**
  * Creates a successful result object with the given value.
@@ -74,20 +74,20 @@ function tryLog(log?: LogConfig, error?: unknown) {
   log.kind === 'error' ? console.error(...args) : console.warn(...args)
 }
 
-export function safeAsync<T>(
+export function safeAsync<T, E = unknown>(
   run: () => Promise<T>,
   log?: LogConfig,
-): Promise<Result<T, unknown>> {
+): AsyncResult<T, E> {
   return new Promise((resolve) => {
-    const resolveErr = (error: unknown) => {
+    const resolveErr = (error: E) => {
       tryLog(log, error)
       resolve(err(error))
     }
     try {
-      run().then(result => resolve(ok(result))).catch(error => resolveErr(error))
+      run().then(result => resolve(ok(result))).catch(error => resolveErr(error as E))
     }
     catch (error: unknown) {
-      resolveErr(error)
+      resolveErr(error as E)
     }
   })
 }
