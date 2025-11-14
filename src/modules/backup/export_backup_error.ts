@@ -17,6 +17,7 @@ export default class ExportBackupError extends Error {
     super(message)
     this.data = data
     this.previous = previous
+    Object.setPrototypeOf(this, ExportBackupError.prototype)
   }
 
   public static invalidStoreData(data: any): ExportBackupError {
