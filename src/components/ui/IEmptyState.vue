@@ -2,7 +2,7 @@
   <div
     class="bg-white shadow px-9 py-4 w-full max-w-3xl rounded-box"
   >
-    <h2 class="text-xl font-bold flex items-center leading-relaxed">
+    <h2 class="text-xl font-bold flex items-center justify-between leading-relaxed">
       {{ title }}
       <component
         :is="titleIcon"
@@ -24,8 +24,9 @@
 
     <IBtn
       variant="primary"
+      size="lg"
       class="text-base-100 w-full mt-6"
-      @click="$router.push({ name: 'plant.add' })"
+      @click="$router.push(to)"
     >
       <component :is="ctaIcon" />
       {{ cta }}
@@ -37,6 +38,7 @@
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
+import type { RouteLocationRaw } from 'vue-router'
 import IBtn from './IBtn.vue'
 
 interface Props {
@@ -46,6 +48,7 @@ interface Props {
   illustration: Component
   cta: string
   ctaIcon: Component
+  to: RouteLocationRaw
 }
 interface Emits {
 

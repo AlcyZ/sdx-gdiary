@@ -6,6 +6,7 @@
     :illustration="IllustrationWateringPlants"
     cta="Neue Pflanze hinzufügen"
     :cta-icon="IconPlus"
+    :to="{ name: 'plant.add' }"
   >
     <template #bonus>
       <div class="text-center mt-2">
