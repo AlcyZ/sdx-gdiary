@@ -1,4 +1,5 @@
 import type { IDBPDatabase, IDBPObjectStore } from 'idb'
+import type { AsyncResult } from '../../types'
 import type BackupServiceUtil from './backup_service_util.ts'
 import type { BackupStoreNames, BackupTxStores, ImportExportData } from './types'
 import JSZip from 'jszip'
@@ -43,53 +44,57 @@ export default class ImportRepository {
     return new ImportRepository(db, util)
   }
 
-  public async importBackup(file: File) {
+  public async importBackup(file: File): AsyncResult<void, ImportBackupError> {
     return safeAsync(async () => {
       const zip = await JSZip.loadAsync(file)
 
       const json = zip.file(BACKUP_FILENAME_DATA)
       if (!json)
-        throw new ImportBackupError(`Invalid ZIP package: backup file ${BACKUP_FILENAME_DATA} not found`)
+        throw ImportBackupError.zipNotFound(BACKUP_FILENAME_DATA)
 
       const content = await json.async('text')
 
       const result = safeParseJson(content, isImportExportData)
       if (!result.ok)
-        throw new ImportBackupError(`Invalid ZIP package: invalid backup data`, result.error)
+        throw ImportBackupError.invalidBackupData(result.error)
 
-      await this.importData(result.value, zip)
+      const importResult = await this.importData(result.value, zip)
+      if (!importResult.ok)
+        throw ImportBackupError.error(importResult.error)
     })
   }
 
-  private async importData(data: ImportExportData, zip: JSZip) {
-    await Promise.all([
-      this.loadImages(data, zip),
-      this.truncateStores(),
-    ])
+  private async importData(data: ImportExportData, zip: JSZip): AsyncResult<void, DOMException> {
+    return safeAsync(async () => {
+      await Promise.all([
+        this.loadImages(data, zip),
+        this.truncateStores(),
+      ])
 
-    const tx = this.db.transaction(TABLES_DB, 'readwrite')
-    const {
-      storePlants,
-      storePlantImages,
-      storePlantSubstrates,
-      storePlantPhases,
-      storePlantWateringLogs,
-      storeFertilizers,
-      storeWateringSchema,
-      storeFertilizerWateringSchema,
-    } = this.util.unpackStores(tx)
+      const tx = this.db.transaction(TABLES_DB, 'readwrite')
+      const {
+        storePlants,
+        storePlantImages,
+        storePlantSubstrates,
+        storePlantPhases,
+        storePlantWateringLogs,
+        storeFertilizers,
+        storeWateringSchema,
+        storeFertilizerWateringSchema,
+      } = this.util.unpackStores(tx)
 
-    await Promise.all([
-      this.addData(TABLE_PLANTS, storePlants, data),
-      this.addData(TABLE_PLANT_IMAGES, storePlantImages, data),
-      this.addData(TABLE_PLANT_SUBSTRATES, storePlantSubstrates, data),
-      this.addData(TABLE_PLANT_PHASES, storePlantPhases, data),
-      this.addData(TABLE_PLANT_WATERING_LOGS, storePlantWateringLogs, data),
-      this.addData(TABLE_FERTILIZERS, storeFertilizers, data),
-      this.addData(TABLE_WATERING_SCHEMAS, storeWateringSchema, data),
-      this.addData(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, storeFertilizerWateringSchema, data),
-    ])
-    await tx.done
+      await Promise.all([
+        this.addData(TABLE_PLANTS, storePlants, data),
+        this.addData(TABLE_PLANT_IMAGES, storePlantImages, data),
+        this.addData(TABLE_PLANT_SUBSTRATES, storePlantSubstrates, data),
+        this.addData(TABLE_PLANT_PHASES, storePlantPhases, data),
+        this.addData(TABLE_PLANT_WATERING_LOGS, storePlantWateringLogs, data),
+        this.addData(TABLE_FERTILIZERS, storeFertilizers, data),
+        this.addData(TABLE_WATERING_SCHEMAS, storeWateringSchema, data),
+        this.addData(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, storeFertilizerWateringSchema, data),
+      ])
+      await tx.done
+    })
   }
 
   private async loadImages(data: ImportExportData, zip: JSZip) {

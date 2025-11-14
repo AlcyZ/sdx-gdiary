@@ -78,14 +78,14 @@ async function importData() {
   const result = await service.importBackup(importFile.value)
   isLoading.value = false
 
-  if (result.ok) {
-    toast('Backup erfolgreich importiert', 'success')
-    await syncStores()
+  if (!result.ok) {
+    toast('Es ist ein Fehler beim importieren des Backups aufgetreten', 'error')
+    result.error.log()
     return
   }
 
-  toast('Es ist ein Fehler beim importieren des Backups aufgetreten', 'error')
-  console.error('Error:', result)
+  toast('Backup erfolgreich importiert', 'success')
+  await syncStores()
 }
 
 async function syncStores() {
