@@ -2,9 +2,19 @@ import type { IDBPDatabase, IDBPObjectStore } from 'idb'
 import type BackupServiceUtil from './backup_service_util.ts'
 import type { BackupStoreNames, BackupTxStores, ImportExportData } from './types'
 import JSZip from 'jszip'
-import { safeAsync, safeParseJson, some, wrapOption } from '../../util.ts'
+import {
+  andThen,
+  getExtension,
+  mapExtensionToMime,
+  safeAsync,
+  safeParseJson,
+  some,
+  unwrapOr,
+  wrapOption,
+} from '../../util.ts'
 import {
   getDb,
+  INDEX_PLANT_ID,
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_IMAGES,
@@ -85,25 +95,30 @@ export default class ImportRepository {
   private async loadImages(data: ImportExportData, zip: JSZip) {
     const files = Object.values(zip.files).filter(f => !f.dir)
     const findById = (id: number) => wrapOption(files.find(file => file.name.startsWith(`${BACKUP_FILENAME_IMAGE}${id}`)))
-    const loadById = async (id: number) => {
-      const option = findById(id)
-      if (!option.exist)
-        return option
+    const loadById = async (id: number) => andThen(
+      findById(id),
+      async (file) => {
+        const data = await file.async('arraybuffer')
+        const mime = mapExtensionToMime(
+          unwrapOr(getExtension(file.name), ''),
+        )
 
-      const file = await option.value.async('blob')
-      return some(file)
-      //
-      // const ext = unwrapOr(getExtension(option.value.name), '')
-      // const mime = mapExtensionToMime(`.${ext}`)
-      //
-      // return some(new Blob([file], { type: mime }))
-    }
+        return some({
+          data,
+          mime,
+        })
+      },
+    )
 
-    for (const image of data[TABLE_PLANT_IMAGES]) {
-      const option = await loadById(image.id)
+    for (let i = 0; i < data[TABLE_PLANT_IMAGES].length; i++) {
+      const option = await loadById(data[TABLE_PLANT_IMAGES][i].id)
 
       if (option.exist) {
-        image.image = option.value
+        data[TABLE_PLANT_IMAGES][i] = {
+          [INDEX_PLANT_ID]: data[TABLE_PLANT_IMAGES][i].plantId,
+          id: data[TABLE_PLANT_IMAGES][i].id,
+          ...option.value,
+        }
       }
     }
   }
