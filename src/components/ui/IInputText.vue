@@ -1,11 +1,15 @@
 <template>
   <div>
-    <label class="floating-label">
+    <label class="floating-label" :class="labelClass">
+      <component
+        :is="icon"
+        v-if="icon"
+        :class="iconClass"
+      />
       <input
         ref="input"
         v-model="model"
         :type="type"
-        class="input"
         :class="inputClass"
         :placeholder="label"
       >
@@ -30,6 +34,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Component } from 'vue'
 import type { InputSize } from '../../types'
 import { XIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
@@ -42,12 +47,14 @@ interface Props {
   fullWidth?: boolean
   size?: InputSize
   required?: boolean
+  icon?: Component | undefined
+  iconClass?: string | undefined
 }
 interface Emits {
 
 }
 
-const { fullWidth, size, type = 'text', required = false } = defineProps<Props>()
+const { fullWidth, size, type = 'text', required = false, icon } = defineProps<Props>()
 defineEmits<Emits>()
 
 const model = defineModel<string>()
@@ -64,6 +71,12 @@ const sizeMap: Record<InputSize, string> = {
 const inputClass = computed(() => [
   fullWidth ? 'w-full' : undefined,
   size ? sizeMap[size] : undefined,
+  icon ? 'grow' : 'input',
+])
+
+const labelClass = computed(() => [
+  icon ? 'input' : undefined,
+  fullWidth ? 'w-full' : undefined,
 ])
 
 function focus() {

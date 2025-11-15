@@ -14,6 +14,7 @@
         v-model:manufacturer="manufacturer"
         :error-name="errors.name"
         :error-manufacturer="errors.manufacturer"
+        size="lg"
         class="my-3"
       />
       <input type="submit" class="hidden">
