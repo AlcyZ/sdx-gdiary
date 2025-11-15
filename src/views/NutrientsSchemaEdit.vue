@@ -2,7 +2,7 @@
   <TopNavigation
     @back="$router.back()"
   />
-  <div class="flex-1 flex justify-center items-center">
+  <div class="flex-1 flex justify-center items-center p-4">
     <ICard
       class="w-full max-w-2xl"
       class-actions="justify-between"
