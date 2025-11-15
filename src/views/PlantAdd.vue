@@ -2,7 +2,7 @@
   <TopNavigation
     @back="$router.back()"
   />
-  <div class="flex-1 flex items-center justify-center mt-4">
+  <div class="flex-1 flex items-center justify-center py-4">
     <ICard
       class="w-full max-w-2xl"
       class-actions="justify-between"
@@ -25,39 +25,31 @@
 
       <template #actions>
         <IBtn
-          @click="$emit('back')"
+          variant="primary"
+          class="w-full text-base-100"
+          :disabled="loading || hasFormErrors"
+          @click="saveAndNew"
         >
-          <IconBack />
-          Zurück
+          <IconAdd />
+          Speichern & Neu
         </IBtn>
-        <div class="join">
-          <IBtn
-            variant="neutral"
-            class="join-item"
-            :disabled="loading || hasFormErrors"
-            @click="saveAndNew"
-          >
-            <IconAdd />
-            Speichern & Neu
-          </IBtn>
-          <IBtn
-            variant="primary"
-            class="join-item text-base-100"
-            :disabled="loading || hasFormErrors"
-            @click="save"
-          >
-            <IconSave />
-            Speichern
-          </IBtn>
-        </div>
+        <IBtn
+          variant="neutral"
+          class="w-full"
+          :disabled="loading || hasFormErrors"
+          @click="save"
+        >
+          <IconSave />
+          Speichern
+        </IBtn>
       </template>
     </ICard>
-    <IFab
-      :actions="fabActions"
-      class="mb-14"
-      :icon="IconMenu"
-    />
   </div>
+  <IFab
+    :actions="fabActions"
+    class="mb-14"
+    :icon="IconMenu"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -65,7 +57,6 @@ import type { NewPlant } from '../modules/plants/types'
 import type { Result, ToastVariant } from '../types'
 import {
   CirclePlus as IconAdd,
-  MoveLeft as IconBack,
   Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'

@@ -1,58 +1,63 @@
 <template>
-  <IFieldset
-    legend="Substrat / Medium"
-  >
-    <div>
-      <IFloatingLabel
-        label="Wähle das Substrat oder trage einen eigenen Typ ein"
-      >
-        <ISelect
-          v-model="substrateInternal"
-          :options="substrates"
-          full-width
-          size="lg"
-        >
-          <template #option="{ item }">
-            <option :value="item" :selected="item === substrate">
-              {{ item }}
-            </option>
-          </template>
-        </ISelect>
-      </IFloatingLabel>
+  <ICard>
+    <ICardTitle class="text-xl">
+      Anbau-Details
+    </ICardTitle>
 
-      <div class="text-xs text-error px-4 mt-1">
-        {{ substrateError }}
-      </div>
+    <p class="text-xs text-gray-400 my-3">
+      Definiere das Substrat und die Größe des Topfes.
+    </p>
+
+    <div>
+      <h4>Substrat / Medium wählen</h4>
+      <label class="select select-lg w-full">
+        <select v-model="substrate">
+          <option
+            v-for="(item, i) in substrates"
+            :key="i"
+            :value="item"
+            :selected="item === substrate"
+          >
+            {{ item }}
+          </option>
+        </select>
+      </label>
     </div>
 
-    <IInputText
+    <div
       v-if="substrateInternal === 'Custom'"
-      v-model="substrate"
-      label="Eigener Substrat-Typ z.B. Steinwolle oder Spezialmischung"
-      class="mt-5"
-      full-width
-    />
+      class="mt-2"
+    >
+      <h4>Eigenes Substrat</h4>
 
-    <IInputText
-      v-model="size"
-      label="Gib die Größe des Topfes oder Volumens des Substrats an (z.B. 12L, 15cm x 15cm x 15cm)"
-      type="text"
-      class="mt-5"
-      full-width
-      :error="sizeError"
-      required
-      size="lg"
-    />
-  </IFieldset>
+      <IInput
+        v-model="substrate"
+        full-width
+        :error="substrateError"
+        placeholder="z.B. Steinwolle oder Spezialmischung"
+      />
+    </div>
+
+    <div class="mt-2">
+      <h4>Topfgröße in Liter (z.B. 10L)</h4>
+
+      <IInput
+        v-model="size"
+        full-width
+        :error="sizeError"
+        size="lg"
+        placeholder="z.B. 12L oder 6cm x 8cm x 10cm"
+      />
+    </div>
+  </ICard>
 </template>
 
 <script lang="ts" setup>
 import type { PlantSubstrateType } from '../modules/plants/types'
 import { computed, nextTick, ref, watch } from 'vue'
-import IFloatingLabel from './IFloatingLabel.vue'
-import IFieldset from './ui/IFieldset.vue'
-import IInputText from './ui/IInputText.vue'
-import ISelect from './ui/ISelect.vue'
+import ICard from './ui/ICard.vue'
+import ICardTitle from './ui/ICardTitle.vue'
+import IInput from './ui/IInput.vue'
 
 interface Props {
   substrate?: string

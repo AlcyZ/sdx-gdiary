@@ -2,7 +2,7 @@
   <TopNavigation
     @back="$router.back()"
   />
-  <div class="flex-1 flex items-center justify-center mt-4">
+  <div class="flex-1 flex items-center justify-center py-4">
     <ICard
       class="w-full max-w-2xl"
       class-actions="justify-between"
@@ -25,35 +25,27 @@
 
       <template #actions>
         <IBtn
-          @click="$router.push('/plants')"
-        >
-          <IconBack />
-          Zurück
-        </IBtn>
-
-        <IBtn
           variant="primary"
-          class="text-base-100"
+          class="w-full text-base-100"
           :disabled="loading || hasFormErrors"
           @click="updatePlant"
         >
           <IconSave />
-          Aktualisieren
+          Speichern
         </IBtn>
       </template>
     </ICard>
-    <IFab
-      :actions="fabActions"
-      class="mb-14"
-      :icon="IconMenu"
-    />
   </div>
+  <IFab
+    :actions="fabActions"
+    class="mb-14"
+    :icon="IconMenu"
+  />
 </template>
 
 <script lang="ts" setup>
 import type { EditPlant } from '../modules/plants/types'
 import {
-  MoveLeft as IconBack,
   Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'

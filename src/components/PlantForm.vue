@@ -1,23 +1,40 @@
 <template>
   <form
-    class="space-y-3"
+    class="space-y-6 mb-4"
     @submit.prevent="$emit('submit')"
   >
-    <IInputText
-      v-model="strain"
-      label="Wähle die Sorte deiner Pflanze aus"
-      :error="errors.strain"
-      required
-      full-width
-      size="xl"
-    />
+    <ICard>
+      <ICardTitle class="text-xl">
+        Pflanzen-Identifikation
+      </ICardTitle>
 
-    <IInputText
-      v-model="name"
-      label="Gib deiner Pflanze einen Namen (optional)"
-      :error="errors.name"
-      full-width
-    />
+      <p class="text-xs text-gray-400 my-3">
+        Gib der Pflanze einen Namen und wähle die Sorte aus dem Katalog.
+      </p>
+
+      <div>
+        <h4>Wähle die Sorte deiner Pflanze aus*</h4>
+
+        <IInput
+          v-model="strain"
+          :error="errors.strain"
+          full-width
+          placeholder="OG Kush | Northern Lights"
+          size="xl"
+        />
+      </div>
+
+      <div class="mt-2">
+        <h4>Gib deiner Pflanze einen Namen (optional)</h4>
+
+        <IInput
+          v-model="strain"
+          :error="errors.strain"
+          full-width
+          placeholder="#1 Super Silver Purple Chicken Cookie"
+        />
+      </div>
+    </ICard>
 
     <PlantFormSubstrate
       v-model:substrate="substrate"
@@ -26,15 +43,15 @@
       :size-error="errors.substrateSize"
     />
 
-    <IFieldset
-      v-if="wateringSchemaStore.wateringSchemas.length > 0"
-      legend="Bewässerungsschema"
-    >
-      <label
-        :for="schemaSelectId"
-      >
+    <ICard>
+      <ICardTitle class="text-xl">
+        Bewässerungsschema
+      </ICardTitle>
+
+      <p class="text-xs text-gray-400 my-3">
         Wähle dein Bewässerungsschema. Dadurch lässt sich beim erstellen eines Gießeintrags direkt die passenden Dünger auswählen
-      </label>
+      </p>
+
       <ISelect
         v-model="wateringSchema"
         :options="wateringSchemaStore.wateringSchemas"
@@ -52,7 +69,7 @@
           </option>
         </template>
       </ISelect>
-    </IFieldset>
+    </ICard>
 
     <PlantFormPhase
       v-model="phases"
@@ -68,7 +85,9 @@ import { useId } from 'vue'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
-import IFieldset from './ui/IFieldset.vue'
+import ICard from './ui/ICard.vue'
+import ICardTitle from './ui/ICardTitle.vue'
+import IInput from './ui/IInput.vue'
 import IInputText from './ui/IInputText.vue'
 import ISelect from './ui/ISelect.vue'
 
