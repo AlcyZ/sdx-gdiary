@@ -3,28 +3,30 @@
     :groups
   >
     <template #item="{ item: fertilizer }: { item: Fertilizer }">
-      <h4 class="font-semibold text-primary-content">
-        {{ fertilizer.name }}
-      </h4>
+      <div class="flex items-center justify-between">
+        <h4 class="font-semibold text-primary-content">
+          {{ fertilizer.name }}
+        </h4>
 
-      <div class="space-x-1">
-        <IBtn
-          square
-          ghost
-          size="lg"
-          @click="edit(fertilizer)"
-        >
-          <IconEdit :size="20" />
-        </IBtn>
-        <IBtn
-          square
-          ghost
-          variant="error"
-          size="lg"
-          @click="showDeleteConfirmation(fertilizer)"
-        >
-          <IconDelete :size="20" />
-        </IBtn>
+        <div class="space-x-1">
+          <IBtn
+            square
+            ghost
+            size="lg"
+            @click="edit(fertilizer)"
+          >
+            <IconEdit :size="20" />
+          </IBtn>
+          <IBtn
+            square
+            ghost
+            variant="error"
+            size="lg"
+            @click="showDeleteConfirmation(fertilizer)"
+          >
+            <IconDelete :size="20" />
+          </IBtn>
+        </div>
       </div>
     </template>
   </NutrientsOverviewGroupings>
