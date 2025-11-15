@@ -2,10 +2,9 @@
   <TopNavigation
     @back="$router.back()"
   />
-  <div class="flex-1 flex items-center justify-center">
+  <div class="flex-1 flex justify-center items-center p-4">
     <ICard
       class="w-full max-w-2xl"
-      class-actions="justify-between"
     >
       <ICardTitle class="text-3xl">
         Düngerschema hinzufügen
@@ -16,50 +15,41 @@
         v-model:fertilizers-data="fertilizersData"
         :error-name="errors.name"
         :error-fertilizer-data="errors.fertilizersData"
-        class="my-5"
+        class="my-6"
         @submit="saveAndNew"
       />
 
       <template #actions>
         <IBtn
-          @click="$router.push('/nutrients')"
+          variant="primary"
+          class="w-full text-base-100"
+          @click="saveAndNew"
         >
-          <IconBack />
-          Zurück
+          <IconAdd />
+          Speichern & Neu
         </IBtn>
-        <div class="join">
-          <IBtn
-            variant="neutral"
-            class="join-item"
-            @click="saveAndNew"
-          >
-            <IconAdd />
-            Speichern & Neu
-          </IBtn>
-          <IBtn
-            variant="primary"
-            class="join-item text-base-100"
-            @click="save"
-          >
-            <IconSave />
-            Speichern
-          </IBtn>
-        </div>
+        <IBtn
+          variant="neutral"
+          class="w-full"
+          @click="save"
+        >
+          <IconSave />
+          Speichern
+        </IBtn>
       </template>
     </ICard>
-    <IFab
-      :icon="IconMenu"
-      class="mb-14"
-      :actions="fabActions"
-    />
   </div>
+  <IFab
+    :icon="IconMenu"
+    class="mb-14"
+    :actions="fabActions"
+  />
 </template>
 
 <script lang="ts" setup>
 import type { NewWateringSchema } from '../modules/nutrients/types'
 import {
   CirclePlus as IconAdd,
-  MoveLeft as IconBack,
   Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'

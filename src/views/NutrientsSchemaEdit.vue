@@ -16,20 +16,14 @@
         v-model:fertilizers-data="fertilizersData"
         :error-name="errors.name"
         :error-fertilizer-data="errors.fertilizersData"
-        class="my-5"
+        class="my-6"
         @submit="updateSchema"
       />
 
       <template #actions>
         <IBtn
-          @click="$router.push('/nutrients')"
-        >
-          <IconBack />
-          Zurück
-        </IBtn>
-        <IBtn
           variant="primary"
-          class="text-base-100"
+          class="w-full text-base-100"
           @click="updateSchema"
         >
           <IconSave />
@@ -37,12 +31,12 @@
         </IBtn>
       </template>
     </ICard>
-    <IFab
-      :icon="IconMenu"
-      class="mb-14"
-      :actions="fabActions"
-    />
   </div>
+  <IFab
+    :icon="IconMenu"
+    class="mb-14"
+    :actions="fabActions"
+  />
 </template>
 
 <script lang="ts" setup>

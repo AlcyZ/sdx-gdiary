@@ -7,27 +7,27 @@
       :error="errorName"
       label="Name des Zuchtschemas"
       required
+      :icon="IconName"
+      full-width
     />
 
-    <hr class="my-3 text-base-200">
+    <div class="divider" />
 
     <div class="flex items-center justify-between mb-2">
       <h3 class="text-xl font-semibold">
         Enthaltene Dünger
       </h3>
-
-      <IBtn variant="primary" circle class="text-base-100" @click="addFertilizer">
-        <IconAdd />
-      </IBtn>
     </div>
 
-    <div class="space-y-3">
+    <div
+      class="grid grid-cols-[3fr_minmax(100px,_2fr)_auto] gap-x-2 gap-y-3"
+    >
       <div
         v-for="(fertilizerData, i) in fertilizersData"
         :key="i"
-        class="flex items-center"
+        class="contents"
       >
-        <div class="flex-1 flex items-center justify-between">
+        <div class="flex items-center">
           <ISelect
             v-model="fertilizerData.fertilizer"
             :options="sortedFertilizers"
@@ -42,42 +42,97 @@
               </option>
             </template>
           </ISelect>
-
-          <IInputNumber
-            v-model="fertilizerData.amount"
-            label="ML pro Liter"
-          />
         </div>
 
+        <div class="flex items-center">
+          <label class="input">
+            <input v-model.number="fertilizerData.amount" type="text" placeholder="5">
+            <span class="label">ml/L</span>
+          </label>
+        </div>
+
+        <div class="flex items-center">
+          <IBtn
+            square
+            ghost
+            size="lg"
+            variant="error"
+            @click="removeItem(fertilizerData)"
+          >
+            <IconDelete :size="20" />
+          </IBtn>
+        </div>
+      </div>
+
+      <div class="col-span-3">
         <IBtn
-          square
+          class="w-full flex justify-start border-dashed border-base-300"
           ghost
-          size="sm"
-          class="ml-3"
-          @click="removeItem(fertilizerData)"
+          @click="addFertilizer"
         >
-          <IconRemove :size="20" />
+          <IconAdd />
+          Dünger hinzufügen
         </IBtn>
       </div>
-      <span
-        v-if="errorFertilizerData"
-        class="text-xs text-error px-4 mt-1"
-      >{{ errorFertilizerData }}</span>
     </div>
+
+    <!--    <div class="space-y-3"> -->
+    <!--      <div -->
+    <!--        v-for="(fertilizerData, i) in fertilizersData" -->
+    <!--        :key="i" -->
+    <!--        class="flex items-center" -->
+    <!--      > -->
+    <!--        <div class="flex-1 flex items-center justify-between"> -->
+    <!--          <ISelect -->
+    <!--            v-model="fertilizerData.fertilizer" -->
+    <!--            :options="sortedFertilizers" -->
+    <!--          > -->
+    <!--            <template #option="{ item: fertilizer, i: j }: { item: Fertilizer, i: number }"> -->
+    <!--              <option -->
+    <!--                :key="j" -->
+    <!--                :value="fertilizer" -->
+    <!--                :disabled="isSelected(fertilizer)" -->
+    <!--              > -->
+    <!--                {{ fertilizer.manufacturer ?? fallbackManufacturer }} - {{ fertilizer.name }} -->
+    <!--              </option> -->
+    <!--            </template> -->
+    <!--          </ISelect> -->
+
+    <!--          <IInputNumber -->
+    <!--            v-model="fertilizerData.amount" -->
+    <!--            label="ML pro Liter" -->
+    <!--          /> -->
+    <!--        </div> -->
+
+    <!--        <IBtn -->
+    <!--          square -->
+    <!--          ghost -->
+    <!--          size="sm" -->
+    <!--          class="ml-3" -->
+    <!--          @click="removeItem(fertilizerData)" -->
+    <!--        > -->
+    <!--          <IconRemove :size="20" /> -->
+    <!--        </IBtn> -->
+    <!--      </div> -->
+    <!--      <span -->
+    <!--        v-if="errorFertilizerData" -->
+    <!--        class="text-xs text-error px-4 mt-1" -->
+    <!--      >{{ errorFertilizerData }}</span> -->
+    <!--    </div> -->
   </form>
 </template>
 
 <script lang="ts" setup>
 import type { Fertilizer, NewWateringSchemaFertilizer } from '../modules/nutrients/types'
 import {
-  CirclePlus as IconAdd,
-  CircleMinus as IconRemove,
+  PlusCircle as IconAdd,
+  Trash as IconDelete,
+  Feather as IconName,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { removeArrayElement } from '../util.ts'
 import IBtn from './ui/IBtn.vue'
-import IInputNumber from './ui/IInputNumber.vue'
 import IInputText from './ui/IInputText.vue'
 import ISelect from './ui/ISelect.vue'
 
