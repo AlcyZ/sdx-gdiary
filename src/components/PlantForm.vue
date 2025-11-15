@@ -28,8 +28,8 @@
         <h4>Gib deiner Pflanze einen Namen (optional)</h4>
 
         <IInput
-          v-model="strain"
-          :error="errors.strain"
+          v-model="name"
+          :error="errors.name"
           full-width
           placeholder="#1 Super Silver Purple Chicken Cookie"
         />
@@ -81,14 +81,12 @@
 <script lang="ts" setup>
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
-import { useId } from 'vue'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInput from './ui/IInput.vue'
-import IInputText from './ui/IInputText.vue'
 import ISelect from './ui/ISelect.vue'
 
 interface Props {
@@ -117,6 +115,4 @@ const substrate = defineModel<string>('substrate')
 const substrateSize = defineModel<string>('substrateSize', { required: true })
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
 const wateringSchema = defineModel<WateringSchema>('wateringSchema')
-
-const schemaSelectId = useId()
 </script>

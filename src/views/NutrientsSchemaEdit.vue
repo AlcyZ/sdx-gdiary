@@ -45,7 +45,7 @@ import type {
   NewWateringSchemaFertilizer,
   WateringSchemaFertilizer,
 } from '../modules/nutrients/types'
-import { MoveLeft as IconBack, Cog as IconMenu, Save as IconSave } from 'lucide-vue-next'
+import { Cog as IconMenu, Save as IconSave } from 'lucide-vue-next'
 import { inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import TopNavigation from '../components/layout/TopNavigation.vue'

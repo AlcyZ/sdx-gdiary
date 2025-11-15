@@ -62,13 +62,13 @@ import { computed } from 'vue'
 import NutrientsOverviewEmptyState from '../components/NutrientsOverviewEmptyState.vue'
 import NutrientsOverviewFertilizerList from '../components/NutrientsOverviewFertilizerList.vue'
 import NutrientsOverviewSchemaEmpty from '../components/NutrientsOverviewSchemaEmpty.vue'
+import NutrientsOverviewSchemaList from '../components/NutrientsOverviewSchemaList.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import IFab from '../components/ui/IFab.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import LayoutDock from '../layouts/LayoutDock.vue'
 import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
-import NutrientsOverviewSchemaList from "../components/NutrientsOverviewSchemaList.vue";
 
 interface Props {
 
