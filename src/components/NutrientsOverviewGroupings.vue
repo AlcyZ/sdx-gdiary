@@ -16,16 +16,19 @@
         <slot v-if="!!$slots['header-actions']" name="header-actions" :payload="group.payload" />
       </ICollapseTitle>
 
-      <ICollapseContent>
+      <ICollapseContent
+        :class="collapseContentClass"
+      >
         <div
           v-for="(item, j) in group.items"
           :key="j"
           class="border-b py-3 border-b-gray-100"
           :class="{
             'border-b-3': j === (group.items.length - 1),
+            [slotContainerClass || '']: true,
           }"
         >
-          <slot name="item" :item="item" />
+          <slot name="item" :item="item" :payload="group.payload" :index="j" :length="group.items.length" />
         </div>
       </ICollapseContent>
     </ICollapse>
@@ -46,6 +49,8 @@ interface NutrientsOverviewGroupItem {
 
 interface Props {
   groups: Array<NutrientsOverviewGroupItem>
+  collapseContentClass?: string
+  slotContainerClass?: string
 }
 interface Emits {
 
@@ -55,6 +60,6 @@ defineProps<Props>()
 defineEmits<Emits>()
 defineSlots<{
   'header-actions': (props: { payload: P | undefined }) => any
-  'item': (props: { item: T }) => any
+  'item': (props: { item: T, payload: P | undefined, index: number, length: number }) => any
 }>()
 </script>
