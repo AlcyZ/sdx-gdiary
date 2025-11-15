@@ -1,55 +1,33 @@
 <template>
-  <ICard class="">
-    <ICollapse
-      v-for="manufacturer in Object.keys(fertilizersGroup).sort()"
-      :key="manufacturer"
-      name="fertilizer"
-      arrow
-      closable
-      class="my-2"
-    >
-      <ICollapseTitle
-        class="text-lg font-bold bg-gray-50 border-b border-b-gray-100"
-      >
-        {{ manufacturer }}
-      </ICollapseTitle>
+  <NutrientsOverviewGroupings
+    :groups
+  >
+    <template #item="{ item: fertilizer }: { item: Fertilizer }">
+      <h4 class="font-semibold text-primary-content">
+        {{ fertilizer.name }}
+      </h4>
 
-      <ICollapseContent>
-        <template v-if="fertilizersGroup[manufacturer]">
-          <div
-            v-for="(fertilizer, i) in fertilizersGroup[manufacturer]"
-            :key="i"
-            class="flex items-center justify-between border-b py-3 border-b-gray-100"
-            :class="{
-              'border-b-3': i === fertilizersGroup[manufacturer].length - 1,
-            }"
-          >
-            <h4 class="font-semibold text-primary-content">
-              {{ fertilizer.name }}
-            </h4>
-
-            <div class="space-x-1">
-              <IBtn
-                square
-                ghost
-                size="lg"
-              >
-                <IconEdit :size="20" />
-              </IBtn>
-              <IBtn
-                square
-                ghost
-                variant="error"
-                size="lg"
-              >
-                <IconDelete :size="20" />
-              </IBtn>
-            </div>
-          </div>
-        </template>
-      </ICollapseContent>
-    </ICollapse>
-  </ICard>
+      <div class="space-x-1">
+        <IBtn
+          square
+          ghost
+          size="lg"
+          @click="edit(fertilizer)"
+        >
+          <IconEdit :size="20" />
+        </IBtn>
+        <IBtn
+          square
+          ghost
+          variant="error"
+          size="lg"
+          @click="showDeleteConfirmation(fertilizer)"
+        >
+          <IconDelete :size="20" />
+        </IBtn>
+      </div>
+    </template>
+  </NutrientsOverviewGroupings>
 </template>
 
 <script lang="ts" setup>
@@ -64,12 +42,9 @@ import { useToast } from '../composables/useToast.ts'
 import { REPO_FERTILIZERS } from '../di_keys.ts'
 import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { err } from '../util.ts'
+import NutrientsOverviewGroupings from './NutrientsOverviewGroupings.vue'
 import NutrientsOverviewModalFertilizerEdit from './NutrientsOverviewModalFertilizerEdit.vue'
 import IBtn from './ui/IBtn.vue'
-import ICard from './ui/ICard.vue'
-import ICollapse from './ui/ICollapse.vue'
-import ICollapseContent from './ui/ICollapseContent.vue'
-import ICollapseTitle from './ui/ICollapseTitle.vue'
 
 interface Props {
 
@@ -104,6 +79,14 @@ const fertilizersGroup = computed(() => {
 
   return data
 })
+
+const groups = computed(
+  () => Object.entries(fertilizersGroup.value)
+    .map(([manufacturer, items]) => ({
+      title: manufacturer,
+      items,
+    })),
+)
 
 function edit(fertilizer: Fertilizer) {
   const updateFertilizer = async (update: NewFertilizer, close: () => void) => {
