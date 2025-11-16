@@ -36,6 +36,30 @@
       </div>
     </ICard>
 
+    <ICard
+      class="opacity-60"
+    >
+      <ICardTitle class="text-xl">
+        Foto hinzufügen (optional)
+      </ICardTitle>
+
+      <p class="text-xs text-gray-400 my-3">
+        Aktuelle Bilder helfen bei der Dokumentation des Fortschritts.
+      </p>
+
+      <IAlert
+        variant="warning"
+        soft
+      >
+        <IconInfo />
+
+        <p>
+          Bitte verwende vorübergehend die Funktion zum hochladen von Bildern auf der Pflanzendetailseite.
+        </p>
+      </IAlert>
+
+    </ICard>
+
     <PlantFormSubstrate
       v-model:substrate="substrate"
       v-model:size="substrateSize"
@@ -88,6 +112,8 @@ import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInput from './ui/IInput.vue'
 import ISelect from './ui/ISelect.vue'
+import IAlert from "./ui/IAlert.vue";
+import { TriangleAlert as IconInfo } from "lucide-vue-next";
 
 interface Props {
   errors: FormError
