@@ -1,7 +1,7 @@
 <template>
   <NutrientsOverviewGroupings
     :groups
-    collapse-content-class="grid grid-cols-[minmax(50px,_100px)_1fr_auto] gap-x-2"
+    collapse-content-class="grid grid-cols-[minmax(50px,_100px)_1fr_minmax(96px,_auto)] gap-x-2"
     slot-container-class="contents"
   >
     <template #header-actions="{ payload: schema }">
@@ -45,9 +45,10 @@
         }"
       >
         <IBadge
-          class="mr-2 font-semibold w-full"
+          class="mr-2 font-semibold w-full px-2 py-1"
           variant="accent"
           soft
+          size="sm"
         >
           {{ fertilizer.amount }}ml/L
         </IBadge>
