@@ -115,13 +115,13 @@ export default class ImportRepository {
       },
     )
 
-    for (let i = 0; i < data[TABLE_PLANT_IMAGES].length; i++) {
-      const option = await loadById(data[TABLE_PLANT_IMAGES][i].id)
+    for (const [i, plantImage] of data[TABLE_PLANT_IMAGES].entries()) {
+      const option = await loadById(plantImage.id)
 
       if (option.exist) {
         data[TABLE_PLANT_IMAGES][i] = {
-          [INDEX_PLANT_ID]: data[TABLE_PLANT_IMAGES][i].plantId,
-          id: data[TABLE_PLANT_IMAGES][i].id,
+          [INDEX_PLANT_ID]: plantImage.plantId,
+          id: plantImage.id,
           ...option.value,
         }
       }
