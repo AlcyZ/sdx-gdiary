@@ -121,7 +121,11 @@ async function saveAndNew() {
 
   toast('Dünger erfolgreich gespeichert', 'success')
 
-  resetForm({})
+  resetForm({
+    values: {
+      manufacturer: manufacturer.value,
+    },
+  })
   inputFertilizer.value?.focusName()
 }
 
