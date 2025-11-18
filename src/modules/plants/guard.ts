@@ -10,7 +10,13 @@ import type {
   WateringLogRow,
 } from './types'
 import { INDEX_PLANT_ID, INDEX_PLANT_IMAGE_ID, INDEX_WATERING_SCHEMA_ID } from '../db'
-import { hasNumKey, hasOptionalNumKey, hasOptionalStrKey, hasStrKey } from '../type_guard'
+import {
+  hasEmptyObjectKey,
+  hasNumKey,
+  hasOptionalNumKey,
+  hasOptionalStrKey,
+  hasStrKey,
+} from '../type_guard'
 
 export function isPlantRow(value: any): value is PlantRow {
   return typeof value === 'object'
@@ -28,6 +34,15 @@ export function isPlantImageRow(value: any): value is PlantImageRow {
     && hasNumKey(value, INDEX_PLANT_ID)
     && hasStrKey(value, 'mime')
     && value.data instanceof ArrayBuffer
+}
+
+export function isPlantBackupImageRow(value: any): value is PlantImageRow {
+  return typeof value === 'object'
+    && value !== null
+    && hasNumKey(value, 'id')
+    && hasNumKey(value, INDEX_PLANT_ID)
+    && hasStrKey(value, 'mime')
+    && hasEmptyObjectKey(value, 'data')
 }
 
 export function isPlantSubstrateRow(value: any): value is PlantSubstrateRow {
