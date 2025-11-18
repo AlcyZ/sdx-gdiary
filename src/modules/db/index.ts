@@ -1,8 +1,10 @@
 import type { IDBPDatabase } from 'idb'
-import { openDB } from 'idb'
-import { none, some } from '../../util.ts'
+import type { Result } from '../../types'
+import { deleteDB, openDB } from 'idb'
+import { err, none, ok, some } from '../../util.ts'
+import DeleteDatabaseError from './delete_database_error.ts'
 
-const DB_NAME = 'GrowDiary'
+export const DB_NAME = 'GrowDiary'
 
 export const TABLE_PLANTS = 'plants' as const
 export const TABLE_PLANT_IMAGES = 'plantImages' as const
@@ -82,6 +84,16 @@ export async function getDb() {
   })
 
   return dbInstance
+}
+
+export function safeDeleteDatabase(): Promise<Result<undefined, DeleteDatabaseError>> {
+  return new Promise((resolve) => {
+    deleteDB(DB_NAME, {
+      blocked() {
+        resolve(err(DeleteDatabaseError.blocked()))
+      },
+    }).then(() => resolve(ok(undefined))).catch(error => err(DeleteDatabaseError.error(error)))
+  })
 }
 
 export function base64ToBlob(base64: string, type = TYPE_PNG): Blob {
