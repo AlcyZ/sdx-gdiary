@@ -2,7 +2,6 @@
   <SettingsCard
     title="Testdaten seeden"
     :icon="IconSeed"
-    class="opacity-75"
   >
     <p class="mt-4">
       Bei einen Klick auf den Button werden 6 zufällige Pflanzen, sowie das Hesi-Starterpack, und BioBizz CalMag/PH+-
