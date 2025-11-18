@@ -19,7 +19,7 @@ export default class ImportBackupError extends Error {
     Object.setPrototypeOf(this, ImportBackupError.prototype)
   }
 
-  public static zipNotFound(filename: string): ImportBackupError {
+  public static dataJsonNotFound(filename: string): ImportBackupError {
     return new ImportBackupError(`Invalid backup filename. File (${filename}) not found in zip package`, {})
   }
 
@@ -27,6 +27,10 @@ export default class ImportBackupError extends Error {
     return new ImportBackupError(`Invalid backup data in ZIP package`, {
       json: error,
     })
+  }
+
+  public static emptyDatabaseRequired(): ImportBackupError {
+    return new ImportBackupError('Database/indexDB stores must be empty', {})
   }
 
   public static error(error: unknown): ImportBackupError {

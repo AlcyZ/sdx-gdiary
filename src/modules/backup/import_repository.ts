@@ -4,14 +4,8 @@ import type BackupServiceUtil from './backup_service_util.ts'
 import type { BackupStoreNames, BackupTxStores, ImportExportData } from './types'
 import JSZip from 'jszip'
 import {
-  andThen,
-  getExtension,
-  mapExtensionToMime,
   safeAsync,
   safeParseJson,
-  some,
-  unwrapOr,
-  wrapOption,
 } from '../../util.ts'
 import {
   getDb,
@@ -26,7 +20,7 @@ import {
   TABLE_WATERING_SCHEMAS,
   TABLES_DB,
 } from '../db'
-import { BACKUP_FILENAME_DATA, BACKUP_FILENAME_IMAGE } from './constants.ts'
+import { BACKUP_FILENAME_DATA } from './constants.ts'
 import { isImportExportData } from './guard.ts'
 import ImportBackupError from './import_backup_error.ts'
 
@@ -50,7 +44,7 @@ export default class ImportRepository {
 
       const json = zip.file(BACKUP_FILENAME_DATA)
       if (!json)
-        throw ImportBackupError.zipNotFound(BACKUP_FILENAME_DATA)
+        throw ImportBackupError.dataJsonNotFound(BACKUP_FILENAME_DATA)
 
       const content = await json.async('text')
 
@@ -68,7 +62,7 @@ export default class ImportRepository {
     return safeAsync(async () => {
       await Promise.all([
         this.loadImages(data, zip),
-        this.truncateStores(),
+        this.util.truncateStores(this.db),
       ])
 
       const tx = this.db.transaction(TABLES_DB, 'readwrite')
@@ -98,22 +92,7 @@ export default class ImportRepository {
   }
 
   private async loadImages(data: ImportExportData, zip: JSZip) {
-    const files = Object.values(zip.files).filter(f => !f.dir)
-    const findById = (id: number) => wrapOption(files.find(file => file.name.startsWith(`${BACKUP_FILENAME_IMAGE}${id}`)))
-    const loadById = async (id: number) => andThen(
-      findById(id),
-      async (file) => {
-        const data = await file.async('arraybuffer')
-        const mime = mapExtensionToMime(
-          unwrapOr(getExtension(file.name), ''),
-        )
-
-        return some({
-          data,
-          mime,
-        })
-      },
-    )
+    const loadById = this.util.loadImageByIdCallback(zip)
 
     for (const [i, plantImage] of data[TABLE_PLANT_IMAGES].entries()) {
       const option = await loadById(plantImage.id)
@@ -139,16 +118,5 @@ export default class ImportRepository {
     data: ImportExportData,
   ) {
     data[table].forEach(row => store.add(row))
-  }
-
-  private async truncateStores() {
-    const tx = this.db.transaction(TABLES_DB, 'readwrite')
-    const promises: Array<Promise<void>> = []
-
-    for (const storeName of TABLES_DB)
-      promises.push(tx.objectStore(storeName).clear())
-
-    await Promise.all(promises)
-    await tx.done
   }
 }
