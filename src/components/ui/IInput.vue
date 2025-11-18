@@ -3,6 +3,7 @@
     <span
       v-if="label && !suffix"
       class="label"
+      v-text="label"
     />
 
     <input
@@ -10,19 +11,20 @@
       :class="inputClass"
       :type="type"
       :placeholder="placeholder"
+      :inputmode="inputMode"
     >
 
     <span
       v-if="label && suffix"
       class="label"
-    >{{ label }}</span>
+      v-text="label"
+    />
   </label>
   <div
     v-if="error"
     class="text-xs text-error px-4 mt-1"
-  >
-    {{ error }}
-  </div>
+    v-text="error"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -37,6 +39,7 @@ interface Props {
   type?: 'text' | 'number' | 'password' | 'date'
   fullWidth?: boolean
   size?: InputSize | undefined
+  inputMode?: 'decimal' | 'numeric'
 }
 interface Emits {
 

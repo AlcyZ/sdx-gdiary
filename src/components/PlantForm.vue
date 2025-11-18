@@ -57,7 +57,6 @@
           Bitte verwende vorübergehend die Funktion zum hochladen von Bildern auf der Pflanzendetailseite.
         </p>
       </IAlert>
-
     </ICard>
 
     <PlantFormSubstrate
@@ -105,15 +104,15 @@
 <script lang="ts" setup>
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
+import { TriangleAlert as IconInfo } from 'lucide-vue-next'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
+import IAlert from './ui/IAlert.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInput from './ui/IInput.vue'
 import ISelect from './ui/ISelect.vue'
-import IAlert from "./ui/IAlert.vue";
-import { TriangleAlert as IconInfo } from "lucide-vue-next";
 
 interface Props {
   errors: FormError
