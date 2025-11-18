@@ -34,14 +34,13 @@ export function useModal() {
 
     const close = () => {
       return new Promise<void>((r) => {
+        app.onUnmount(() => r())
+
         app.unmount()
         container.remove()
 
-        if ('onClose' in props && typeof props.onClose === 'function') {
+        if ('onClose' in props && typeof props.onClose === 'function')
           props.onClose()
-        }
-
-        app.onUnmount(() => r())
       })
     }
 
