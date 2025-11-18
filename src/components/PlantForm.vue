@@ -1,23 +1,63 @@
 <template>
   <form
-    class="space-y-3"
+    class="space-y-6 mb-4"
     @submit.prevent="$emit('submit')"
   >
-    <IInputText
-      v-model="strain"
-      label="Wähle die Sorte deiner Pflanze aus"
-      :error="errors.strain"
-      required
-      full-width
-      size="xl"
-    />
+    <ICard>
+      <ICardTitle class="text-xl">
+        Pflanzen-Identifikation
+      </ICardTitle>
 
-    <IInputText
-      v-model="name"
-      label="Gib deiner Pflanze einen Namen (optional)"
-      :error="errors.name"
-      full-width
-    />
+      <p class="text-xs text-gray-400 my-3">
+        Gib der Pflanze einen Namen und wähle die Sorte aus dem Katalog.
+      </p>
+
+      <div>
+        <h4>Wähle die Sorte deiner Pflanze aus*</h4>
+
+        <IInput
+          v-model="strain"
+          :error="errors.strain"
+          full-width
+          placeholder="OG Kush | Northern Lights"
+          size="xl"
+        />
+      </div>
+
+      <div class="mt-2">
+        <h4>Gib deiner Pflanze einen Namen (optional)</h4>
+
+        <IInput
+          v-model="name"
+          :error="errors.name"
+          full-width
+          placeholder="#1 Super Silver Purple Chicken Cookie"
+        />
+      </div>
+    </ICard>
+
+    <ICard
+      class="opacity-60"
+    >
+      <ICardTitle class="text-xl">
+        Foto hinzufügen (optional)
+      </ICardTitle>
+
+      <p class="text-xs text-gray-400 my-3">
+        Aktuelle Bilder helfen bei der Dokumentation des Fortschritts.
+      </p>
+
+      <IAlert
+        variant="warning"
+        soft
+      >
+        <IconInfo />
+
+        <p>
+          Bitte verwende vorübergehend die Funktion zum hochladen von Bildern auf der Pflanzendetailseite.
+        </p>
+      </IAlert>
+    </ICard>
 
     <PlantFormSubstrate
       v-model:substrate="substrate"
@@ -26,18 +66,18 @@
       :size-error="errors.substrateSize"
     />
 
-    <IFieldset
-      v-if="wateringSchemas.length > 0"
-      legend="Bewässerungsschema"
-    >
-      <label
-        :for="schemaSelectId"
-      >
+    <ICard>
+      <ICardTitle class="text-xl">
+        Bewässerungsschema
+      </ICardTitle>
+
+      <p class="text-xs text-gray-400 my-3">
         Wähle dein Bewässerungsschema. Dadurch lässt sich beim erstellen eines Gießeintrags direkt die passenden Dünger auswählen
-      </label>
+      </p>
+
       <ISelect
         v-model="wateringSchema"
-        :options="wateringSchemas"
+        :options="wateringSchemaStore.wateringSchemas"
         :class="{ 'opacity-75': wateringSchema === undefined }"
       >
         <option class="opacity-75 text-xs" :value="undefined">
@@ -52,7 +92,7 @@
           </option>
         </template>
       </ISelect>
-    </IFieldset>
+    </ICard>
 
     <PlantFormPhase
       v-model="phases"
@@ -64,16 +104,18 @@
 <script lang="ts" setup>
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
-import { useId } from 'vue'
-import IFieldset from './IFieldset.vue'
-import IInputText from './IInputText.vue'
-import ISelect from './ISelect.vue'
+import { TriangleAlert as IconInfo } from 'lucide-vue-next'
+import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
+import IAlert from './ui/IAlert.vue'
+import ICard from './ui/ICard.vue'
+import ICardTitle from './ui/ICardTitle.vue'
+import IInput from './ui/IInput.vue'
+import ISelect from './ui/ISelect.vue'
 
 interface Props {
   errors: FormError
-  wateringSchemas: Array<WateringSchema>
 }
 interface Emits {
   submit: []
@@ -87,15 +129,15 @@ interface FormError {
   phases?: string
 }
 
-const { wateringSchemas } = defineProps<Props>()
+defineProps<Props>()
 defineEmits<Emits>()
+
+const wateringSchemaStore = useWateringSchemaStore()
 
 const strain = defineModel<string>('strain')
 const name = defineModel<string>('name')
 const substrate = defineModel<string>('substrate')
 const substrateSize = defineModel<string>('substrateSize', { required: true })
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
-const wateringSchema = defineModel<WateringSchema>('wateringSchema', { required: true })
-
-const schemaSelectId = useId()
+const wateringSchema = defineModel<WateringSchema>('wateringSchema')
 </script>

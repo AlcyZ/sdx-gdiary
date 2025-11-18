@@ -1,8 +1,10 @@
 import type { IDBPDatabase } from 'idb'
-import { openDB } from 'idb'
-import { none, some } from '../../util.ts'
+import type { Result } from '../../types'
+import { deleteDB, openDB } from 'idb'
+import { err, none, ok, some } from '../../util.ts'
+import DeleteDatabaseError from './delete_database_error.ts'
 
-const DB_NAME = 'GrowDiary'
+export const DB_NAME = 'GrowDiary'
 
 export const TABLE_PLANTS = 'plants' as const
 export const TABLE_PLANT_IMAGES = 'plantImages' as const
@@ -12,10 +14,21 @@ export const TABLE_PLANT_WATERING_LOGS = 'plantWateringLogs' as const
 export const TABLE_FERTILIZERS = 'fertilizers' as const
 export const TABLE_WATERING_SCHEMAS = 'wateringSchema' as const
 export const TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA = 'fertilizerWateringSchema' as const
+export const TABLES_DB = [
+  TABLE_PLANTS,
+  TABLE_PLANT_IMAGES,
+  TABLE_PLANT_SUBSTRATES,
+  TABLE_PLANT_PHASES,
+  TABLE_PLANT_WATERING_LOGS,
+  TABLE_FERTILIZERS,
+  TABLE_WATERING_SCHEMAS,
+  TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
+] as const
 
 export const INDEX_PLANT_ID = 'plantId' as const
 export const INDEX_FERTILIZER_ID = 'fertilizerId' as const
 export const INDEX_WATERING_SCHEMA_ID = 'wateringSchemaId' as const
+export const INDEX_PLANT_IMAGE_ID = 'plantImageId' as const
 
 const DEFAULT_KEY_PATH = 'id'
 const TYPE_PNG = 'image/png'
@@ -46,13 +59,18 @@ function createTableWithIndices(
   }
 }
 
+let dbInstance: IDBPDatabase | null = null
+
 export async function getDb() {
+  if (dbInstance !== null)
+    return dbInstance
+
   const createPlantSubTable = (table: string, db: IDBPDatabase) =>
     createTableWithIndices(table, [INDEX_PLANT_ID], db)
 
-  return openDB(DB_NAME, 1, {
+  dbInstance = await openDB(DB_NAME, 1, {
     upgrade(db) {
-      createTableWithIndices(TABLE_PLANTS, [INDEX_WATERING_SCHEMA_ID], db)
+      createTableWithIndices(TABLE_PLANTS, [INDEX_WATERING_SCHEMA_ID, INDEX_PLANT_IMAGE_ID], db)
 
       createPlantSubTable(TABLE_PLANT_IMAGES, db)
       createPlantSubTable(TABLE_PLANT_SUBSTRATES, db)
@@ -63,6 +81,18 @@ export async function getDb() {
       createTable(TABLE_WATERING_SCHEMAS, db)
       createTableWithIndices(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, [INDEX_FERTILIZER_ID, INDEX_WATERING_SCHEMA_ID], db)
     },
+  })
+
+  return dbInstance
+}
+
+export function safeDeleteDatabase(): Promise<Result<undefined, DeleteDatabaseError>> {
+  return new Promise((resolve) => {
+    deleteDB(DB_NAME, {
+      blocked() {
+        resolve(err(DeleteDatabaseError.blocked()))
+      },
+    }).then(() => resolve(ok(undefined))).catch(error => err(DeleteDatabaseError.error(error)))
   })
 }
 

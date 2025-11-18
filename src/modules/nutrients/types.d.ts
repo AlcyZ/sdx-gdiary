@@ -7,6 +7,8 @@ interface NewFertilizer {
 
 type Fertilizer = WithId<NewFertilizer, number>
 
+type FertilizerRow = Fertilizer
+
 interface NewWateringSchemaFertilizer {
   fertilizer: Fertilizer
   amount: number

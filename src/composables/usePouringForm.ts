@@ -33,10 +33,19 @@ export type FormFertilizerData = InferType<typeof fertilizerDataSchema>
 
 const validationSchema = toTypedSchema(pourSchema)
 
-export function usePouringForm(plant: Plant) {
-  const { errors, defineField, validate } = useForm({
+export function usePouringForm() {
+  const { errors, defineField, validate, resetForm } = useForm({
     validationSchema,
-    initialValues: {
+  })
+
+  const [date] = defineField<'date', string>('date')
+  const [amount] = defineField<'amount', number>('amount')
+  const [ph] = defineField('ph')
+  const [ec] = defineField('ec')
+  const [fertilizersData] = defineField<'fertilizers', Array<FormFertilizerData>>('fertilizers')
+
+  const resetPouringForm = (plant: Plant) => resetForm({
+    values: {
       date: dayjs().format('YYYY-MM-DDTHH:mm'),
       amount: DEFAULT_AMOUNT,
       fertilizers: plant.wateringSchema?.fertilizers
@@ -49,12 +58,6 @@ export function usePouringForm(plant: Plant) {
     },
   })
 
-  const [date] = defineField<'date', string>('date')
-  const [amount] = defineField<'amount', number>('amount')
-  const [ph] = defineField('ph')
-  const [ec] = defineField('ec')
-  const [fertilizersData] = defineField<'fertilizers', Array<FormFertilizerData>>('fertilizers')
-
   return {
     date,
     amount,
@@ -64,5 +67,6 @@ export function usePouringForm(plant: Plant) {
     errors,
     validate,
     DEFAULT_AMOUNT,
+    resetPouringForm,
   }
 }

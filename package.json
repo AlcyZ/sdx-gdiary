@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vue-tsc -b && vite build && node update_sw.js",
     "preview": "vite preview",
     "lint": "eslint",
     "lint:fix": "eslint --fix"
@@ -15,11 +15,15 @@
     "dayjs": "^1.11.19",
     "fuse.js": "^7.1.0",
     "idb": "^8.0.3",
+    "install": "^0.13.0",
+    "jszip": "^3.10.1",
     "lucide-vue-next": "^0.548.0",
+    "pinia": "^3.0.4",
     "sdx-php-date": "^0.0.2",
     "type-fest": "^5.2.0",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.22",
+    "vue-router": "4",
     "vue3-toastify": "^0.2.8",
     "yup": "^1.7.1"
   },

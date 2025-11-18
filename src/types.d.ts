@@ -8,6 +8,8 @@ import type { Component } from 'vue'
  */
 type Result<T, E> = Ok<T> | Err<E>
 
+type AsyncResult<T, E> = Promise<Result<T, E>>
+
 /**
  * Represents a successful result value containing a value of type `T`.
  *
@@ -28,6 +30,8 @@ interface None { exist: false }
 
 type Option<T> = Some<T> | None
 
+type ResultOrOption<T, E = any> = Result<T, E> | Option<T>
+
 interface HasId<T> {
   id: T
 }
@@ -39,11 +43,10 @@ interface HasTimestamps {
   updatedAt: string
 }
 
-interface DockItem<T = undefined> {
+interface DockItem {
   icon: Component
   label: string
-  active?: boolean
-  data?: T
+  to: string
 }
 
 interface ListItem {
@@ -55,9 +58,17 @@ interface ListItem {
 
 interface DropdownItem {
   label: string
-  icon: Component
-  onClick?: () => void
+  icon?: Component
+  onClick?: () => unknown
 }
+
+type DropdownPosition = 'start'
+  | 'center'
+  | 'end'
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
 
 interface StepItem {
 
@@ -70,6 +81,12 @@ interface ListItemAction {
 
 interface FabAction {
   icon: Component
+  onClick?: () => unknown
+}
+
+interface TopNavigationAction {
+  icon?: Component
+  label: string
   onClick?: () => unknown
 }
 
@@ -99,6 +116,11 @@ type ButtonSize = BaseSize
 type InputSize = BaseSize
 type SelectSize = BaseSize
 
+type AlertVariant = Exclude<BaseVariant, 'neutral' | 'primary' | 'secondary' | 'accent'>
+
+type LoadingSize = BaseSize
+type LoadingType = 'spinner' | 'dots' | 'ring' | 'ball' | 'bars' | 'infinity'
+
 type ResponsiveBreakpoint = 'sm' | 'md' | 'lg' | 'xl'
 
 type FormError<T extends object> = {
@@ -117,4 +139,17 @@ interface ShowConfirmationModalProps {
   title: string
   text?: string
   actions: Array<ShowConfirmationModalAction>
+}
+
+interface ParseJsonErrorParse {
+  kind: 'parse'
+  error: unknown
+}
+
+interface ParseJsonErrorTypeGuard {
+  kind: 'guard'
+}
+
+type ParseJsonError = (ParseJsonErrorParse | ParseJsonErrorTypeGuard) & {
+  payload?: any
 }

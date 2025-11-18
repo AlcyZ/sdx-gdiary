@@ -1,7 +1,7 @@
 import type { Component, VNodeProps } from 'vue'
 import type { ShowConfirmationModalProps } from '../types'
 import { createApp, h } from 'vue'
-import IModalConfirmation from '../components/IModalConfirmation.vue'
+import IModalConfirmation from '../components/ui/IModalConfirmation.vue'
 
 export function useModal() {
   const showConfirmationModal = (props: ShowConfirmationModalProps) => {
@@ -34,14 +34,13 @@ export function useModal() {
 
     const close = () => {
       return new Promise<void>((r) => {
+        app.onUnmount(() => r())
+
         app.unmount()
         container.remove()
 
-        if ('onClose' in props && typeof props.onClose === 'function') {
+        if ('onClose' in props && typeof props.onClose === 'function')
           props.onClose()
-        }
-
-        app.onUnmount(() => r())
       })
     }
 

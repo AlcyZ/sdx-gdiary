@@ -1,9 +1,27 @@
 import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { Result } from '../../types'
-import type { TABLE_PLANT_IMAGES } from '../db'
-import type { EditPlant, NewPlant, NewPlantPhase, NewPlantSubstrate, NewWateringLog, PlantSubstrate } from './types'
-import { wrapSafe } from '../../util.ts'
-import { getDb, INDEX_PLANT_ID, INDEX_WATERING_SCHEMA_ID, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_WATERING_LOGS, TABLE_PLANTS } from '../db'
+import type {
+  EditPlant,
+  NewPlant,
+  NewPlantPhase,
+  NewPlantSubstrate,
+  NewWateringLog,
+  Plant,
+  PlantImage,
+  PlantSubstrate,
+} from './types'
+import { safeAsync } from '../../util.ts'
+import {
+  getDb,
+  INDEX_PLANT_ID,
+  INDEX_PLANT_IMAGE_ID,
+  INDEX_WATERING_SCHEMA_ID,
+  TABLE_PLANT_IMAGES,
+  TABLE_PLANT_PHASES,
+  TABLE_PLANT_SUBSTRATES,
+  TABLE_PLANT_WATERING_LOGS,
+  TABLE_PLANTS,
+} from '../db'
 
 export default class PlantWriteRepository {
   private readonly db: IDBPDatabase
@@ -17,8 +35,8 @@ export default class PlantWriteRepository {
     return new PlantWriteRepository(db)
   }
 
-  public async save(plant: NewPlant): Promise<Result<undefined, unknown>> {
-    return await wrapSafe(async () => {
+  public async save(plant: NewPlant): Promise<Result<void, unknown>> {
+    return await safeAsync(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
@@ -43,7 +61,7 @@ export default class PlantWriteRepository {
   }
 
   public async update(plant: EditPlant) {
-    return await wrapSafe(async () => {
+    return await safeAsync(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
@@ -68,8 +86,8 @@ export default class PlantWriteRepository {
     })
   }
 
-  public async pourPlant(data: NewWateringLog): Promise<Result<undefined, unknown>> {
-    return wrapSafe(async () => {
+  public async pourPlant(data: NewWateringLog): Promise<Result<void, unknown>> {
+    return safeAsync(async () => {
       const tx = this.db.transaction(TABLE_PLANT_WATERING_LOGS, 'readwrite')
       const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
 
@@ -79,22 +97,72 @@ export default class PlantWriteRepository {
   }
 
   public async delete(plantId: number) {
-    return await wrapSafe(async () => {
-      const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
+    return await safeAsync(async () => {
+      const tx = this.db.transaction([
+        TABLE_PLANTS,
+        TABLE_PLANT_SUBSTRATES,
+        TABLE_PLANT_PHASES,
+        TABLE_PLANT_IMAGES,
+      ], 'readwrite')
 
-      await this.deletePlantAssociations(plantId, TABLE_PLANT_SUBSTRATES, tx)
-      await this.deletePlantAssociations(plantId, TABLE_PLANT_PHASES, tx)
+      await Promise.all([
+        this.deletePlantAssociations(plantId, TABLE_PLANT_SUBSTRATES, tx),
+        this.deletePlantAssociations(plantId, TABLE_PLANT_PHASES, tx),
+        this.deletePlantAssociations(plantId, TABLE_PLANT_IMAGES, tx),
+      ])
 
       const plantsStore = tx.objectStore(TABLE_PLANTS)
       await plantsStore.delete(plantId)
 
       await tx.done
-    }, { method: 'delete', message: 'Failed to delete plant', payload: { plantId } })
+    }, { method: 'delete', message: 'Failed to delete plant', payload: { plantId }, kind: 'error' })
+  }
+
+  public async deleteLog(logId: number) {
+    return safeAsync(async () => {
+      const tx = this.db.transaction([TABLE_PLANT_WATERING_LOGS], 'readwrite')
+      const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
+
+      await store.delete(logId)
+      await tx.done
+    })
+  }
+
+  public async uploadPlantImage(plant: Plant, image: File): Promise<Result<void, unknown>> {
+    return safeAsync(async () => {
+      const data = await image.arrayBuffer()
+      const mime = image.type
+
+      const dataset = {
+        [INDEX_PLANT_ID]: plant.id,
+        data,
+        mime,
+      }
+
+      const tx = this.db.transaction(TABLE_PLANT_IMAGES, 'readwrite')
+      const store = tx.objectStore(TABLE_PLANT_IMAGES)
+      await store.add(dataset)
+    }, { method: 'PlantWriteRepository.uploadPlantImage', message: 'Failed to upload plant' })
+  }
+
+  public async markFavorit(plant: Plant, image: PlantImage): Promise<Result<void, unknown>> {
+    return safeAsync(async () => {
+      const tx = this.db.transaction(TABLE_PLANTS, 'readwrite')
+      const store = tx.objectStore(TABLE_PLANTS)
+
+      const row = await store.get(plant.id)
+      if (row === undefined)
+        throw new Error(`Plant data (id: ${plant.id}) not found`)
+
+      row[INDEX_PLANT_IMAGE_ID] = image.id
+      await store.put(row)
+      await tx.done
+    })
   }
 
   private async deletePlantAssociations(
     plantId: number,
-    table: typeof TABLE_PLANT_IMAGES | typeof TABLE_PLANT_PHASES | typeof TABLE_PLANT_SUBSTRATES,
+    table: typeof TABLE_PLANT_IMAGES | typeof TABLE_PLANT_PHASES | typeof TABLE_PLANT_SUBSTRATES | typeof TABLE_PLANT_IMAGES,
     tx: IDBPTransaction<unknown, Array<string>, 'readwrite'>,
   ) {
     const store = tx.objectStore(table)

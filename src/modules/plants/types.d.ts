@@ -1,5 +1,5 @@
 import type { HasId, HasTimestamps, WithId } from '../../types'
-import type { INDEX_WATERING_SCHEMA_ID } from '../db'
+import type { type INDEX_PLANT_ID, INDEX_PLANT_IMAGE_ID, type INDEX_WATERING_SCHEMA_ID } from '../db'
 import type { WateringSchema } from '../nutrients/types'
 
 interface NewPlantSubstrate {
@@ -29,6 +29,11 @@ type EditPlant = Omit<WithId<NewPlant, number>, 'substrate'> & {
 
 type PlantSubstrate = WithId<NewPlantSubstrate, number>
 type PlantPhase = WithId<NewPlantPhase, number>
+type PlantImage = HasId<number>
+type PlantImageData = PlantImage & {
+  data: ArrayBuffer
+  mime: string
+}
 
 type Plant = {
   strain: string
@@ -38,6 +43,8 @@ type Plant = {
   phases: Array<PlantPhase>
   wateringSchema?: WateringSchema
   wateringLogs: Array<WateringLog>
+  images: Array<PlantImage>
+  favoritImage?: PlantImage
 } & HasId<number> & HasTimestamps
 
 type PlantSubstrateType = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
@@ -56,9 +63,18 @@ interface PlantRow {
   strain: string
   name?: string
   [INDEX_WATERING_SCHEMA_ID]?: number
+  [INDEX_PLANT_IMAGE_ID]?: number
 }
 
-type WithPlantId<T> = WithId<T, number> & { plantId: number }
+interface PlantImageRow {
+  id: number
+  plantId: number
+  data: ArrayBuffer
+  mime: string
+}
+
+interface HasPlantId { [INDEX_PLANT_ID]: number }
+type WithPlantId<T> = WithId<T, number> & HasPlantId
 
 type PlantSubstrateRow = WithPlantId<{
   substrate: string

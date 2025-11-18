@@ -1,7 +1,13 @@
 <template>
-  <IFieldset
-    legend="Wachstumsphase"
-  >
+  <ICard>
+    <ICardTitle class="text-xl">
+      Start der Wachstumsphasen
+    </ICardTitle>
+
+    <p class="text-xs text-gray-400 my-3">
+      Lege des Startdatum der Wachstumsphasen fest.
+    </p>
+
     <div class="overflow-y-auto max-h-96">
       <ISteps
         vertical
@@ -42,7 +48,7 @@
     <div v-if="error" class="text-error">
       {{ error }}
     </div>
-  </IFieldset>
+  </ICard>
 </template>
 
 <script lang="ts" setup>
@@ -52,9 +58,10 @@ import type { NewPlantPhase, PlantPhaseType } from '../modules/plants/types'
 import { computed, onMounted, toRaw } from 'vue'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { extractEventValue, now } from '../util.ts'
-import IFieldset from './IFieldset.vue'
-import IStep from './IStep.vue'
-import ISteps from './ISteps.vue'
+import ICard from './ui/ICard.vue'
+import ICardTitle from './ui/ICardTitle.vue'
+import IStep from './ui/IStep.vue'
+import ISteps from './ui/ISteps.vue'
 
 interface Props {
   modelValue: Array<NewPlantPhase>

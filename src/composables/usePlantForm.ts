@@ -1,4 +1,3 @@
-import type { PartialDeep } from 'type-fest'
 import type { InferType } from 'yup'
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
@@ -60,10 +59,16 @@ function isChronologicallySorted(phases: Array<NewPlantPhase> | undefined): bool
   return true
 }
 
-export function usePlantForm(initialValues?: PartialDeep<PlantForm>, wateringSchemaArg?: WateringSchema) {
-  const { validate, errors, defineField } = useForm({
+export function usePlantForm() {
+  const { validate, errors, defineField, resetForm } = useForm({
     validationSchema,
-    initialValues,
+    initialValues: {
+      strain: '',
+      name: '',
+      substrate: '',
+      substrateSize: '',
+      phases: [],
+    },
   })
 
   const hasFormErrors = computed(() => Object.keys(errors.value).length > 0)
@@ -74,7 +79,7 @@ export function usePlantForm(initialValues?: PartialDeep<PlantForm>, wateringSch
   const [substrateSize] = defineField<'substrateSize', string>('substrateSize')
   const [phases] = defineField<'phases', Array<NewPlantPhase>>('phases')
 
-  const wateringSchema = ref<WateringSchema | undefined>(wateringSchemaArg)
+  const wateringSchema = ref<WateringSchema | undefined>()
 
   return {
     strain,
@@ -86,5 +91,6 @@ export function usePlantForm(initialValues?: PartialDeep<PlantForm>, wateringSch
     validate,
     errors,
     hasFormErrors,
+    resetForm,
   }
 }

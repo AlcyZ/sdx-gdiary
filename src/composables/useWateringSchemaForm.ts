@@ -17,7 +17,7 @@ const validationSchema = toTypedSchema(wateringSchemaSchema)
 export type WateringSchemaForm = InferType<typeof wateringSchemaSchema>
 
 export function useWateringSchemaForm(initialValues?: PartialDeep<WateringSchemaForm>) {
-  const { errors, defineField, validate } = useForm({
+  const { errors, defineField, validate, resetForm } = useForm({
     validationSchema,
     initialValues,
   })
@@ -30,5 +30,6 @@ export function useWateringSchemaForm(initialValues?: PartialDeep<WateringSchema
     fertilizersData,
     errors,
     validate,
+    resetForm,
   }
 }

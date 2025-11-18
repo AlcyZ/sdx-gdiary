@@ -1,0 +1,161 @@
+<template>
+  <TopNavigation
+    @back="$router.back()"
+  />
+  <div class="flex-1 flex items-center justify-center py-4">
+    <ICard
+      class="w-full max-w-2xl"
+      class-actions="justify-between"
+    >
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold">
+          {{ plantName }} bearbeiten
+        </h1>
+      </div>
+
+      <PlantForm
+        v-model:strain="strain"
+        v-model:name="name"
+        v-model:substrate="substrate"
+        v-model:substrate-size="substrateSize"
+        v-model:phases="phases"
+        v-model:watering-schema="wateringSchema"
+        :errors="errors"
+      />
+
+      <template #actions>
+        <IBtn
+          variant="primary"
+          class="w-full text-base-100"
+          :disabled="loading || hasFormErrors"
+          @click="updatePlant"
+        >
+          <IconSave />
+          Speichern
+        </IBtn>
+      </template>
+    </ICard>
+  </div>
+  <IFab
+    :actions="fabActions"
+    class="mb-14"
+    :icon="IconMenu"
+  />
+</template>
+
+<script lang="ts" setup>
+import type { EditPlant } from '../modules/plants/types'
+import {
+  Cog as IconMenu,
+  Save as IconSave,
+} from 'lucide-vue-next'
+import { computed, inject, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import TopNavigation from '../components/layout/TopNavigation.vue'
+import PlantForm from '../components/PlantForm.vue'
+import IBtn from '../components/ui/IBtn.vue'
+import ICard from '../components/ui/ICard.vue'
+import IFab from '../components/ui/IFab.vue'
+import { usePlantForm } from '../composables/usePlantForm.ts'
+import { usePlantView } from '../composables/usePlantView.ts'
+import { useToast } from '../composables/useToast.ts'
+import { REPO_PLANT } from '../di_keys.ts'
+import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
+import { usePlantStore } from '../stores/plantStore.ts'
+import { err } from '../util.ts'
+
+interface Props {
+}
+interface Emits {
+
+}
+
+defineProps<Props>()
+defineEmits<Emits>()
+
+const plantRepo = inject(REPO_PLANT)
+
+const plantStore = usePlantStore()
+
+const router = useRouter()
+const { toast } = useToast()
+const { fabActions } = usePlantView()
+
+const loading = ref(false)
+
+const plantName = computed(
+  () => plantStore.plant === null
+    ? ''
+    : plantStore.plant.name !== undefined && plantStore.plant.name !== ''
+      ? `${plantStore.plant.name} (${plantStore.plant.strain})`
+      : plantStore.plant.strain,
+)
+
+const {
+  strain,
+  name,
+  substrate,
+  substrateSize,
+  phases,
+  wateringSchema,
+  validate,
+  errors,
+  resetForm,
+} = usePlantForm()
+
+const hasFormErrors = computed(() => Object.keys(errors.value).length > 0)
+
+async function updatePlant() {
+  if (!plantStore.plant)
+    return
+
+  const validationResult = await validate()
+  if (!validationResult.valid) {
+    toast('Bitte fülle alle Pflichtfelder aus', 'error')
+    return
+  }
+
+  const data: EditPlant = {
+    id: plantStore.plant.id,
+    strain: strain.value!,
+    name: name.value,
+    substrate: {
+      id: plantStore.plant.substrate.id,
+      substrate: substrate.value,
+      size: substrateSize.value,
+    },
+    phases: phases.value,
+  }
+
+  if (wateringSchema.value) {
+    data[INDEX_WATERING_SCHEMA_ID] = wateringSchema.value.id
+  }
+
+  const result = await plantRepo?.update(data) || err(undefined)
+  if (!result.ok) {
+    toast('Es ist ein Fehler beim aktualisieren der Pflanze aufgetreten', 'error')
+    return
+  }
+
+  toast('Pflanze erfolgreich aktualisiert', 'success')
+  await router.push('/plants')
+}
+
+onMounted(async () => {
+  await plantStore.syncPlantWithRoute()
+
+  if (!plantStore.plant)
+    return
+
+  resetForm({
+    values: {
+      strain: plantStore.plant.strain,
+      name: plantStore.plant.name,
+      substrate: plantStore.plant.substrate.substrate,
+      substrateSize: plantStore.plant.substrate.size,
+      phases: plantStore.plant.phases,
+    },
+  })
+  wateringSchema.value = plantStore.plant.wateringSchema
+})
+</script>

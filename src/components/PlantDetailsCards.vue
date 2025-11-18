@@ -1,0 +1,57 @@
+<template>
+  <PlantDetailsCardHeader
+    :plant
+  />
+
+  <PlantDetailsCardGallery
+    :plant
+    @select-favorit="markFavorit"
+  />
+
+  <PlantDetailsCardActionWatering
+    :plant
+  />
+
+  <PlantDetailsCardPhases
+    :plant
+  />
+
+  <PlantDetailsCardWatering
+    :plant
+  />
+
+  <PlantDetailsCardActionBack />
+</template>
+
+<script lang="ts" setup>
+import type { Plant, PlantImage } from '../modules/plants/types'
+
+import { useToast } from '../composables/useToast.ts'
+import { usePlantStore } from '../stores/plantStore.ts'
+import PlantDetailsCardActionBack from './PlantDetailsCardActionBack.vue'
+import PlantDetailsCardActionWatering from './PlantDetailsCardActionWatering.vue'
+import PlantDetailsCardGallery from './PlantDetailsCardGallery.vue'
+import PlantDetailsCardHeader from './PlantDetailsCardHeader.vue'
+import PlantDetailsCardPhases from './PlantDetailsCardPhases.vue'
+import PlantDetailsCardWatering from './PlantDetailsCardWatering.vue'
+
+interface Props {
+  plant: Plant
+}
+interface Emits {
+}
+
+defineProps<Props>()
+defineEmits<Emits>()
+
+const plantStore = usePlantStore()
+const { toast } = useToast()
+
+async function markFavorit(image: PlantImage) {
+  const result = await plantStore.markFavorit(image)
+
+  result.ok
+    ? toast('Bild als Favorit markiert', 'success')
+    : toast('Es ist ein Fehler aufgetreten', 'error')
+}
+</script>

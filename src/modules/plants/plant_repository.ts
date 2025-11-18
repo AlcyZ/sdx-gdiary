@@ -1,6 +1,5 @@
-import type { Result } from '../../types'
-import type { EditPlant, GetPlantError, NewPlant, NewWateringLog, Plant } from './types'
-import { err, ok } from '../../util.ts'
+import type { Option, Result } from '../../types'
+import type { EditPlant, GetPlantError, NewPlant, NewWateringLog, Plant, PlantImage, PlantImageData } from './types'
 import PlantReadRepository from './plant_read_repository.ts'
 import PlantWriteRepository from './plant_write_repository.ts'
 
@@ -22,15 +21,15 @@ export default class PlantRepository {
     return new PlantRepository(read, write)
   }
 
-  public async save(plant: NewPlant): Promise<Result<undefined, unknown>> {
+  public async save(plant: NewPlant): Promise<Result<void, unknown>> {
     return this.write.save(plant)
   }
 
-  public async update(plant: EditPlant): Promise<Result<undefined, unknown>> {
+  public async update(plant: EditPlant): Promise<Result<void, unknown>> {
     return this.write.update(plant)
   }
 
-  public async pourPlant(data: NewWateringLog): Promise<Result<undefined, unknown>> {
+  public async pourPlant(data: NewWateringLog): Promise<Result<void, unknown>> {
     return this.write.pourPlant(data)
   }
 
@@ -38,18 +37,27 @@ export default class PlantRepository {
     return this.read.getAll()
   }
 
-  public async _getById(id: number): Promise<Result<Plant, GetPlantError>> {
+  public async getById(id: number): Promise<Result<Plant, GetPlantError>> {
     return this.read.getById(id)
   }
 
-  public async delete(plantId: number): Promise<Result<undefined, string>> {
-    try {
-      await this.write.delete(plantId)
-      return ok(undefined)
-    }
-    catch (e) {
-      console.error('[PlantRepository.delete] - failed to delete plant with id:', plantId, e)
-      return err('Es ist ein Fehler beim löschen der Pflanze aufgetreten')
-    }
+  public async getImageByImageId(plantImageId: number): Promise<Option<PlantImageData>> {
+    return this.read.getImageByImageId(plantImageId)
+  }
+
+  public async delete(plantId: number): Promise<Result<void, unknown>> {
+    return await this.write.delete(plantId)
+  }
+
+  public async deleteLog(logId: number): Promise<Result<void, unknown>> {
+    return this.write.deleteLog(logId)
+  }
+
+  public async uploadPlantImage(plant: Plant, image: File): Promise<Result<void, unknown>> {
+    return this.write.uploadPlantImage(plant, image)
+  }
+
+  public async markFavorit(plant: Plant, image: PlantImage): Promise<Result<void, unknown>> {
+    return this.write.markFavorit(plant, image)
   }
 }

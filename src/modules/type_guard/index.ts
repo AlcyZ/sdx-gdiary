@@ -26,3 +26,11 @@ export function hasNumKey(value: Record<string, unknown>, key: string): boolean 
 export function hasBlobKey(value: Record<string, unknown>, key: string): boolean {
   return key in value && value[key] instanceof Blob
 }
+
+export function isEmptyObject(value: unknown): boolean {
+  return typeof value === 'object' && value !== null && Object.keys(value).length === 0
+}
+
+export function hasEmptyObjectKey(value: Record<string, unknown>, key: string): boolean {
+  return key in value && isEmptyObject(value[key])
+}

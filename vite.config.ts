@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
   ],
 
-  base: './',
+  base: '/',
 
   server: {
     https: {

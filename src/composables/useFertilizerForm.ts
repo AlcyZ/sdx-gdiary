@@ -1,19 +1,34 @@
-import type { NewFertilizer } from '../modules/nutrients/types'
+import type { PartialDeep } from 'type-fest'
+import type { InferType } from 'yup'
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
-import * as yup from 'yup'
+import { object, string } from 'yup'
 
 const ERR_NAME_REQUIRED = 'Es muss ein Name angegeben werden'
 
-export function useFertilizerForm(initialValues?: NewFertilizer) {
-  const fertilizerSchema = yup.object({
-    name: yup.string().required(ERR_NAME_REQUIRED),
-    manufacturer: yup.string().optional(),
-  })
+const fertilizerSchema = object({
+  name: string().required(ERR_NAME_REQUIRED),
+  manufacturer: string().optional(),
+})
 
+type FertilizerForm = InferType<typeof fertilizerSchema>
+
+export function useFertilizerForm(initialValues?: PartialDeep<FertilizerForm>) {
   const validationSchema = toTypedSchema(fertilizerSchema)
-  return useForm({
+
+  const { errors, defineField, validate, resetForm } = useForm({
     validationSchema,
     initialValues,
   })
+
+  const [name] = defineField<'name', string>('name')
+  const [manufacturer] = defineField<'manufacturer', string | undefined>('manufacturer')
+
+  return {
+    name,
+    manufacturer,
+    errors,
+    validate,
+    resetForm,
+  }
 }
