@@ -13,6 +13,7 @@
 <script lang="ts" setup>
 import type { DockItem } from '../types'
 import {
+  Images as IconGallery,
   Apple as IconNutrients,
   Flower2 as IconPlant,
   Settings as IconSettings,
@@ -44,6 +45,11 @@ const docks = ref<Array<DockItem>>([
     label: 'Dünger',
     icon: IconNutrients,
     to: '/nutrients',
+  },
+  {
+    label: 'Galerie',
+    icon: IconGallery,
+    to: '/gallery',
   },
   {
     label: 'Einstellungen',
