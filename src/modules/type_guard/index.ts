@@ -23,6 +23,10 @@ export function hasNumKey(value: Record<string, unknown>, key: string): boolean 
   return key in value && typeof value[key] === 'number'
 }
 
+export function hasBoolKey(value: Record<string, unknown>, key: string): boolean {
+  return key in value && typeof value[key] === 'boolean'
+}
+
 export function hasBlobKey(value: Record<string, unknown>, key: string): boolean {
   return key in value && value[key] instanceof Blob
 }
