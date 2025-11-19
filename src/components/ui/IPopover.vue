@@ -10,14 +10,14 @@
       <PopoverContent
         :side="side"
         :side-offset="sideOffset"
-        class="bg-white rounded-field shadow-lg w-72 relative"
+        class="bg-white border border-gray-50 rounded-field shadow-lg w-72 relative"
       >
-        <div class="p-2 pr-12">
+        <div class="pr-14">
           <slot />
         </div>
         <PopoverClose
           aria-label="Close"
-          class="absolute top-0.5 right-0.5 btn btn-square btn-ghost btn-lg"
+          class="absolute top-1.5 right-1.5 btn btn-square btn-ghost btn-lg"
         >
           <IconX />
         </PopoverClose>
@@ -28,14 +28,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { Side } from 'radix-vue/dist/Popper'
 import {
   X as IconX,
 } from 'lucide-vue-next'
 import { PopoverArrow, PopoverClose, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'radix-vue'
 
 interface Props {
-  side?: Side | undefined
+  side?: 'top' | 'right' | 'bottom' | 'left' | undefined
   sideOffset?: number
   triggerClass?: string
 }

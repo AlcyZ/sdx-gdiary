@@ -15,7 +15,7 @@
               v-if="plant.show"
               side="top"
             >
-              <div class="px-6 py-3 space-y-4">
+              <div class="pl-6 py-3 space-y-4">
                 <div class="flex items-center justify-between gap-x-6">
                   <IconCol />
 
@@ -190,7 +190,7 @@ function loadConfig(plant: Plant): StorageConfig {
   const key = `plant-gallery-${plant.id}`
   const option = getConfig(key)
 
-  return option.exist ? option.value : defaultConfig
+  return option.exist ? option.value : { id: plant.id, ...defaultConfig }
 }
 
 function getConfig(key: string): Option<StorageConfig> {
