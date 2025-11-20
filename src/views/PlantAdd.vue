@@ -20,6 +20,7 @@
         v-model:substrate-size="substrateSize"
         v-model:phases="phases"
         v-model:watering-schema="wateringSchema"
+        v-model:images="images"
         :errors="errors"
       />
 
@@ -53,6 +54,7 @@
 </template>
 
 <script lang="ts" setup>
+import type PlantRepository from '../modules/plants/plant_repository.ts'
 import type { NewPlant } from '../modules/plants/types'
 import type { Result, ToastVariant } from '../types'
 import {
@@ -73,7 +75,7 @@ import { useToast } from '../composables/useToast.ts'
 import { REPO_PLANT } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { usePlantStore } from '../stores/plantStore.ts'
-import { err } from '../util.ts'
+import { andThen, combineOpts, err, some, toOpt, wrapOption } from '../util.ts'
 
 interface Props {
 }
@@ -85,7 +87,7 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-const plantRepo = inject(REPO_PLANT)
+const plantRepo = inject(REPO_PLANT) as PlantRepository
 
 const plantStore = usePlantStore()
 
@@ -106,6 +108,8 @@ const {
   errors,
   hasFormErrors,
 } = usePlantForm()
+
+const images = ref<FileList | undefined>()
 
 function toast(message: string, variant: ToastVariant = 'error', close?: () => void) {
   showToast({
@@ -163,12 +167,25 @@ async function savePlant(): Promise<Result<void, string>> {
     [INDEX_WATERING_SCHEMA_ID]: wateringSchema.value?.id,
   }
 
-  const result = await plantRepo?.save(newPlant) || err(undefined)
-  loading.value = false
+  const saveResult = await plantRepo.save(newPlant)
+  const plantResult = await andThen(
+    combineOpts(toOpt(saveResult), wrapOption(images.value)),
+    async ([plantId, images]) => combineOpts(
+      toOpt(await plantRepo.getById(plantId)),
+      some(images),
+    ),
+  )
 
-  if (result.ok)
+  await andThen(
+    plantResult,
+    async ([plant, images]) => await plantRepo.uploadPlantImages(plant, images),
+  )
+
+  images.value = undefined
+  loading.value = false
+  if (saveResult.ok)
     await plantStore.syncPlants()
 
-  return result.ok ? result : err('Pflanze konnte nicht gespeichert werden')
+  return saveResult.ok ? saveResult : err('Pflanze konnte nicht gespeichert werden')
 }
 </script>

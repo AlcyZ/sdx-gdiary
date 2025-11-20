@@ -74,7 +74,7 @@ export default class PlantReadRepository {
       .map(result => result.value)
   }
 
-  public async getById(id: number): Promise<Result<Plant, GetPlantError>> {
+  public async getById(id: number | IDBValidKey): Promise<Result<Plant, GetPlantError>> {
     const tx = this.db.transaction([
       TABLE_PLANTS,
       TABLE_PLANT_IMAGES,

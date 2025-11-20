@@ -20,6 +20,7 @@
         v-model:substrate-size="substrateSize"
         v-model:phases="phases"
         v-model:watering-schema="wateringSchema"
+        v-model:images="images"
         :errors="errors"
       />
 
@@ -44,6 +45,7 @@
 </template>
 
 <script lang="ts" setup>
+import type PlantRepository from '../modules/plants/plant_repository.ts'
 import type { EditPlant } from '../modules/plants/types'
 import {
   Cog as IconMenu,
@@ -62,7 +64,7 @@ import { useToast } from '../composables/useToast.ts'
 import { REPO_PLANT } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { usePlantStore } from '../stores/plantStore.ts'
-import { err } from '../util.ts'
+import { andThen, combineOpts, some, toOpt, wrapOption } from '../util.ts'
 
 interface Props {
 }
@@ -73,7 +75,7 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-const plantRepo = inject(REPO_PLANT)
+const plantRepo = inject(REPO_PLANT) as PlantRepository
 
 const plantStore = usePlantStore()
 
@@ -82,6 +84,7 @@ const { toast } = useToast()
 const { fabActions } = usePlantView()
 
 const loading = ref(false)
+const images = ref<FileList | undefined>()
 
 const plantName = computed(
   () => plantStore.plant === null
@@ -131,7 +134,16 @@ async function updatePlant() {
     data[INDEX_WATERING_SCHEMA_ID] = wateringSchema.value.id
   }
 
-  const result = await plantRepo?.update(data) || err(undefined)
+  const result = await plantRepo.update(data)
+  const plantResult = andThen(
+    combineOpts(toOpt(result), wrapOption(plantStore.plant)),
+    ([_, plant]) => combineOpts(wrapOption(images.value), some(plant)),
+  )
+  await andThen(
+    plantResult,
+    async ([images, plant]) => await plantRepo.uploadPlantImages(plant, images),
+  )
+
   if (!result.ok) {
     toast('Es ist ein Fehler beim aktualisieren der Pflanze aufgetreten', 'error')
     return

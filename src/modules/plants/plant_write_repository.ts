@@ -1,5 +1,5 @@
 import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
-import type { Result } from '../../types'
+import type { AsyncResult, Result } from '../../types'
 import type {
   EditPlant,
   NewPlant,
@@ -35,7 +35,7 @@ export default class PlantWriteRepository {
     return new PlantWriteRepository(db)
   }
 
-  public async save(plant: NewPlant): Promise<Result<void, unknown>> {
+  public async save(plant: NewPlant): AsyncResult<IDBValidKey, unknown> {
     return await safeAsync(async () => {
       const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
 
@@ -55,8 +55,9 @@ export default class PlantWriteRepository {
 
       await this.insertSubstrate(plantId, plant.substrate, plantSubstrateStore)
       await this.insertPhases(plantId, plant.phases, plantPhaseStore)
-
       await tx.done
+
+      return plantId
     }, { method: 'save', message: 'Failed to save plant', payload: { plant } })
   }
 
@@ -128,8 +129,8 @@ export default class PlantWriteRepository {
     })
   }
 
-  public async uploadPlantImage(plant: Plant, image: File): Promise<Result<void, unknown>> {
-    return safeAsync(async () => {
+  public async uploadPlantImage(plant: Plant, image: File): Promise<Result<void, DOMException>> {
+    return safeAsync<void, DOMException>(async () => {
       const data = await image.arrayBuffer()
       const mime = image.type
 

@@ -36,28 +36,9 @@
       </div>
     </ICard>
 
-    <ICard
-      class="opacity-60"
-    >
-      <ICardTitle class="text-xl">
-        Foto hinzufügen (optional)
-      </ICardTitle>
-
-      <p class="text-xs text-gray-400 my-3">
-        Aktuelle Bilder helfen bei der Dokumentation des Fortschritts.
-      </p>
-
-      <IAlert
-        variant="warning"
-        soft
-      >
-        <IconInfo />
-
-        <p>
-          Bitte verwende vorübergehend die Funktion zum hochladen von Bildern auf der Pflanzendetailseite.
-        </p>
-      </IAlert>
-    </ICard>
+    <PlantFormImages
+      v-model="images"
+    />
 
     <PlantFormSubstrate
       v-model:substrate="substrate"
@@ -104,11 +85,10 @@
 <script lang="ts" setup>
 import type { WateringSchema } from '../modules/nutrients/types'
 import type { NewPlantPhase } from '../modules/plants/types'
-import { TriangleAlert as IconInfo } from 'lucide-vue-next'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
+import PlantFormImages from './PlantFormImages.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
 import PlantFormSubstrate from './PlantFormSubstrate.vue'
-import IAlert from './ui/IAlert.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInput from './ui/IInput.vue'
@@ -140,4 +120,5 @@ const substrate = defineModel<string>('substrate')
 const substrateSize = defineModel<string>('substrateSize', { required: true })
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
 const wateringSchema = defineModel<WateringSchema>('wateringSchema')
+const images = defineModel<FileList>('images')
 </script>

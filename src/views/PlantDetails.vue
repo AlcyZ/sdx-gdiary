@@ -48,7 +48,7 @@ import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
 import LayoutDock from '../layouts/LayoutDock.vue'
 import { usePlantStore } from '../stores/plantStore.ts'
-import { getUploadedFile, getUploadedFiles } from '../util.ts'
+import { getUploadedFiles } from '../util.ts'
 
 interface Props {
 }
