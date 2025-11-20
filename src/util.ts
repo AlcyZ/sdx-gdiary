@@ -1,5 +1,7 @@
 import type { AsyncResult, Err, None, Ok, Option, ParseJsonError, Result, ResultOrOption, Some } from './types'
 
+export function ok(): Ok<void>
+export function ok<T>(value: T): Ok<T>
 /**
  * Creates a successful result object with the given value.
  *
@@ -7,10 +9,14 @@ import type { AsyncResult, Err, None, Ok, Option, ParseJsonError, Result, Result
  * @returns {Ok} - A successful result object containing the provided value.
  * @template T - The type of the successful value.
  */
-export function ok<T>(value: T): Ok<T> {
-  return { ok: true, value }
+export function ok<T>(value?: T): Ok<T | void> {
+  return value !== undefined
+    ? { ok: true, value }
+    : { ok: true, value: void 0 }
 }
 
+export function err(): Err<void>
+export function err<E>(error: E): Err<E>
 /**
  * Creates an error result object with the given error.
  *
@@ -18,8 +24,10 @@ export function ok<T>(value: T): Ok<T> {
  * @returns {Err} - An error result object containing the provided error.
  * @template E - The type of the error value.
  */
-export function err<E>(error: E): Err<E> {
-  return { ok: false, error }
+export function err<E>(error?: E): Err<E | void> {
+  return error !== undefined
+    ? { ok: false, error }
+    : { ok: false, error: void 0 }
 }
 
 export function some<T>(value: T): Some<T> {
@@ -210,8 +218,8 @@ export function getUploadedFile(event: Event): Option<File> {
   )
 }
 
-export function wrapOption<T>(value: T | undefined): Option<T> {
-  return value !== undefined ? some(value) : none()
+export function wrapOption<T>(value: T | undefined | null): Option<T> {
+  return value !== undefined && value !== null ? some(value) : none()
 }
 
 export function unwrapOr<T>(value: ResultOrOption<T>, or: T): T {
@@ -220,11 +228,15 @@ export function unwrapOr<T>(value: ResultOrOption<T>, or: T): T {
     : value.exist ? value.value : or
 }
 
-export function andThen<T, E, R>(value: Result<T, E>, then: (value: T) => Result<R, E>): Result<R, E>
+export function andThen<T, E, R, RE>(value: Result<T, E>, then: (value: T) => Result<R, RE>): Result<R, RE>
+export function andThen<T, E, R>(value: Result<T, E>, then: (value: T) => Option<R>): Option<R>
 export function andThen<T, R>(value: Option<T>, then: (value: T) => Option<R>): Option<R>
+export function andThen<T, R, RE>(value: Option<T>, then: (value: T) => Result<R, RE>): Result<R, RE>
 
-export function andThen<T, E, R>(value: Result<T, E>, then: (value: T) => Promise<Result<R, E>>): Promise<Result<R, E>>
+export function andThen<T, E, R, RE>(value: Result<T, E>, then: (value: T) => Promise<Result<R, RE>>): Promise<Result<R, RE>>
+export function andThen<T, E, R>(value: Result<T, E>, then: (value: T) => Promise<Option<R>>): Promise<Option<R>>
 export function andThen<T, R>(value: Option<T>, then: (value: T) => Promise<Option<R>>): Promise<Option<R>>
+export function andThen<T, R, RE>(value: Option<T>, then: (value: T) => Promise<Result<R, RE>>): Promise<Result<R, RE>>
 export function andThen<T, E, R>(
   value: ResultOrOption<T, E>,
   then: (value: T) => Promise<ResultOrOption<R, E>> | ResultOrOption<R, E>,
@@ -243,6 +255,16 @@ export function doThen<T>(value: ResultOrOption<T>, then: (value: T) => any) {
 
   if (value.exist)
     then(value.value)
+}
+
+export function toOpt<T>(result: Result<T, any>): Option<T> {
+  return result.ok ? some(result.value) : none()
+}
+
+export function combineOpts<T, V>(lhs: Option<T>, rhs: Option<V>): Option<[T, V]> {
+  return lhs.exist && rhs.exist
+    ? some([lhs.value, rhs.value])
+    : none()
 }
 
 export function omitKeys<T extends Record<string, any>, K extends keyof T>(
