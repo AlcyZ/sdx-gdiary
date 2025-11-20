@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import type { PlantImage } from '../modules/plants/types'
-import { inject, onMounted, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
 import { REPO_PLANT } from '../di_keys.ts'
 import { BASE64_PLACEHOLDER, none } from '../util.ts'
 
@@ -38,9 +38,11 @@ const imgSrc = ref(BASE64_PLACEHOLDER)
 
 const isLoading = ref(false)
 
-async function loadImage() {
+watch(() => image, newImage => loadImage(newImage), { immediate: true })
+
+async function loadImage(plantImage: PlantImage) {
   isLoading.value = true
-  const imageOption = await plantRepo?.getImageByImageId(image.id) || none()
+  const imageOption = await plantRepo?.getImageByImageId(plantImage.id) || none()
 
   isLoading.value = false
   if (imageOption.exist) {
@@ -51,6 +53,4 @@ async function loadImage() {
     imgSrc.value = BASE64_PLACEHOLDER
   }
 }
-
-onMounted(loadImage)
 </script>
