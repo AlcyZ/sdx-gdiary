@@ -192,18 +192,22 @@ export function safeParseJson<T>(content: string, guard: (value: any) => value i
   return ok(result.value)
 }
 
+export function getEventTarget(event: Event): Option<HTMLInputElement> {
+  return event.target instanceof HTMLInputElement ? some(event.target) : none()
+}
+
+export function getUploadedFiles(event: Event): Option<FileList> {
+  return andThen(
+    getEventTarget(event),
+    target => target.files ? some(target.files) : none(),
+  )
+}
+
 export function getUploadedFile(event: Event): Option<File> {
-  if (!(event.target instanceof HTMLInputElement))
-    return none()
-
-  const files = event.target.files
-  if (!files)
-    return none()
-
-  const file = files[0]
-  return file instanceof File
-    ? some(file)
-    : none()
+  return andThen(
+    getUploadedFiles(event),
+    files => files[0] instanceof File ? some(files[0]) : none(),
+  )
 }
 
 export function wrapOption<T>(value: T | undefined): Option<T> {

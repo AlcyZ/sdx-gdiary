@@ -36,12 +36,12 @@ export const usePlantStore = defineStore('plant', () => {
     syncPlantWithRoute(),
   ])
 
-  const uploadPlantImage = async (file: File) => {
+  const uploadPlantImage = async (file: File, sync: boolean = true) => {
     if (!plant.value)
       return err(undefined)
 
     const result = await plantRepo?.uploadPlantImage(plant.value, file) || err(undefined)
-    if (result.ok)
+    if (result.ok && sync)
       await syncData()
 
     return result
@@ -73,6 +73,7 @@ export const usePlantStore = defineStore('plant', () => {
     syncPlant,
     syncPlantWithRoute,
     syncPlants,
+    syncData,
     uploadPlantImage,
     markFavorit,
     deleteWateringLog,

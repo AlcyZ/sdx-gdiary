@@ -10,6 +10,7 @@
         ref="inputImage"
         class="hidden"
         type="file"
+        multiple
         accept="image/jpeg, image/png, image/webp"
         @change="handleImageUpload"
       >
@@ -47,7 +48,7 @@ import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
 import LayoutDock from '../layouts/LayoutDock.vue'
 import { usePlantStore } from '../stores/plantStore.ts'
-import { getUploadedFile } from '../util.ts'
+import { getUploadedFile, getUploadedFiles } from '../util.ts'
 
 interface Props {
 }
@@ -96,19 +97,34 @@ function selectImageViaInput() {
 async function handleImageUpload(event: Event) {
   const errorToast = () => toast('Es ist ein Fehler beim hochladen des Bildes aufgetreten.', 'error')
 
-  const imageResult = getUploadedFile(event)
-  if (!imageResult.exist) {
+  const option = getUploadedFiles(event)
+  if (!option.exist) {
     errorToast()
     return
   }
 
-  const uploadResult = await plantStore.uploadPlantImage(imageResult.value)
-  if (!uploadResult.ok) {
-    errorToast()
-    return
-  }
+  const results = await Promise.all(
+    Array.from(option.value)
+      .map(file => plantStore.uploadPlantImage(file, false)),
+  )
 
-  toast('Bild erfolgreich hochgeladen', 'success')
+  const hasError = results.some(r => !r.ok)
+  const hasSuccess = results.some(r => r.ok)
+
+  if (hasSuccess)
+    await plantStore.syncData()
+
+  if (hasError && hasSuccess) {
+    toast('Mindestens ein Bild konnte nicht hochgeladen werden', 'warning')
+    console.warn('[PlantDetails.handleImageUpload]: At least one image upload failed', results)
+  }
+  else if (hasError) {
+    errorToast()
+    console.error('[PlantDetails.handleImageUpload]: Failed to upload images:', results)
+  }
+  else if (hasSuccess) {
+    toast('Bilder erfolgreich hochgeladen', 'success')
+  }
 }
 
 onMounted(async () => await plantStore.syncPlantWithRoute())
