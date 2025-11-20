@@ -5,10 +5,7 @@
     class="grid"
     :class="gridClass"
     group="plantImages"
-    :move="isOtherList"
-    @update:model-value="updateModelValue"
     @change="handleChange"
-    @end="handleEnd"
   >
     <template #item="{ element: image }">
       <div>
@@ -107,20 +104,7 @@ function getGap(value?: Gap): string | undefined {
   }
 }
 
-function handleChange(event: ChangeEvent, b) {
-  // console.info('handleChange:', event, b)
+function handleChange(event: ChangeEvent) {
   emit('change', event, plantId)
-}
-function updateModelValue(event: ChangeEvent, b) {
-  // console.info('updateModelValue:', plantId, event, b)
-  // emit('change', event)
-}
-function handleEnd(event: ChangeEvent, b) {
-  // console.info('handleEnd:', plantId, event, b)
-  // emit('change', event)
-}
-
-function isOtherList({ from, to }: { from: HTMLElement, to: HTMLElement }) {
-  // return from !== to
 }
 </script>

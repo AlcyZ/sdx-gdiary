@@ -1,14 +1,4 @@
-import type {
-  INDEX_PLANT_ID,
-  TABLE_FERTILIZERS,
-  TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
-  TABLE_PLANT_IMAGES,
-  TABLE_PLANT_PHASES,
-  TABLE_PLANT_SUBSTRATES,
-  TABLE_PLANT_WATERING_LOGS,
-  TABLE_PLANTS,
-  TABLE_WATERING_SCHEMAS,
-} from '../db'
+import type { type INDEX_PLANT_ID, INDEX_SORT, type TABLE_FERTILIZERS, type TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, type TABLE_PLANT_IMAGES, type TABLE_PLANT_PHASES, type TABLE_PLANT_SUBSTRATES, type TABLE_PLANT_WATERING_LOGS, type TABLE_PLANTS, type TABLE_WATERING_SCHEMAS } from '../db'
 import type { FertilizerRow, FertilizerWateringSchemaRow, WateringSchemaRow } from '../nutrients/types'
 import type { PlantImageRow, PlantPhaseRow, PlantRow, PlantSubstrateRow, WateringLogRow } from '../plants/types'
 
@@ -91,6 +81,7 @@ interface CleanPlantImageData {
 
 type CleanPlantImage = CleanPlantImageData & {
   [INDEX_PLANT_ID]: IDBValidKey
+  [INDEX_SORT]: number
 }
 
 interface CleanPlantData {

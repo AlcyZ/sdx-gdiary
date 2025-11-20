@@ -1,5 +1,5 @@
 import type { HasId, HasTimestamps, WithId } from '../../types'
-import type { type INDEX_PLANT_ID, INDEX_PLANT_IMAGE_ID, type INDEX_WATERING_SCHEMA_ID } from '../db'
+import type { type INDEX_PLANT_ID, type INDEX_PLANT_IMAGE_ID, INDEX_SORT, type INDEX_WATERING_SCHEMA_ID } from '../db'
 import type { WateringSchema } from '../nutrients/types'
 
 interface NewPlantSubstrate {
@@ -71,6 +71,7 @@ interface PlantImageRow {
   plantId: number
   data: ArrayBuffer
   mime: string
+  [INDEX_SORT]: number
 }
 
 interface HasPlantId { [INDEX_PLANT_ID]: number }

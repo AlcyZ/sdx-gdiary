@@ -9,7 +9,7 @@ import type {
   WateringLogFertilizer,
   WateringLogRow,
 } from './types'
-import { INDEX_PLANT_ID, INDEX_PLANT_IMAGE_ID, INDEX_WATERING_SCHEMA_ID } from '../db'
+import { INDEX_PLANT_ID, INDEX_PLANT_IMAGE_ID, INDEX_SORT, INDEX_WATERING_SCHEMA_ID } from '../db'
 import {
   hasEmptyObjectKey,
   hasNumKey,
@@ -34,6 +34,7 @@ export function isPlantImageRow(value: any): value is PlantImageRow {
     && hasNumKey(value, INDEX_PLANT_ID)
     && hasStrKey(value, 'mime')
     && value.data instanceof ArrayBuffer
+    && hasNumKey(value, INDEX_SORT)
 }
 
 export function isPlantBackupImageRow(value: any): value is PlantImageRow {

@@ -15,6 +15,8 @@ import {
   getDb,
   INDEX_PLANT_ID,
   INDEX_PLANT_IMAGE_ID,
+  INDEX_PLANT_IMAGE_SORT,
+  INDEX_SORT,
   INDEX_WATERING_SCHEMA_ID,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
@@ -133,11 +135,13 @@ export default class PlantWriteRepository {
     return safeAsync<void, DOMException>(async () => {
       const data = await image.arrayBuffer()
       const mime = image.type
+      const sort = await this.getNextImageSort(plant.id, this.db)
 
       const dataset = {
         [INDEX_PLANT_ID]: plant.id,
         data,
         mime,
+        [INDEX_SORT]: sort,
       }
 
       const tx = this.db.transaction(TABLE_PLANT_IMAGES, 'readwrite')
@@ -211,5 +215,29 @@ export default class PlantWriteRepository {
         plantId,
       })).map(data => store.add(data)),
     )
+  }
+
+  private async getNextImageSort(plantId: number | IDBValidKey, db: IDBPDatabase): Promise<number> {
+    let highesSort = 0
+
+    const tx = db.transaction(TABLE_PLANT_IMAGES)
+    const index = tx.store.index(INDEX_PLANT_IMAGE_SORT)
+
+    const range = IDBKeyRange.bound(
+      [plantId, 0],
+      [plantId, Infinity],
+    )
+    const cursor = await index.openCursor(range, 'prev')
+
+    if (cursor) {
+      highesSort = cursor.value[INDEX_SORT]
+    }
+    else {
+      console.warn('cursor not found in range:', range)
+    }
+
+    await tx.done
+
+    return highesSort + 1
   }
 }

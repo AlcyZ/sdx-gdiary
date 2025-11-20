@@ -25,8 +25,10 @@ import {
   getDb,
   INDEX_FERTILIZER_ID,
   INDEX_PLANT_ID,
+  INDEX_SORT,
   INDEX_WATERING_SCHEMA_ID,
   TABLES_DB,
+
 } from '../db'
 import { sortPlantPhases } from '../plants/helper.ts'
 import { BACKUP_FILENAME_DATA } from './constants.ts'
@@ -250,10 +252,11 @@ export default class ImportCleanRepository {
   }
 
   private convertPlantImage(data: CleanPlantData, plantId: IDBValidKey): Array<CleanPlantImage> {
-    return data.images.map(item => ({
-      plantId,
+    return data.images.map((item, i) => ({
+      [INDEX_PLANT_ID]: plantId,
       data: item.data,
       mime: item.mime,
+      [INDEX_SORT]: i + 1,
     }))
   }
 

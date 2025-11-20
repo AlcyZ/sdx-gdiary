@@ -10,6 +10,7 @@ import {
 import {
   getDb,
   INDEX_PLANT_ID,
+  INDEX_SORT,
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_IMAGES,
@@ -102,6 +103,7 @@ export default class ImportRepository {
           [INDEX_PLANT_ID]: plantImage.plantId,
           id: plantImage.id,
           ...option.value,
+          [INDEX_SORT]: i + 1,
         }
       }
     }

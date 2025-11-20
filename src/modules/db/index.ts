@@ -25,10 +25,12 @@ export const TABLES_DB = [
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
 ] as const
 
+export const INDEX_SORT = 'sortId' as const
 export const INDEX_PLANT_ID = 'plantId' as const
 export const INDEX_FERTILIZER_ID = 'fertilizerId' as const
 export const INDEX_WATERING_SCHEMA_ID = 'wateringSchemaId' as const
 export const INDEX_PLANT_IMAGE_ID = 'plantImageId' as const
+export const INDEX_PLANT_IMAGE_SORT = 'plantSortIdx' as const
 
 const DEFAULT_KEY_PATH = 'id'
 const TYPE_PNG = 'image/png'
@@ -57,6 +59,20 @@ function createTableWithIndices(
   if (opt.exist) {
     indices.forEach(index => opt.value.createIndex(index, index, { unique: false }))
   }
+
+  return opt
+}
+
+function createPlantSubTable(table: string, db: IDBPDatabase) {
+  return createTableWithIndices(table, [INDEX_PLANT_ID], db)
+}
+
+function createPlantImagesTable(db: IDBPDatabase) {
+  const opt = createPlantSubTable(TABLE_PLANT_IMAGES, db)
+  if (!opt.exist)
+    return
+
+  opt.value.createIndex(INDEX_PLANT_IMAGE_SORT, [INDEX_PLANT_ID, INDEX_SORT], { unique: false })
 }
 
 let dbInstance: IDBPDatabase | null = null
@@ -65,14 +81,12 @@ export async function getDb() {
   if (dbInstance !== null)
     return dbInstance
 
-  const createPlantSubTable = (table: string, db: IDBPDatabase) =>
-    createTableWithIndices(table, [INDEX_PLANT_ID], db)
-
   dbInstance = await openDB(DB_NAME, 1, {
     upgrade(db) {
       createTableWithIndices(TABLE_PLANTS, [INDEX_WATERING_SCHEMA_ID, INDEX_PLANT_IMAGE_ID], db)
 
-      createPlantSubTable(TABLE_PLANT_IMAGES, db)
+      createPlantImagesTable(db)
+
       createPlantSubTable(TABLE_PLANT_SUBSTRATES, db)
       createPlantSubTable(TABLE_PLANT_PHASES, db)
       createPlantSubTable(TABLE_PLANT_WATERING_LOGS, db)
