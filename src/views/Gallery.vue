@@ -59,9 +59,11 @@
           class="mt-4"
         >
           <PlantImagesGallery
+            :plant-id="plant.id"
             :images="plant.images"
             :cols="plant.cols"
             :gap="plant.gap"
+            @change="handleChange"
           />
         </div>
       </ICard>
@@ -70,7 +72,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { Column, Gap } from '../components/PlantImagesGallery.vue'
+import type {
+  ChangeEvent,
+  Column,
+  Gap,
+} from '../components/PlantImagesGallery.vue'
 import type { Plant } from '../modules/plants/types'
 import type { Option } from '../types'
 import {
@@ -87,6 +93,7 @@ import ICard from '../components/ui/ICard.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
 import IInputSteps from '../components/ui/IInputSteps.vue'
 import IPopover from '../components/ui/IPopover.vue'
+import { useGallerySortHandler } from '../composables/useGallerySortHandler.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import LayoutDock from '../layouts/LayoutDock.vue'
 import { hasBoolKey, hasNumKey } from '../modules/type_guard'
@@ -117,6 +124,8 @@ const plantStore = usePlantStore()
 const { getPlantName } = usePlant()
 
 const plants = ref<Array<Plant & Config>>([])
+
+const { handle } = useGallerySortHandler(plants)
 
 const plantConfigs = computed((): Array<StorageConfig> => plants.value.map(plant => ({
   id: plant.id,
@@ -203,5 +212,9 @@ function getConfig(key: string): Option<StorageConfig> {
     return none()
 
   return some(result.value)
+}
+
+function handleChange(event: ChangeEvent, plantId: number) {
+  handle(event, plantId)
 }
 </script>

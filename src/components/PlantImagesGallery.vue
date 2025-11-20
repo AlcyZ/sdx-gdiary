@@ -1,51 +1,50 @@
 <template>
-  <div class="grid" :class="gridClass">
-    <PlantImageAsyncSquare
-      v-for="(image, j) in images"
-      :key="j"
-      :image="image"
-      :class="{ 'rounded-sm': hasGap }"
-    />
-  </div>
+  <VueDraggable
+    :model-value="images"
+    item-key="plantImages"
+    class="grid"
+    :class="gridClass"
+    group="plantImages"
+    :move="isOtherList"
+    @update:model-value="updateModelValue"
+    @change="handleChange"
+    @end="handleEnd"
+  >
+    <template #item="{ element: image }">
+      <div>
+        {{ image.id }}
+        <PlantImageAsyncSquare
+          :image="image"
+          :class="{ 'rounded-sm': hasGap }"
+        />
+      </div>
+    </template>
+  </VueDraggable>
 </template>
 
 <script lang="ts" setup>
+import type { ChangeEvent, Column, Gap } from '../modules/gallery/types'
 import type { PlantImage } from '../modules/plants/types'
 import { computed } from 'vue'
+import VueDraggable from 'vuedraggable'
 import PlantImageAsyncSquare from './PlantImageAsyncSquare.vue'
 
-export type Column = '1'
-  | '2'
-  | '3'
-  | '4'
-  | '5'
-  | '6'
-
-export type Gap = '0'
-  | '0.5'
-  | '1'
-  | '1.5'
-  | '2'
-  | '2.5'
-  | '3'
-  | '3.5'
-  | '4'
-  | '5'
-
 interface Props {
+  plantId: number
   images: Array<PlantImage>
   cols?: Column
   gap?: Gap | undefined
 }
 interface Emits {
-
+  change: [event: ChangeEvent, plantId: number]
 }
 
 const {
   cols = '3',
   gap = '0.5',
+  plantId,
 } = defineProps<Props>()
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
 
 const gridClass = computed(() => [
   getCol(cols),
@@ -106,5 +105,22 @@ function getGap(value?: Gap): string | undefined {
     default:
       return undefined
   }
+}
+
+function handleChange(event: ChangeEvent, b) {
+  // console.info('handleChange:', event, b)
+  emit('change', event, plantId)
+}
+function updateModelValue(event: ChangeEvent, b) {
+  // console.info('updateModelValue:', plantId, event, b)
+  // emit('change', event)
+}
+function handleEnd(event: ChangeEvent, b) {
+  // console.info('handleEnd:', plantId, event, b)
+  // emit('change', event)
+}
+
+function isOtherList({ from, to }: { from: HTMLElement, to: HTMLElement }) {
+  // return from !== to
 }
 </script>
