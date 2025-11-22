@@ -72,11 +72,7 @@
 </template>
 
 <script lang="ts" setup>
-import type {
-  ChangeEvent,
-  Column,
-  Gap,
-} from '../components/PlantImagesGallery.vue'
+import type { ChangeEvent, Column, Gap } from '../modules/gallery/types'
 import type { Plant } from '../modules/plants/types'
 import type { Option } from '../types'
 import {

@@ -146,7 +146,7 @@ async function saveAndNew() {
   name.value = ''
 }
 
-async function savePlant(): Promise<Result<void, string>> {
+async function savePlant(): Promise<Result<IDBValidKey, string>> {
   loading.value = true
 
   const r = await validate()
