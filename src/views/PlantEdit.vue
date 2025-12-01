@@ -150,7 +150,10 @@ async function updatePlant() {
   }
 
   toast('Pflanze erfolgreich aktualisiert', 'success')
-  await router.push('/plants')
+  await Promise.all([
+    router.push('/plants'),
+    plantStore.syncData(),
+  ])
 }
 
 onMounted(async () => {

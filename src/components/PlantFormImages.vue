@@ -13,6 +13,7 @@
     <IInputMultiFileUpload
       v-model="images"
       label="Klick hier, um ein oder mehrere Bilder auszuwählen, oder ziehe die Bilder hierher."
+      accept="image/jpeg, image/png, image/webp"
     />
   </ICard>
 </template>

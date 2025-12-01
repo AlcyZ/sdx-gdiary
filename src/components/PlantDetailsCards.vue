@@ -4,6 +4,7 @@
   />
 
   <PlantDetailsCardGallery
+    :key="plant.id"
     :plant
     @select-favorit="markFavorit"
   />
