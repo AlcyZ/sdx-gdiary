@@ -28,9 +28,9 @@
 
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
-import { AirplayIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { usePlant } from '../composables/usePlant.ts'
+import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import IBadge from './ui/IBadge.vue'
 import ICard from './ui/ICard.vue'
@@ -48,6 +48,7 @@ defineEmits<Emits>()
 
 const { getPlantAge, getPlantName } = usePlant()
 const { getPhaseIcon, getPhaseLabel } = usePlantPhase()
+const { getContainerIcon, getContainerLabel } = usePlantContainer()
 
 const plantName = computed(() => getPlantName(plant))
 const plantAge = computed(() => getPlantAge(plant))
@@ -59,14 +60,8 @@ const currentPhase = computed(() => ({
 }))
 
 const substrate = computed(() => ({
-  // Todo: Refactor substrat/container stuff!
-  // substrate: plant.substrate.substrate,
-  // label: getSubstrateLabel(plant.substrate.substrate),
-  // icon: getSubstrateIcon(plant.substrate.substrate),
-  // size: plant.substrate.size,
-  substrate: 'Test',
-  label: 'Dev',
-  icon: AirplayIcon,
-  size: '12L',
+  label: getContainerLabel(plant.container.medium),
+  icon: getContainerIcon(plant.container.medium),
+  size: `${plant.container.volume}L`,
 }))
 </script>

@@ -1,7 +1,7 @@
 import type { HasId, HasTimestamps, WithId } from '../../types'
 import type { type INDEX_PLANT_ID, type INDEX_PLANT_IMAGE_ID, INDEX_SORT, type INDEX_WATERING_SCHEMA_ID } from '../db'
 import type { WateringSchema } from '../nutrients/types'
-import type { PlantContainerMedium } from '../plant_container/types'
+import type { PlantContainer, PlantContainerMedium } from '../plant_container/types'
 
 interface NewPlantContainer {
   container: string
@@ -30,7 +30,6 @@ type EditPlant = Omit<WithId<NewPlant, number>, 'substrate' | 'container'> & {
   [INDEX_WATERING_SCHEMA_ID]?: number
 }
 
-type PlantSubstrate = WithId<NewPlantContainer, number>
 type PlantPhase = WithId<NewPlantPhase, number>
 type PlantImage = HasId<number>
 type PlantImageData = PlantImage & {
@@ -38,15 +37,19 @@ type PlantImageData = PlantImage & {
   mime: string
 }
 
+interface PlantLogs {
+  watering: Array<WateringLog>
+  containers: Array<PlantContainer>
+}
+
 type Plant = {
   strain: string
   name?: string
-  // substrate: PlantSubstrate
-  // Todo: Refactor substrate with container
+  container: PlantContainer
   phase: PlantPhase
   phases: Array<PlantPhase>
   wateringSchema?: WateringSchema
-  wateringLogs: Array<WateringLog>
+  logs: PlantLogs
   images: Array<PlantImage>
   favoritImage?: PlantImage
 } & HasId<number> & HasTimestamps
