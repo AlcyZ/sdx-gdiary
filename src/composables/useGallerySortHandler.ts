@@ -48,7 +48,7 @@ export function useGallerySortHandler(plants: Ref<Array<Plant>>) {
     if (!image)
       return
 
-    newImages.splice(event.moved.newIndex - 1, 0, image)
+    newImages.splice(event.moved.newIndex, 0, image)
     plant.images = newImages
   }
 
