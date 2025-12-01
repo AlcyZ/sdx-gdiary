@@ -16,6 +16,7 @@ import {
   getDb,
   INDEX_PLANT_ID,
   INDEX_PLANT_IMAGE_ID,
+  INDEX_PLANT_IMAGE_SORT,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_SUBSTRATES,
@@ -265,9 +266,14 @@ export default class PlantReadRepository {
     tx: IDBPTransaction<unknown, PlantRepoTxStores>,
   ): Promise<Array<PlantImage>> {
     const store = tx.objectStore(TABLE_PLANT_IMAGES)
-    const index = store.index(INDEX_PLANT_ID)
+    const index = store.index(INDEX_PLANT_IMAGE_SORT)
 
-    const data = await index.getAll(plantRow.id)
+    const range = IDBKeyRange.bound(
+      [plantRow.id, 0],
+      [plantRow.id, Infinity],
+    )
+
+    const data = await index.getAll(range)
     return data.filter(row => isPlantImageRow(row))
       .map((row): PlantImage => ({
         id: row.id,
