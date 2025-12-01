@@ -17,8 +17,7 @@ export default class PlantContainerReadRepository {
     const index = store.index(INDEX_PLANT_ID)
 
     const rows = await index.getAll(plantId)
-
     return rows.filter(isPlantContainerRow)
-      .map(row => omitKeys(row, ['plantId']))
+      .map(row => omitKeys(row, [INDEX_PLANT_ID]))
   }
 }
