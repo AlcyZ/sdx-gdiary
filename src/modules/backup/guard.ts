@@ -1,4 +1,6 @@
+import type { Result } from '../../types'
 import type { ImportExportData } from './types'
+import { err, ok } from '../../util.ts'
 import {
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
@@ -17,6 +19,7 @@ import {
   isPlantSubstrateRow,
   isWateringLogRow,
 } from '../plants/guard.ts'
+import TypeGuardError from '../type_guard/type_guard_error.ts'
 
 type TableKey = keyof ImportExportData
 
@@ -45,6 +48,20 @@ type DynamicTypeGuardedData<
     : ImportExportData[K]
 }
 
+interface NotArrayError {
+  kind: 'not-array'
+  data: unknown
+}
+interface GuardFailedError {
+  kind: 'guard-failed'
+  index: number
+  item: unknown
+}
+
+type ValidationError = (NotArrayError | GuardFailedError) & {
+  table: string
+}
+
 /**
  * Die Standard-Type Guards, die angewendet werden, wenn kein Custom Guard übergeben wird.
  */
@@ -65,8 +82,21 @@ export function isImportExportDataCustom<
   value: unknown,
   config?: Config,
 ): value is DynamicTypeGuardedData<Config> {
+  const result = validateImportExportDataCustom(value, config)
+  if (!result.ok)
+    result.error.log()
+
+  return result.ok
+}
+
+export function validateImportExportDataCustom<
+  Config extends ImportExportGuardConfig,
+>(
+  value: unknown,
+  config?: Config,
+): Result<void, TypeGuardError<Array<ValidationError>>> {
   if (typeof value !== 'object' || value === null) {
-    return false
+    return err(TypeGuardError.isNotObject(value))
   }
 
   const obj = value as Record<string, unknown>
@@ -76,32 +106,58 @@ export function isImportExportDataCustom<
   // Erstelle eine Map der Standard-Guards für einfachen Zugriff
   const defaultGuardMap = new Map<TableKey, (item: any) => item is any>(DEFAULT_GUARDS)
 
-  return DEFAULT_GUARDS.every(([key]) => {
-    const array = obj[key]
+  const errors: Array<ValidationError> = []
 
-    if (!Array.isArray(array)) {
-      return false
+  for (const [table] of DEFAULT_GUARDS) {
+    const data = obj[table]
+
+    if (!Array.isArray(data)) {
+      errors.push({
+        kind: 'not-array',
+        table,
+        data,
+      })
+      continue
     }
 
-    let isRowTypeGuard = defaultGuardMap.get(key) || guardAllow // Standard-Guard als Fallback
-    const customConfig = config?.[key as keyof Config]
+    let isRowTypeGuard = defaultGuardMap.get(table) || guardAllow
+    const customConfig = config?.[table as keyof Config]
 
     if (customConfig === 'allow') {
-      // Wenn 'allow' gesetzt ist, wird der einfache guardAllow verwendet
       isRowTypeGuard = guardAllow
     }
     else if (typeof customConfig === 'function') {
-      // Wenn eine Funktion übergeben wurde, wird sie als Type Guard verwendet
       isRowTypeGuard = customConfig as (item: any) => item is any
     }
 
-    return array.every(isRowTypeGuard)
-  })
+    for (const [index, item] of data.entries()) {
+      if (!isRowTypeGuard(item)) {
+        errors.push({
+          kind: 'guard-failed',
+          table,
+          index,
+          item,
+        })
+      }
+    }
+  }
+
+  return errors.length > 0
+    ? err(TypeGuardError.from(value, errors))
+    : ok()
 }
 
 export function isImportExportData(value: unknown): value is ImportExportData {
+  const result = validateImportExportData(value)
+  if (!result.ok)
+    result.error.log()
+
+  return result.ok
+}
+
+export function validateImportExportData(value: unknown): Result<void, TypeGuardError<Array<ValidationError>>> {
   if (typeof value !== 'object' || value === null) {
-    return false
+    return err(TypeGuardError.isNotObject(value))
   }
 
   const obj = value as Record<string, unknown>
@@ -120,13 +176,33 @@ export function isImportExportData(value: unknown): value is ImportExportData {
     [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, guardAllow],
   ]
 
-  return arrayKeys.every(([key, isRowTypeGuard]) => {
-    const array = obj[key]
+  const errors: Array<ValidationError> = []
 
-    if (!Array.isArray(array)) {
-      return false
+  for (const [table, isRowGuard] of arrayKeys) {
+    const data = obj[table]
+
+    if (!Array.isArray(data)) {
+      errors.push({
+        kind: 'not-array',
+        data,
+        table,
+      })
+      continue
     }
 
-    return array.every(isRowTypeGuard)
-  })
+    for (const [index, item] of data.entries()) {
+      if (!isRowGuard(item)) {
+        errors.push({
+          kind: 'guard-failed',
+          index,
+          table,
+          item,
+        })
+      }
+    }
+  }
+
+  return errors.length > 0
+    ? err(TypeGuardError.from(value, errors))
+    : ok()
 }
