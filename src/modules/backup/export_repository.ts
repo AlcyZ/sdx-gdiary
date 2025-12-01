@@ -62,7 +62,6 @@ export default class ExportRepository {
       const {
         storePlants,
         storePlantImages,
-        storePlantSubstrates,
         storePlantPhases,
         storePlantWateringLogs,
         storeFertilizers,
@@ -73,7 +72,6 @@ export default class ExportRepository {
       const results = await Promise.all([
         storePlants.getAll().then(plants => ({ plants })),
         storePlantImages.getAll().then(plantImages => ({ plantImages })),
-        storePlantSubstrates.getAll().then(plantSubstrates => ({ plantSubstrates })),
         storePlantPhases.getAll().then(plantPhases => ({ plantPhases })),
         storePlantWateringLogs.getAll().then(plantWateringLogs => ({ plantWateringLogs })),
         storeFertilizers.getAll().then(fertilizers => ({ fertilizers })),

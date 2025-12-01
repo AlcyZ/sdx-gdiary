@@ -15,7 +15,6 @@ import {
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
-  TABLE_PLANT_SUBSTRATES,
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANTS,
   TABLE_WATERING_SCHEMAS,
@@ -70,7 +69,6 @@ export default class ImportRepository {
       const {
         storePlants,
         storePlantImages,
-        storePlantSubstrates,
         storePlantPhases,
         storePlantWateringLogs,
         storeFertilizers,
@@ -81,7 +79,6 @@ export default class ImportRepository {
       await Promise.all([
         this.addData(TABLE_PLANTS, storePlants, data),
         this.addData(TABLE_PLANT_IMAGES, storePlantImages, data),
-        this.addData(TABLE_PLANT_SUBSTRATES, storePlantSubstrates, data),
         this.addData(TABLE_PLANT_PHASES, storePlantPhases, data),
         this.addData(TABLE_PLANT_WATERING_LOGS, storePlantWateringLogs, data),
         this.addData(TABLE_FERTILIZERS, storeFertilizers, data),

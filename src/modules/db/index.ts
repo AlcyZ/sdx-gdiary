@@ -8,7 +8,6 @@ export const DB_NAME = 'GrowDiary'
 
 export const TABLE_PLANTS = 'plants' as const
 export const TABLE_PLANT_IMAGES = 'plantImages' as const
-export const TABLE_PLANT_SUBSTRATES = 'plantSubstrates' as const
 export const TABLE_PLANT_PHASES = 'plantPhases' as const
 export const TABLE_PLANT_WATERING_LOGS = 'plantWateringLogs' as const
 export const TABLE_PLANT_CONTAINER_LOGS = 'plantContainerLogs' as const
@@ -18,7 +17,6 @@ export const TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA = 'fertilizerWateringSchema'
 export const TABLES_DB = [
   TABLE_PLANTS,
   TABLE_PLANT_IMAGES,
-  TABLE_PLANT_SUBSTRATES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANT_CONTAINER_LOGS,
@@ -89,7 +87,6 @@ export async function getDb() {
 
       createPlantImagesTable(db)
 
-      createPlantSubTable(TABLE_PLANT_SUBSTRATES, db)
       createPlantSubTable(TABLE_PLANT_PHASES, db)
       createPlantSubTable(TABLE_PLANT_WATERING_LOGS, db)
       createPlantSubTable(TABLE_PLANT_CONTAINER_LOGS, db)

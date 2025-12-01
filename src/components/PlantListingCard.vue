@@ -50,11 +50,12 @@
           {{ plant.lastWatering }}
         </div>
         <div class="flex items-center opacity-60">
-          <component
-            :is="plant.substrate.icon"
-            :size="14"
-          />
-          <span>{{ plant.substrate.label }} | {{ plant.substrate.size }}</span>
+          <!-- Todo: Refactor substrat stuff -->
+          <!--          <component -->
+          <!--            :is="plant.substrate.icon" -->
+          <!--            :size="14" -->
+          <!--          /> -->
+          <!--          <span>{{ plant.substrate.label }} | {{ plant.substrate.size }}</span> -->
         </div>
       </div>
 
@@ -91,7 +92,6 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
-import { usePlantSubstrate } from '../composables/usePlantSubstrate.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import PlantImageAsync from './PlantImageAsync.vue'
@@ -115,7 +115,6 @@ const plantStore = usePlantStore()
 const router = useRouter()
 const { getPlantAge, getFlowerDay, getPlantName, showDeleteConfirmationModal } = usePlant()
 const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
-const { getSubstrateLabel, getSubstrateIcon } = usePlantSubstrate()
 
 const plantsList = computed(
   () => plantStore.plants.map(plant => ({
@@ -129,11 +128,12 @@ const plantsList = computed(
       icon: getPhaseIcon(plant.phase.phase),
       class: getPlantStatusClass(plant),
     },
-    substrate: {
-      label: getSubstrateLabel(plant.substrate.substrate),
-      size: plant.substrate.size,
-      icon: getSubstrateIcon(plant.substrate.substrate),
-    },
+    // Todo: Refactor substrat/container stuff!
+    // substrate: {
+    //   label: getSubstrateLabel(plant.substrate.substrate),
+    //   size: plant.substrate.size,
+    //   icon: getSubstrateIcon(plant.substrate.substrate),
+    // },
     lastWatering: getLastWatering(plant),
     actions: [
       {

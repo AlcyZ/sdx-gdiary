@@ -6,7 +6,6 @@ import {
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
-  TABLE_PLANT_SUBSTRATES,
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANTS,
   TABLE_WATERING_SCHEMAS,
@@ -16,7 +15,6 @@ import {
   isPlantBackupImageRow,
   isPlantPhaseRow,
   isPlantRow,
-  isPlantSubstrateRow,
   isWateringLogRow,
 } from '../plants/guard.ts'
 import TypeGuardError from '../type_guard/type_guard_error.ts'
@@ -29,6 +27,11 @@ type ImportExportGuardConfig = {
   [K in TableKey]?:
     | 'allow'
     | ((item: any) => item is any)
+} & {
+  [key: string]:
+    | 'allow'
+    | ((item: any) => item is any)
+    | undefined
 }
 
 type DynamicTypeGuardedData<
@@ -68,7 +71,6 @@ type ValidationError = (NotArrayError | GuardFailedError) & {
 const DEFAULT_GUARDS: Array<[TableKey, (item: any) => item is any]> = [
   [TABLE_PLANTS, isPlantRow],
   [TABLE_PLANT_IMAGES, isPlantBackupImageRow],
-  [TABLE_PLANT_SUBSTRATES, isPlantSubstrateRow],
   [TABLE_PLANT_PHASES, isPlantPhaseRow],
   [TABLE_PLANT_WATERING_LOGS, isWateringLogRow],
   [TABLE_FERTILIZERS, isFertilizerRow],
@@ -101,14 +103,21 @@ export function validateImportExportDataCustom<
 
   const obj = value as Record<string, unknown>
 
-  const guardAllow = (_v: any): _v is any => true
-
-  // Erstelle eine Map der Standard-Guards für einfachen Zugriff
   const defaultGuardMap = new Map<TableKey, (item: any) => item is any>(DEFAULT_GUARDS)
+  const keysToCheck = new Set<string>(DEFAULT_GUARDS.map(([key]) => key))
+
+  if (config) {
+    for (const key of Object.keys(config)) {
+      keysToCheck.add(key)
+    }
+  }
 
   const errors: Array<ValidationError> = []
+  for (const table of keysToCheck) {
+    if (!(table in obj)) {
+      continue
+    }
 
-  for (const [table] of DEFAULT_GUARDS) {
     const data = obj[table]
 
     if (!Array.isArray(data)) {
@@ -120,7 +129,8 @@ export function validateImportExportDataCustom<
       continue
     }
 
-    let isRowTypeGuard = defaultGuardMap.get(table) || guardAllow
+    const guardAllow = (_v: any): _v is any => true
+    let isRowTypeGuard = defaultGuardMap.get(table as TableKey) || guardAllow
     const customConfig = config?.[table as keyof Config]
 
     if (customConfig === 'allow') {
@@ -167,7 +177,6 @@ export function validateImportExportData(value: unknown): Result<void, TypeGuard
   const arrayKeys: Array<[string, (item: any) => item is any]> = [
     [TABLE_PLANTS, isPlantRow],
     [TABLE_PLANT_IMAGES, isPlantBackupImageRow],
-    [TABLE_PLANT_SUBSTRATES, isPlantSubstrateRow],
     [TABLE_PLANT_PHASES, isPlantPhaseRow],
     [TABLE_PLANT_WATERING_LOGS, isWateringLogRow],
 

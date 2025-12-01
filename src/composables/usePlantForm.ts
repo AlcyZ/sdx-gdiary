@@ -1,6 +1,7 @@
 import type { InferType } from 'yup'
 import type { WateringSchema } from '../modules/nutrients/types'
-import type { NewPlantPhase, PlantPhaseType, PlantSubstrateType } from '../modules/plants/types'
+import type { PlantContainerMedium } from '../modules/plant_container/types'
+import type { NewPlantPhase, PlantPhaseType } from '../modules/plants/types'
 import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
@@ -9,8 +10,9 @@ import * as yup from 'yup'
 const ERR_STRAIN_REQUIRED = 'Die Sorte muss angegeben werden'
 const ERR_STRAIN_MAX = ({ max }: { max: number }) => `Die Sorte dar maximal ${max} Zeichen lang sein`
 
-const ERR_SUBSTRATE_REQUIRED = 'Es muss ein Substrat/Medium ausgewählt werden'
-const ERR_SUBSTRATE_SIZE_REQUIRED = 'Es muss eine Substratgröße angegeben werden'
+const ERR_CONTAINER_REQUIRED = 'Es muss ein Behälter ausgewählt werden'
+const ERR_MEDIUM_REQUIRED = 'Es muss ein Medium ausgewählt werden'
+const ERR_VOLUME_SIZE_REQUIRED = 'Es muss eine Substratgröße angegeben werden'
 const ERR_PHASES_NOT_CHRONOLOGICALLY = 'Die Phasen müssen chronologisch aufeinander folgen'
 
 const phaseSchema = yup.object({
@@ -22,8 +24,10 @@ const phaseSchema = yup.object({
 const plantSchema = yup.object({
   strain: yup.string().required(ERR_STRAIN_REQUIRED).max(64, ERR_STRAIN_MAX),
   name: yup.string().optional(),
-  substrate: yup.string().required(ERR_SUBSTRATE_REQUIRED),
-  substrateSize: yup.string().required(ERR_SUBSTRATE_SIZE_REQUIRED),
+  container: yup.string().required(ERR_CONTAINER_REQUIRED),
+  medium: yup.string().required(ERR_MEDIUM_REQUIRED),
+  volume: yup.number().required(ERR_VOLUME_SIZE_REQUIRED),
+  notes: yup.string().optional(),
   phases: yup.array()
     .of(phaseSchema)
     .test('is-ascending', ERR_PHASES_NOT_CHRONOLOGICALLY, isChronologicallySorted),
@@ -65,8 +69,10 @@ export function usePlantForm() {
     initialValues: {
       strain: '',
       name: '',
-      substrate: '',
-      substrateSize: '',
+      container: '',
+      medium: 'soil',
+      volume: 0.5,
+      notes: undefined,
       phases: [],
     },
   })
@@ -75,8 +81,10 @@ export function usePlantForm() {
 
   const [strain] = defineField('strain')
   const [name] = defineField('name')
-  const [substrate] = defineField<'substrate', PlantSubstrateType>('substrate')
-  const [substrateSize] = defineField<'substrateSize', string>('substrateSize')
+  const [container] = defineField<'container', string>('container')
+  const [medium] = defineField<'medium', PlantContainerMedium>('medium')
+  const [volume] = defineField<'volume', number>('volume')
+  const [notes] = defineField<'notes', string>('notes')
   const [phases] = defineField<'phases', Array<NewPlantPhase>>('phases')
 
   const wateringSchema = ref<WateringSchema | undefined>()
@@ -84,8 +92,10 @@ export function usePlantForm() {
   return {
     strain,
     name,
-    substrate,
-    substrateSize,
+    container,
+    medium,
+    volume,
+    notes,
     phases,
     wateringSchema,
     validate,

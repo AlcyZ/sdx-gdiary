@@ -7,7 +7,6 @@ import {
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
-  TABLE_PLANT_SUBSTRATES,
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANTS,
   TABLE_WATERING_SCHEMAS,
@@ -21,7 +20,6 @@ export default class BackupServiceUtil {
   ) {
     const storePlants = tx.objectStore(TABLE_PLANTS)
     const storePlantImages = tx.objectStore(TABLE_PLANT_IMAGES)
-    const storePlantSubstrates = tx.objectStore(TABLE_PLANT_SUBSTRATES)
     const storePlantPhases = tx.objectStore(TABLE_PLANT_PHASES)
     const storePlantWateringLogs = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
     const storeFertilizers = tx.objectStore(TABLE_FERTILIZERS)
@@ -31,7 +29,6 @@ export default class BackupServiceUtil {
     return {
       storePlants,
       storePlantImages,
-      storePlantSubstrates,
       storePlantPhases,
       storePlantWateringLogs,
       storeFertilizers,

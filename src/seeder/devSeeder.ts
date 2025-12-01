@@ -133,9 +133,10 @@ export default class DevSeeder {
   private async seedPlant() {
     const data: NewPlant = {
       strain: randomArrayElement(STRAINS),
-      substrate: {
-        substrate: 'Erde',
-        size: '12L',
+      container: {
+        container: 'Air Pot',
+        medium: 'soil',
+        volume: 12,
       },
       phases: [
         {

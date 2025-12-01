@@ -16,8 +16,10 @@
       <PlantForm
         v-model:strain="strain"
         v-model:name="name"
-        v-model:substrate="substrate"
-        v-model:substrate-size="substrateSize"
+        v-model:container="container"
+        v-model:medium="medium"
+        v-model:volume="volume"
+        v-model:notes="notes"
         v-model:phases="phases"
         v-model:watering-schema="wateringSchema"
         v-model:images="images"
@@ -97,8 +99,10 @@ const plantName = computed(
 const {
   strain,
   name,
-  substrate,
-  substrateSize,
+  container,
+  medium,
+  volume,
+  notes,
   phases,
   wateringSchema,
   validate,
@@ -122,11 +126,6 @@ async function updatePlant() {
     id: plantStore.plant.id,
     strain: strain.value!,
     name: name.value,
-    substrate: {
-      id: plantStore.plant.substrate.id,
-      substrate: substrate.value,
-      size: substrateSize.value,
-    },
     phases: phases.value,
   }
 
@@ -166,8 +165,11 @@ onMounted(async () => {
     values: {
       strain: plantStore.plant.strain,
       name: plantStore.plant.name,
-      substrate: plantStore.plant.substrate.substrate,
-      substrateSize: plantStore.plant.substrate.size,
+      // Todo: Refactor plant container stuff!
+      container: '',
+      medium: '',
+      volume: 0.5,
+      notes: '',
       phases: plantStore.plant.phases,
     },
   })

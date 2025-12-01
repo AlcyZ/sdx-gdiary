@@ -8,7 +8,6 @@ import type {
   PlantImageData,
   PlantPhaseRow,
   PlantRow,
-  PlantSubstrate,
   WateringLog,
 } from './types'
 import { err, none, ok, some, unwrapOrUndefined } from '../../util.ts'
@@ -19,17 +18,15 @@ import {
   INDEX_PLANT_IMAGE_SORT,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
-  TABLE_PLANT_SUBSTRATES,
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANTS,
 } from '../db'
 import WateringSchemaReadRepository from '../nutrients/watering_schema_read_repository.ts'
-import { isPlantImageRow, isPlantPhaseRow, isPlantRow, isPlantSubstrateRow, isWateringLogRow } from './guard.ts'
+import { isPlantImageRow, isPlantPhaseRow, isPlantRow, isWateringLogRow } from './guard.ts'
 
 type PlantRepoTxStores
   = (typeof TABLE_PLANTS
     | typeof TABLE_PLANT_IMAGES
-    | typeof TABLE_PLANT_SUBSTRATES
     | typeof TABLE_PLANT_PHASES
     | typeof TABLE_PLANT_WATERING_LOGS
   )[]
@@ -53,7 +50,6 @@ export default class PlantReadRepository {
     const tx = this.db.transaction([
       TABLE_PLANTS,
       TABLE_PLANT_IMAGES,
-      TABLE_PLANT_SUBSTRATES,
       TABLE_PLANT_PHASES,
       TABLE_PLANT_WATERING_LOGS,
     ])
@@ -79,7 +75,6 @@ export default class PlantReadRepository {
     const tx = this.db.transaction([
       TABLE_PLANTS,
       TABLE_PLANT_IMAGES,
-      TABLE_PLANT_SUBSTRATES,
       TABLE_PLANT_PHASES,
       TABLE_PLANT_WATERING_LOGS,
     ])
@@ -125,18 +120,16 @@ export default class PlantReadRepository {
     tx: IDBPTransaction<unknown, PlantRepoTxStores>,
   ): Promise<Result<Plant, string>> {
     const [
-      substrateResult,
       phasesResult,
       wateringLogs,
       images,
     ] = await Promise.all([
-      this.fetchSubstrate(plantData, tx),
       this.fetchPhases(plantData, tx),
       this.fetchWateringLogs(plantData, tx),
       this.fetchImages(plantData, tx),
     ])
 
-    if (substrateResult.ok && phasesResult.ok) {
+    if (phasesResult.ok) {
       const phase = this.getCurrentPhase(phasesResult.value)
       const favoritImage = this.getFavoritImage(plantData, images)
 
@@ -146,7 +139,6 @@ export default class PlantReadRepository {
         id: plantData.id,
         strain: plantData.strain,
         name: plantData.name,
-        substrate: substrateResult.value,
         phases: phasesResult.value,
         phase,
         wateringSchema,
@@ -159,8 +151,7 @@ export default class PlantReadRepository {
     }
 
     const message: Array<string> = []
-    if (!substrateResult.ok)
-      message.push(substrateResult.error)
+
     if (!phasesResult.ok)
       message.push(phasesResult.error)
 
@@ -192,27 +183,6 @@ export default class PlantReadRepository {
         date: row.date,
         fertilizers: row.fertilizers,
       }))
-  }
-
-  private async fetchSubstrate(
-    plant: PlantRow,
-    tx: IDBPTransaction<unknown, PlantRepoTxStores>,
-  ): Promise<Result<PlantSubstrate, string>> {
-    const store = tx.objectStore(TABLE_PLANT_SUBSTRATES)
-    const index = store.index(INDEX_PLANT_ID)
-
-    const substrateRow = await index.get(plant.id)
-    if (!isPlantSubstrateRow(substrateRow)) {
-      console.error('[PlantReadRepository.fetchSubstrate] - substrate not found for plant', plant, substrateRow)
-      return err('Pflanze hat kein Substrat zugewiesen')
-    }
-
-    return ok({
-      id: substrateRow.id,
-      substrate: substrateRow.substrate,
-      size: substrateRow.size,
-      info: substrateRow.info,
-    })
   }
 
   private getCurrentPhase(phases: Array<PlantPhaseRow>): PlantPhaseRow {

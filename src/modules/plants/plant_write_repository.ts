@@ -4,12 +4,10 @@ import type {
   EditPlant,
   NewPlant,
   NewPlantPhase,
-  NewPlantSubstrate,
   NewWateringLog,
   Plant,
   PlantImage,
   PlantImageSort,
-  PlantSubstrate,
 } from './types'
 import { safeAsync } from '../../util.ts'
 import {
@@ -19,31 +17,39 @@ import {
   INDEX_PLANT_IMAGE_SORT,
   INDEX_SORT,
   INDEX_WATERING_SCHEMA_ID,
+  TABLE_PLANT_CONTAINER_LOGS,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
-  TABLE_PLANT_SUBSTRATES,
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANTS,
 } from '../db'
+import PlantContainerWriteRepository from '../plant_container/plant_container_write_repository.ts'
 
 export default class PlantWriteRepository {
   private readonly db: IDBPDatabase
+  private readonly containerRepo: PlantContainerWriteRepository
 
-  constructor(db: IDBPDatabase) {
+  constructor(db: IDBPDatabase, containerRepo: PlantContainerWriteRepository) {
     this.db = db
+    this.containerRepo = containerRepo
   }
 
   public static async create() {
     const db = await getDb()
-    return new PlantWriteRepository(db)
+    const containerRepo = PlantContainerWriteRepository.create()
+
+    return new PlantWriteRepository(db, containerRepo)
   }
 
   public async save(plant: NewPlant): AsyncResult<IDBValidKey, unknown> {
     return await safeAsync(async () => {
-      const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
+      const tx = this.db.transaction([
+        TABLE_PLANTS,
+        TABLE_PLANT_PHASES,
+        TABLE_PLANT_CONTAINER_LOGS,
+      ], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
-      const plantSubstrateStore = tx.objectStore(TABLE_PLANT_SUBSTRATES)
       const plantPhaseStore = tx.objectStore(TABLE_PLANT_PHASES)
 
       const plantData: Record<string, string | number | undefined> = {
@@ -56,8 +62,11 @@ export default class PlantWriteRepository {
 
       const plantId = await plantStore.add(plantData)
 
-      await this.insertSubstrate(plantId, plant.substrate, plantSubstrateStore)
-      await this.insertPhases(plantId, plant.phases, plantPhaseStore)
+      await Promise.all([
+        this.containerRepo.saveNewContainer(plantId, plant.container, tx),
+        this.insertPhases(plantId, plant.phases, plantPhaseStore),
+      ])
+
       await tx.done
 
       return plantId
@@ -66,15 +75,13 @@ export default class PlantWriteRepository {
 
   public async update(plant: EditPlant) {
     return await safeAsync(async () => {
-      const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_PHASES], 'readwrite')
+      const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_PHASES], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
-      const substrateStore = tx.objectStore(TABLE_PLANT_SUBSTRATES)
       const phaseStore = tx.objectStore(TABLE_PLANT_PHASES)
 
       await this.deletePlantAssociations(plant.id, TABLE_PLANT_PHASES, tx)
       await this.insertPhases(plant.id, plant.phases, phaseStore)
-      await this.insertSubstrate(plant.id, plant.substrate, substrateStore)
 
       const data: Record<string, string | number | undefined> = {
         strain: plant.strain,
@@ -104,13 +111,11 @@ export default class PlantWriteRepository {
     return await safeAsync(async () => {
       const tx = this.db.transaction([
         TABLE_PLANTS,
-        TABLE_PLANT_SUBSTRATES,
         TABLE_PLANT_PHASES,
         TABLE_PLANT_IMAGES,
       ], 'readwrite')
 
       await Promise.all([
-        this.deletePlantAssociations(plantId, TABLE_PLANT_SUBSTRATES, tx),
         this.deletePlantAssociations(plantId, TABLE_PLANT_PHASES, tx),
         this.deletePlantAssociations(plantId, TABLE_PLANT_IMAGES, tx),
       ])
@@ -225,7 +230,7 @@ export default class PlantWriteRepository {
 
   private async deletePlantAssociations(
     plantId: number,
-    table: typeof TABLE_PLANT_IMAGES | typeof TABLE_PLANT_PHASES | typeof TABLE_PLANT_SUBSTRATES | typeof TABLE_PLANT_IMAGES,
+    table: typeof TABLE_PLANT_IMAGES | typeof TABLE_PLANT_PHASES | typeof TABLE_PLANT_IMAGES,
     tx: IDBPTransaction<unknown, Array<string>, 'readwrite'>,
   ) {
     const store = tx.objectStore(table)
@@ -241,23 +246,6 @@ export default class PlantWriteRepository {
     }
 
     await Promise.all(promises)
-  }
-
-  private async insertSubstrate(
-    plantId: IDBValidKey | number,
-    substrate: PlantSubstrate | NewPlantSubstrate,
-    store: IDBPObjectStore<unknown, string[], typeof TABLE_PLANT_SUBSTRATES, 'readwrite'>,
-  ) {
-    const data: Record<string, string | undefined | number | IDBValidKey> = {
-      substrate: substrate.substrate,
-      size: substrate.size,
-      info: substrate.info,
-      plantId,
-    }
-    if ('id' in substrate) {
-      data.id = substrate.id
-    }
-    await store.put(data)
   }
 
   private async insertPhases(

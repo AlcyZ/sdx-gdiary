@@ -1,6 +1,6 @@
 import type { IDBPDatabase, IDBPObjectStore } from 'idb'
 import type { AsyncResult } from '../../types'
-import type { TABLE_FERTILIZERS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, TABLE_PLANT_IMAGES, TABLE_PLANT_PHASES, TABLE_PLANT_SUBSTRATES, TABLE_PLANT_WATERING_LOGS, TABLE_PLANTS, TABLE_WATERING_SCHEMAS } from '../db'
+import type { TABLE_FERTILIZERS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, TABLE_PLANT_IMAGES, TABLE_PLANT_PHASES, TABLE_PLANT_WATERING_LOGS, TABLE_PLANTS, TABLE_WATERING_SCHEMAS } from '../db'
 import type { PlantPhaseType, PlantRow } from '../plants/types'
 import type BackupServiceUtil from './backup_service_util.ts'
 import type {
@@ -12,7 +12,6 @@ import type {
   CleanPlantImage,
   CleanPlantImageData,
   CleanPlantPhase,
-  CleanPlantSubstrate,
   CleanPlantWateringLog,
   CleanWateringSchema,
   CleanWateringSchemaData,
@@ -79,7 +78,6 @@ export default class ImportCleanRepository {
     const tx = this.db.transaction(TABLES_DB, 'readwrite')
     const {
       storePlants,
-      storePlantSubstrates,
       storePlantPhases,
       storePlantWateringLogs,
       storePlantImages,
@@ -90,7 +88,7 @@ export default class ImportCleanRepository {
 
     await this.importFertilizers(fertilizers, storeFertilizers)
     await this.importSchemas(schemas, storeWateringSchema, storeFertilizerWateringSchema)
-    await this.importPlants(plants, storePlants, storePlantSubstrates, storePlantPhases, storePlantWateringLogs, storePlantImages)
+    await this.importPlants(plants, storePlants, storePlantPhases, storePlantWateringLogs, storePlantImages)
 
     await tx.done
   }
@@ -134,7 +132,6 @@ export default class ImportCleanRepository {
   private async importPlants(
     plants: Array<CleanPlantData>,
     storePlants: IDBPObjectStore<unknown, BackupTxStores, typeof TABLE_PLANTS, 'readwrite'>,
-    storePlantSubstrates: IDBPObjectStore<unknown, BackupTxStores, typeof TABLE_PLANT_SUBSTRATES, 'readwrite'>,
     storePlantPhases: IDBPObjectStore<unknown, BackupTxStores, typeof TABLE_PLANT_PHASES, 'readwrite'>,
     storePlantWateringLogs: IDBPObjectStore<unknown, BackupTxStores, typeof TABLE_PLANT_WATERING_LOGS, 'readwrite'>,
     storePlantImages: IDBPObjectStore<unknown, BackupTxStores, typeof TABLE_PLANT_IMAGES, 'readwrite'>,
@@ -147,9 +144,6 @@ export default class ImportCleanRepository {
       const plantData = this.convertPlantData(plant)
 
       const plantId = await storePlants.add(plantData)
-
-      const substrateData = this.convertPlantSubstrate(plant, plantId)
-      promises.push(storePlantSubstrates.add(substrateData))
 
       promises.push(
         ...this.convertPlantPhases(plant, plantId)
@@ -197,7 +191,6 @@ export default class ImportCleanRepository {
       name: plant.name,
       phases: data.plantPhases.filter(phase => phase.plantId === plant.id)
         .toSorted((lhs, rhs) => sortPlantPhases(lhs.phase, rhs.phase)),
-      substrate: data.plantSubstrates.find(substrate => substrate.plantId === plant.id)!,
       logs: {
         watering: data.plantWateringLogs.filter(log => log.plantId === plant.id)
           .toSorted((lhs, rhs) => lhs.date - rhs.date)
@@ -258,14 +251,6 @@ export default class ImportCleanRepository {
       mime: item.mime,
       [INDEX_SORT]: i + 1,
     }))
-  }
-
-  private convertPlantSubstrate(data: CleanPlantData, plantId: IDBValidKey): CleanPlantSubstrate {
-    return {
-      substrate: data.substrate.substrate,
-      size: data.substrate.size,
-      [INDEX_PLANT_ID]: plantId,
-    }
   }
 
   private convertPlantPhases(data: CleanPlantData, plantId: IDBValidKey): Array<CleanPlantPhase> {

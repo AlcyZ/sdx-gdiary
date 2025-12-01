@@ -40,11 +40,15 @@
       v-model="images"
     />
 
-    <PlantFormSubstrate
-      v-model:substrate="substrate"
-      v-model:size="substrateSize"
-      :substrate-error="errors.substrate"
-      :size-error="errors.substrateSize"
+    <PlantFormContainer
+      v-model:container="container"
+      v-model:medium="medium"
+      v-model:volume="volume"
+      v-model:notes="notes"
+      :container-error="errors.container"
+      :medium-error="errors.medium"
+      :volume-error="errors.volume"
+      :notes-error="errors.notes"
     />
 
     <ICard>
@@ -84,11 +88,12 @@
 
 <script lang="ts" setup>
 import type { WateringSchema } from '../modules/nutrients/types'
+import type { PlantContainerMedium } from '../modules/plant_container/types'
 import type { NewPlantPhase } from '../modules/plants/types'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
+import PlantFormContainer from './PlantFormContainer.vue'
 import PlantFormImages from './PlantFormImages.vue'
 import PlantFormPhase from './PlantFormPhase.vue'
-import PlantFormSubstrate from './PlantFormSubstrate.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInput from './ui/IInput.vue'
@@ -104,8 +109,10 @@ interface Emits {
 interface FormError {
   strain?: string
   name?: string
-  substrate?: string
-  substrateSize?: string
+  container?: string
+  medium?: string
+  volume?: string
+  notes?: string
   phases?: string
 }
 
@@ -116,8 +123,10 @@ const wateringSchemaStore = useWateringSchemaStore()
 
 const strain = defineModel<string>('strain')
 const name = defineModel<string>('name')
-const substrate = defineModel<string>('substrate')
-const substrateSize = defineModel<string>('substrateSize', { required: true })
+const medium = defineModel<PlantContainerMedium>('medium', { required: true })
+const container = defineModel<string>('container', { required: true })
+const volume = defineModel<number>('volume', { required: true })
+const notes = defineModel<string>('notes')
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
 const wateringSchema = defineModel<WateringSchema>('wateringSchema')
 const images = defineModel<FileList>('images')

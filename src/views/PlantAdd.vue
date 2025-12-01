@@ -16,8 +16,10 @@
       <PlantForm
         v-model:strain="strain"
         v-model:name="name"
-        v-model:substrate="substrate"
-        v-model:substrate-size="substrateSize"
+        v-model:container="container"
+        v-model:medium="medium"
+        v-model:volume="volume"
+        v-model:notes="notes"
         v-model:phases="phases"
         v-model:watering-schema="wateringSchema"
         v-model:images="images"
@@ -100,8 +102,10 @@ const loading = ref(false)
 const {
   strain,
   name,
-  substrate,
-  substrateSize,
+  container,
+  medium,
+  volume,
+  notes,
   phases,
   wateringSchema,
   validate,
@@ -159,9 +163,11 @@ async function savePlant(): Promise<Result<IDBValidKey, string>> {
   const newPlant: NewPlant = {
     strain: strain.value!,
     name: name.value,
-    substrate: {
-      substrate: substrate.value,
-      size: substrateSize.value!,
+    container: {
+      container: container.value,
+      medium: medium.value,
+      volume: volume.value,
+      notes: notes.value,
     },
     phases: phases.value,
     [INDEX_WATERING_SCHEMA_ID]: wateringSchema.value?.id,
