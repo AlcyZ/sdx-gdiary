@@ -74,6 +74,11 @@ interface PlantImageRow {
   [INDEX_SORT]: number
 }
 
+interface PlantImageSort {
+  [INDEX_PLANT_ID]: number
+  images: Array<HasId<number>>
+}
+
 interface HasPlantId { [INDEX_PLANT_ID]: number }
 type WithPlantId<T> = WithId<T, number> & HasPlantId
 

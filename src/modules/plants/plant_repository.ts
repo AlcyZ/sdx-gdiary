@@ -1,5 +1,14 @@
 import type { AsyncResult, Option, Result } from '../../types'
-import type { EditPlant, GetPlantError, NewPlant, NewWateringLog, Plant, PlantImage, PlantImageData } from './types'
+import type {
+  EditPlant,
+  GetPlantError,
+  NewPlant,
+  NewWateringLog,
+  Plant,
+  PlantImage,
+  PlantImageData,
+  PlantImageSort,
+} from './types'
 import { err, ok } from '../../util.ts'
 import PlantReadRepository from './plant_read_repository.ts'
 import PlantWriteRepository from './plant_write_repository.ts'
@@ -68,6 +77,10 @@ export default class PlantRepository {
 
     const errors = results.filter(result => !result.ok).map(result => result.error)
     return err(errors)
+  }
+
+  public async sortPlantImages(data: Array<PlantImageSort>): AsyncResult<void, DOMException> {
+    return this.write.sortPlantImages(data)
   }
 
   public async markFavorit(plant: Plant, image: PlantImage): Promise<Result<void, unknown>> {

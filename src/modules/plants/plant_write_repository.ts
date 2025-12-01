@@ -1,4 +1,4 @@
-import type { IDBPDatabase, IDBPObjectStore, IDBPTransaction } from 'idb'
+import type { IDBPDatabase, IDBPIndex, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { AsyncResult, Result } from '../../types'
 import type {
   EditPlant,
@@ -8,6 +8,7 @@ import type {
   NewWateringLog,
   Plant,
   PlantImage,
+  PlantImageSort,
   PlantSubstrate,
 } from './types'
 import { safeAsync } from '../../util.ts'
@@ -147,6 +148,7 @@ export default class PlantWriteRepository {
       const tx = this.db.transaction(TABLE_PLANT_IMAGES, 'readwrite')
       const store = tx.objectStore(TABLE_PLANT_IMAGES)
       await store.add(dataset)
+      await tx.done
     }, { method: 'PlantWriteRepository.uploadPlantImage', message: 'Failed to upload plant' })
   }
 
@@ -163,6 +165,62 @@ export default class PlantWriteRepository {
       await store.put(row)
       await tx.done
     })
+  }
+
+  public async sortPlantImages(data: Array<PlantImageSort>): AsyncResult<void, DOMException> {
+    return safeAsync(async () => {
+      const tx = this.db.transaction([TABLE_PLANT_IMAGES], 'readwrite')
+      const store = tx.objectStore(TABLE_PLANT_IMAGES)
+      const index = store.index(INDEX_PLANT_ID)
+
+      const records: Record<number, any> = {}
+
+      for (const dataset of data) {
+        for (const [index, image] of dataset.images.entries()) {
+          const record = await store.get(image.id)
+
+          if (!Array.isArray(records[dataset.plantId]))
+            records[dataset.plantId] = []
+
+          records[dataset.plantId].push({
+            ...record,
+            [INDEX_PLANT_ID]: dataset.plantId,
+            [INDEX_SORT]: index + 1,
+          })
+        }
+      }
+
+      for (const [plantId, images] of Object.entries(records)) {
+        await this.deleteImagesByPlantId(plantId, index)
+
+        await Promise.all(
+          images.map((record: unknown) => store.put(record)),
+        )
+      }
+
+      await tx.done
+    })
+  }
+
+  private async deleteImagesByPlantId(
+    plantId: string | number,
+    index: IDBPIndex<
+      unknown,
+      (typeof TABLE_PLANT_IMAGES)[],
+      typeof TABLE_PLANT_IMAGES,
+      typeof INDEX_PLANT_ID,
+      'readwrite'
+    >,
+  ) {
+    const range = IDBKeyRange.only(plantId)
+
+    let cursor = await index.openCursor(range)
+    if (cursor) {
+      do {
+        cursor.delete()
+        cursor = await cursor.continue()
+      } while (cursor)
+    }
   }
 
   private async deletePlantAssociations(
