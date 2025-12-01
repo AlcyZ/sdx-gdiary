@@ -8,13 +8,10 @@
     @change="handleChange"
   >
     <template #item="{ element: image }">
-      <div>
-        {{ image.id }}
-        <PlantImageAsyncSquare
-          :image="image"
-          :class="{ 'rounded-sm': hasGap }"
-        />
-      </div>
+      <PlantImageAsyncSquare
+        :image="image"
+        :class="{ 'rounded-sm': hasGap }"
+      />
     </template>
   </VueDraggable>
 </template>

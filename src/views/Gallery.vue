@@ -68,29 +68,42 @@
         </div>
       </ICard>
     </div>
+
+    <IFab
+      ref="fabBtn"
+      class="mb-14"
+      :icon="IconMore"
+      :disabled="!isDirty"
+      :actions="fabActions"
+    />
   </LayoutDock>
 </template>
 
 <script lang="ts" setup>
 import type { ChangeEvent, Column, Gap } from '../modules/gallery/types'
 import type { Plant } from '../modules/plants/types'
-import type { Option } from '../types'
+import type { FabAction, Option } from '../types'
 import {
   Grid2X2Check as IconCol,
   LayoutGrid as IconGap,
   ChevronUp as IconHide,
+  Ellipsis as IconMore,
+  ImageDown as IconSave,
   Settings as IconSettings,
   ChevronDown as IconShow,
+  Undo as IconUndo,
 } from 'lucide-vue-next'
 import { computed, onMounted, ref, watch } from 'vue'
 import PlantImagesGallery from '../components/PlantImagesGallery.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
+import IFab from '../components/ui/IFab.vue'
 import IInputSteps from '../components/ui/IInputSteps.vue'
 import IPopover from '../components/ui/IPopover.vue'
 import { useGallerySortHandler } from '../composables/useGallerySortHandler.ts'
 import { usePlant } from '../composables/usePlant.ts'
+import { useToast } from '../composables/useToast.ts'
 import LayoutDock from '../layouts/LayoutDock.vue'
 import { hasBoolKey, hasNumKey } from '../modules/type_guard'
 import { usePlantStore } from '../stores/plantStore.ts'
@@ -118,8 +131,10 @@ defineEmits<Emits>()
 
 const plantStore = usePlantStore()
 const { getPlantName } = usePlant()
+const { toast } = useToast()
 
 const plants = ref<Array<Plant & Config>>([])
+const isDirty = ref(false)
 
 const { handle } = useGallerySortHandler(plants)
 
@@ -212,5 +227,33 @@ function getConfig(key: string): Option<StorageConfig> {
 
 function handleChange(event: ChangeEvent, plantId: number) {
   handle(event, plantId)
+  isDirty.value = true
 }
+
+const fabBtn = ref<InstanceType<typeof IFab> | undefined>()
+
+function resetGallery(): void {
+  loadPlants(plantStore.plants)
+  isDirty.value = false
+  fabBtn.value?.blur()
+}
+
+const fabActions: Array<FabAction> = [
+  {
+    icon: IconUndo,
+    onClick: resetGallery,
+  },
+  {
+    icon: IconSave,
+    onClick: async () => {
+      const result = await plantStore.sortPlantImages(plants.value)
+
+      result.ok
+        ? toast('Bilder sortiert', 'success')
+        : toast('Es ist ein Fehler beim sortieren der Bilder aufgetreten', 'error')
+
+      resetGallery()
+    },
+  },
+]
 </script>

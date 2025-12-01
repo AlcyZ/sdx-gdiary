@@ -1,4 +1,5 @@
-import type { Plant, PlantImage } from '../modules/plants/types'
+import type PlantRepository from '../modules/plants/plant_repository.ts'
+import type { Plant, PlantImage, PlantImageSort } from '../modules/plants/types'
 import { defineStore } from 'pinia'
 import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -6,7 +7,7 @@ import { REPO_PLANT } from '../di_keys.ts'
 import { err } from '../util.ts'
 
 export const usePlantStore = defineStore('plant', () => {
-  const plantRepo = inject(REPO_PLANT)
+  const plantRepo = inject(REPO_PLANT) as PlantRepository
 
   const route = useRoute()
 
@@ -47,6 +48,19 @@ export const usePlantStore = defineStore('plant', () => {
     return result
   }
 
+  const sortPlantImages = async (plants: Array<Plant>) => {
+    const data: Array<PlantImageSort> = plants.map((plant): PlantImageSort => ({
+      plantId: plant.id,
+      images: plant.images.map(image => ({ id: image.id })),
+    }))
+
+    const result = await plantRepo.sortPlantImages(data)
+    if (result.ok)
+      await syncData()
+
+    return result
+  }
+
   const deleteWateringLog = async (logId: number) => {
     const result = await plantRepo?.deleteLog(logId) || err(undefined)
     if (result.ok)
@@ -75,6 +89,7 @@ export const usePlantStore = defineStore('plant', () => {
     syncPlants,
     syncData,
     uploadPlantImage,
+    sortPlantImages,
     markFavorit,
     deleteWateringLog,
   }
