@@ -11,6 +11,7 @@ export const TABLE_PLANT_IMAGES = 'plantImages' as const
 export const TABLE_PLANT_SUBSTRATES = 'plantSubstrates' as const
 export const TABLE_PLANT_PHASES = 'plantPhases' as const
 export const TABLE_PLANT_WATERING_LOGS = 'plantWateringLogs' as const
+export const TABLE_PLANT_CONTAINER_LOGS = 'plantContainerLogs' as const
 export const TABLE_FERTILIZERS = 'fertilizers' as const
 export const TABLE_WATERING_SCHEMAS = 'wateringSchema' as const
 export const TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA = 'fertilizerWateringSchema' as const
@@ -20,6 +21,7 @@ export const TABLES_DB = [
   TABLE_PLANT_SUBSTRATES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_WATERING_LOGS,
+  TABLE_PLANT_CONTAINER_LOGS,
   TABLE_FERTILIZERS,
   TABLE_WATERING_SCHEMAS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
@@ -90,6 +92,7 @@ export async function getDb() {
       createPlantSubTable(TABLE_PLANT_SUBSTRATES, db)
       createPlantSubTable(TABLE_PLANT_PHASES, db)
       createPlantSubTable(TABLE_PLANT_WATERING_LOGS, db)
+      createPlantSubTable(TABLE_PLANT_CONTAINER_LOGS, db)
 
       createTable(TABLE_FERTILIZERS, db)
       createTable(TABLE_WATERING_SCHEMAS, db)
