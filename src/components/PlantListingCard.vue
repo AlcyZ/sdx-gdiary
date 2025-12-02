@@ -172,11 +172,11 @@ function getPlantStatusClass(plant: Plant): string {
 }
 
 function getLastWatering(plant: Plant): string {
-  if (plant.wateringLogs.length === 0) {
+  if (plant.logs.watering.length === 0) {
     return 'Kein Protokoll'
   }
 
-  const latestLog = plant.wateringLogs.reduce((lhs, rhs) => lhs.date > rhs.date ? lhs : rhs)
+  const latestLog = plant.logs.watering.reduce((lhs, rhs) => lhs.date > rhs.date ? lhs : rhs)
   const logDate = dayjs(new Date(latestLog.date)).format('DD.MM.YYYY')
 
   return `Zuletzt gegossen: ${logDate}`

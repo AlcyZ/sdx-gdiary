@@ -116,7 +116,7 @@ function getDayAndTime(timestamp: number) {
 }
 
 const sortedWateringLogs = computed(
-  () => [...plant?.wateringLogs || []].sort((lhs, rhs) => rhs.date - lhs.date).map(log => ({
+  () => [...plant?.logs.watering || []].sort((lhs, rhs) => rhs.date - lhs.date).map(log => ({
     ...log,
     ...getDayAndTime(log.date),
   })),
