@@ -21,6 +21,10 @@
     :plant
   />
 
+  <PlantDetailsCardContainers
+    :plant
+  />
+
   <PlantDetailsCardActionBack />
 </template>
 
@@ -31,6 +35,7 @@ import { useToast } from '../composables/useToast.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import PlantDetailsCardActionBack from './PlantDetailsCardActionBack.vue'
 import PlantDetailsCardActionWatering from './PlantDetailsCardActionWatering.vue'
+import PlantDetailsCardContainers from './PlantDetailsCardContainers.vue'
 import PlantDetailsCardGallery from './PlantDetailsCardGallery.vue'
 import PlantDetailsCardHeader from './PlantDetailsCardHeader.vue'
 import PlantDetailsCardPhases from './PlantDetailsCardPhases.vue'
