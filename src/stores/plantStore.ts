@@ -62,7 +62,15 @@ export const usePlantStore = defineStore('plant', () => {
   }
 
   const deleteWateringLog = async (logId: number) => {
-    const result = await plantRepo?.deleteLog(logId) || err(undefined)
+    const result = await plantRepo.deleteWateringLog(logId)
+    if (result.ok)
+      await syncData()
+
+    return result
+  }
+
+  const deleteContainer = async (containerId: number) => {
+    const result = await plantRepo.deleteContainer(containerId)
     if (result.ok)
       await syncData()
 
@@ -104,5 +112,6 @@ export const usePlantStore = defineStore('plant', () => {
     markFavorit,
     addContainer,
     deleteWateringLog,
+    deleteContainer,
   }
 })

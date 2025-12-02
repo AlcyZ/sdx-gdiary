@@ -91,7 +91,6 @@ import { useModal } from '../composables/useModal.ts'
 import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { useToast } from '../composables/useToast.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
-import { err } from '../util.ts'
 import IBadge from './ui/IBadge.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
@@ -139,31 +138,29 @@ const sortedContainers = computed(
   })),
 )
 
-async function openDeleteContainerLogModal(log: PlantContainer) {
-  const { day, time } = getDayAndTime(log.timestamp)
-  const text = `Bist du sicher, dass du den Gießeintrag vom ${day} um ${time} Uhr löschen möchtest?`
+async function openDeleteContainerLogModal(container: PlantContainer) {
+  const text = `Bist du sicher, dass du den Behälter löschen möchtest?`
 
-  const deleteWateringLog = async () => {
-    // const result = await plantStore.deleteWateringLog(log.id)
-    const result = err()
+  const deleteContainer = async () => {
+    const result = await plantStore.deleteContainer(container.id)
 
     result.ok
-      ? toast('Gießeintrag erfolgreich gelöscht', 'success')
-      : toast('Es ist ein Fehler beim löschen des Gießeintrags aufgetreten', 'error')
+      ? toast('Behälter erfolgreich gelöscht', 'success')
+      : toast('Es ist ein Fehler beim löschen des Behälter aufgetreten', 'error')
 
     if (!result.ok)
-      console.error('[PlantDetailsCardWatering.deleteWateringLog] error:', result.error)
+      console.error('[PlantDetailsCardContainer.deleteContainer] error:', result.error)
   }
 
   showConfirmationModal({
-    title: 'Gießeintrag löschen?',
+    title: 'Behälter löschen?',
     text,
     actions: [
       {
         label: 'Löschen',
         icon: IconDelete,
         class: 'btn-error text-base-100',
-        onClick: deleteWateringLog,
+        onClick: deleteContainer,
       },
     ],
   })

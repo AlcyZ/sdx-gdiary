@@ -82,8 +82,12 @@ export default class PlantRepository {
     return await this.write.delete(plantId)
   }
 
-  public async deleteLog(logId: number): Promise<Result<void, unknown>> {
-    return this.write.deleteLog(logId)
+  public async deleteWateringLog(logId: number): AsyncResult<void, unknown> {
+    return this.write.deleteWateringLog(logId)
+  }
+
+  public async deleteContainer(containerId: number): AsyncResult<void, unknown> {
+    return this.write.deleteContainer(containerId)
   }
 
   public async uploadPlantImage(plant: Plant, image: File): Promise<Result<void, DOMException>> {
