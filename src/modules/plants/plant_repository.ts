@@ -2,6 +2,7 @@ import type { IDBPDatabase } from 'idb'
 import type { AsyncResult, Option, Result } from '../../types'
 import type {
   EditPlant,
+  EditPlantContainer,
   GetPlantError,
   NewPlant,
   NewPlantContainer,
@@ -88,6 +89,14 @@ export default class PlantRepository {
 
   public async deleteContainer(containerId: number): AsyncResult<void, unknown> {
     return this.write.deleteContainer(containerId)
+  }
+
+  public async updateContainer(plantId: number, container: EditPlantContainer): AsyncResult<void, DOMException> {
+    const tx = this.db.transaction([TABLE_PLANT_CONTAINER_LOGS], 'readwrite')
+    const result = this.containerWriteRepo.updateContainer(plantId, container, tx)
+
+    await tx.done
+    return result
   }
 
   public async uploadPlantImage(plant: Plant, image: File): Promise<Result<void, DOMException>> {

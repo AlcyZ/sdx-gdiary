@@ -77,7 +77,7 @@
 
 <script lang="ts" setup>
 import type { PlantContainer } from '../modules/plant_container/types'
-import type { Plant } from '../modules/plants/types'
+import type { EditPlantContainer, Plant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
   Package as IconContainer,
@@ -91,6 +91,7 @@ import { useModal } from '../composables/useModal.ts'
 import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { useToast } from '../composables/useToast.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
+import PlantDetailsModalContainerEdit from './PlantDetailsModalContainerEdit.vue'
 import IBadge from './ui/IBadge.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
@@ -108,7 +109,7 @@ const { plant } = defineProps<Props>()
 defineEmits<Emits>()
 
 const plantStore = usePlantStore()
-const { showConfirmationModal } = useModal()
+const { showModal, showConfirmationModal } = useModal()
 const { toast } = useToast()
 const { getContainerIcon, getContainerLabel } = usePlantContainer()
 
@@ -120,25 +121,40 @@ function getDayAndTime(timestamp: number) {
 }
 
 const sortedContainers = computed(
-  () => [...plant?.logs.containers || []].sort((lhs, rhs) => rhs.timestamp - lhs.timestamp).map(log => ({
-    ...log,
-    ...getDayAndTime(log.timestamp),
+  () => [...plant?.logs.containers || []].sort((lhs, rhs) => rhs.timestamp - lhs.timestamp).map(container => ({
+    ...container,
+    ...getDayAndTime(container.timestamp),
     actions: [
       {
         label: 'Bearbeiten',
         icon: IconEdit,
-        onClick: () => console.log('todo: edit container'),
+        onClick: async () => await openEditContainerModal(container),
       },
       {
         label: 'Löschen',
         icon: IconDelete,
-        onClick: async () => await openDeleteContainerLogModal(log),
+        onClick: async () => await openDeleteContainerModal(container),
       },
     ],
   })),
 )
 
-async function openDeleteContainerLogModal(container: PlantContainer) {
+async function openEditContainerModal(container: PlantContainer) {
+  const { close } = showModal(PlantDetailsModalContainerEdit, {
+    container,
+    onEdit: async (data: EditPlantContainer) => {
+      const result = await plantStore.updateContainer(data)
+
+      result.ok
+        ? toast('Behälter erfolgreich bearbeitet', 'success')
+        : toast('Es ist ein Fehler beim bearbeiten des Behälters aufgetreten', 'error')
+
+      await close()
+    },
+  })
+}
+
+async function openDeleteContainerModal(container: PlantContainer) {
   const text = `Bist du sicher, dass du den Behälter löschen möchtest?`
 
   const deleteContainer = async () => {
