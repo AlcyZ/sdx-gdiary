@@ -63,6 +63,7 @@ export function usePlant() {
     showConfirmationModal({
       title: 'Pflanze löschen',
       text,
+      onEnter: async () => await deleteAndSync(),
       actions: [{
         label: 'Löschen',
         onClick: async () => await deleteAndSync(),

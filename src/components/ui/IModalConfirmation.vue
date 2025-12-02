@@ -11,7 +11,7 @@
     </p>
 
     <template #action>
-      <form method="dialog">
+      <form method="dialog" @keyup.enter="handleSubmit">
         <div tabindex="-1" class="absolute w-0 h-0 overflow-hidden" />
         <button class="btn">
           <IconBack />
@@ -42,6 +42,7 @@ import IModal from './IModal.vue'
 interface Props {
   title: string
   text?: string
+  onEnter?: () => any
   actions: Array<ShowConfirmationModalAction>
 }
 
@@ -49,10 +50,17 @@ interface Emits {
   close: []
 }
 
-defineProps<Props>()
+const { onEnter } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const dialog = ref<HTMLDialogElement | null>(null)
+
+function handleSubmit() {
+  if (onEnter) {
+    onEnter()
+    emit('close')
+  }
+}
 
 onMounted(() => {
   if (!dialog.value) {
