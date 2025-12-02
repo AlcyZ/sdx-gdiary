@@ -49,6 +49,7 @@
       :medium-error="errors.medium"
       :volume-error="errors.volume"
       :notes-error="errors.notes"
+      :show-warning="isEdit"
     />
 
     <ICard>
@@ -101,6 +102,7 @@ import ISelect from './ui/ISelect.vue'
 
 interface Props {
   errors: FormError
+  isEdit?: boolean
 }
 interface Emits {
   submit: []

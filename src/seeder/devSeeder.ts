@@ -137,6 +137,7 @@ export default class DevSeeder {
         container: 'Air Pot',
         medium: 'soil',
         volume: 12,
+        datetime: dayjs().format('YYYY-MM-DDTHH:mm'),
       },
       phases: [
         {

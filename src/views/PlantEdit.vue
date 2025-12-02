@@ -24,6 +24,7 @@
         v-model:watering-schema="wateringSchema"
         v-model:images="images"
         :errors="errors"
+        is-edit
       />
 
       <template #actions>
@@ -127,6 +128,14 @@ async function updatePlant() {
     strain: strain.value!,
     name: name.value,
     phases: phases.value,
+    container: {
+      id: plantStore.plant.container.id,
+      medium: medium.value,
+      container: container.value,
+      volume: volume.value,
+      notes: notes.value,
+      date: Date.now(), // Todo: Replace with form field
+    },
   }
 
   if (wateringSchema.value) {
@@ -165,11 +174,10 @@ onMounted(async () => {
     values: {
       strain: plantStore.plant.strain,
       name: plantStore.plant.name,
-      // Todo: Refactor plant container stuff!
-      container: '',
-      medium: '',
-      volume: 0.5,
-      notes: '',
+      container: plantStore.plant.container.container,
+      medium: plantStore.plant.container.medium,
+      volume: plantStore.plant.container.volume,
+      notes: plantStore.plant.container.notes,
       phases: plantStore.plant.phases,
     },
   })

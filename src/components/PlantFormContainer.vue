@@ -5,8 +5,24 @@
     </ICardTitle>
 
     <p class="text-xs text-gray-400 my-3">
-      Definiere das Medium, den Container, doe Größe in Liter sowie eine optionale Info.
+      Definiere das Medium, den Container, die Größe in Liter sowie eine optionale Info.
     </p>
+
+    <IAlert
+      v-if="showWarning"
+      vertical
+      soft
+      variant="warning"
+      class="mb-3"
+    >
+      <IconAlert />
+      <p class="text-xs">
+        <span class="font-semibold">Wichtig:</span>
+        Verwende die <span class="font-semibold">Bearbeiten-Funktion</span> nur, um Tippfehler oder Details des
+        aktuellen Behälters zu korrigieren.<br>
+        Um einen neuen Behälter zu verwenden (Umtopfen), nutze bitte die Funktion <span class="font-semibold">'Neuer Behälter hinzufügen'</span>.
+      </p>
+    </IAlert>
 
     <div>
       <h4>Medium wählen</h4>
@@ -74,6 +90,10 @@
 
 <script lang="ts" setup>
 import type { PlantContainerMedium } from '../modules/plant_container/types'
+import {
+  AlertTriangle as IconAlert,
+} from 'lucide-vue-next'
+import IAlert from './ui/IAlert.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInput from './ui/IInput.vue'
@@ -83,7 +103,9 @@ interface Props {
   containerError?: string
   volumeError?: string
   notesError?: string
+  showWarning?: boolean
 }
+
 interface Emits {
 
 }
