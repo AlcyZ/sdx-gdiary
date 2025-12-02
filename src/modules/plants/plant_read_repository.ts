@@ -158,7 +158,6 @@ export default class PlantReadRepository {
           watering: wateringLogs,
           containers,
         },
-        wateringLogs,
         images,
         favoritImage,
         createdAt: 'todo',

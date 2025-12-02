@@ -10,6 +10,8 @@ interface NewPlantContainer {
   notes?: string
 }
 
+type PlantContainer = WithId<NewPlantContainer, number>
+
 interface NewPlantPhase {
   phase: PlantPhaseType
   startedAt: string
@@ -24,9 +26,8 @@ interface NewPlant {
   [INDEX_WATERING_SCHEMA_ID]?: number
 }
 
-type EditPlant = Omit<WithId<NewPlant, number>, 'substrate' | 'container'> & {
-  // substrate: PlantSubstrate
-  // Todo: Refactor plant container stuff
+type EditPlant = Omit<WithId<NewPlant, number>, 'container'> & {
+  container: PlantContainer
   [INDEX_WATERING_SCHEMA_ID]?: number
 }
 
