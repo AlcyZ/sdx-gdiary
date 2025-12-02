@@ -1,6 +1,7 @@
 import type { IDBPDatabase, IDBPTransaction } from 'idb'
 import type { Option, Result } from '../../types'
 import type { WateringSchema } from '../nutrients/types'
+import type { PlantContainer } from '../plant_container/types'
 import type {
   GetPlantError,
   Plant,
@@ -12,7 +13,6 @@ import type {
 } from './types'
 import { err, none, ok, some, unwrapOrUndefined } from '../../util.ts'
 import {
-  getDb,
   INDEX_PLANT_ID,
   INDEX_PLANT_IMAGE_ID,
   INDEX_PLANT_IMAGE_SORT,
@@ -45,11 +45,8 @@ export default class PlantReadRepository {
     this.containerRepo = containerRepo
   }
 
-  public static async create() {
-    const [db, wateringRepo] = await Promise.all([
-      getDb(),
-      WateringSchemaReadRepository.create(),
-    ])
+  public static async create(db: IDBPDatabase) {
+    const wateringRepo = await WateringSchemaReadRepository.create()
     const containerRepo = PlantContainerReadRepository.create()
 
     return new PlantReadRepository(db, wateringRepo, containerRepo)
@@ -144,6 +141,7 @@ export default class PlantReadRepository {
 
     if (phasesResult.ok) {
       const phase = this.getCurrentPhase(phasesResult.value)
+      const container = this.getCurrentContainer(containers)
       const favoritImage = this.getFavoritImage(plantData, images)
 
       const wateringSchema = await this.fetchPlantsWateringSchema(plantData)
@@ -152,7 +150,7 @@ export default class PlantReadRepository {
         id: plantData.id,
         strain: plantData.strain,
         name: plantData.name,
-        container: containers[0]!, // Todo: Improve!
+        container,
         phases: phasesResult.value,
         phase,
         wateringSchema,
@@ -201,6 +199,10 @@ export default class PlantReadRepository {
         date: row.date,
         fertilizers: row.fertilizers,
       }))
+  }
+
+  private getCurrentContainer(containers: Array<PlantContainer>): PlantContainer {
+    return containers.reduce((latest, current) => current.date > latest.date ? current : latest)
   }
 
   private getCurrentPhase(phases: Array<PlantPhaseRow>): PlantPhaseRow {
