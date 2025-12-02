@@ -1,8 +1,10 @@
+import type { IDBPDatabase } from 'idb'
 import type { AsyncResult, Option, Result } from '../../types'
 import type {
   EditPlant,
   GetPlantError,
   NewPlant,
+  NewPlantContainer,
   NewWateringLog,
   Plant,
   PlantImage,
@@ -10,25 +12,38 @@ import type {
   PlantImageSort,
 } from './types'
 import { err, ok } from '../../util.ts'
+import { getDb, TABLE_PLANT_CONTAINER_LOGS } from '../db'
+import PlantContainerWriteRepository from '../plant_container/plant_container_write_repository.ts'
 import PlantReadRepository from './plant_read_repository.ts'
 import PlantWriteRepository from './plant_write_repository.ts'
 
 export default class PlantRepository {
+  private readonly db: IDBPDatabase
   private readonly read: PlantReadRepository
   private readonly write: PlantWriteRepository
+  private readonly containerWriteRepo: PlantContainerWriteRepository
 
-  constructor(read: PlantReadRepository, write: PlantWriteRepository) {
+  constructor(
+    db: IDBPDatabase,
+    read: PlantReadRepository,
+    write: PlantWriteRepository,
+    containerWriteRepo: PlantContainerWriteRepository,
+  ) {
+    this.db = db
     this.read = read
     this.write = write
+    this.containerWriteRepo = containerWriteRepo
   }
 
   public static async create() {
+    const db = await getDb()
+    const containerWriteRepo = PlantContainerWriteRepository.create()
     const [read, write] = await Promise.all([
-      PlantReadRepository.create(),
-      PlantWriteRepository.create(),
+      PlantReadRepository.create(db),
+      PlantWriteRepository.create(db, containerWriteRepo),
     ])
 
-    return new PlantRepository(read, write)
+    return new PlantRepository(db, read, write, containerWriteRepo)
   }
 
   public async save(plant: NewPlant): Promise<Result<IDBValidKey, unknown>> {
@@ -37,6 +52,14 @@ export default class PlantRepository {
 
   public async update(plant: EditPlant): Promise<Result<void, unknown>> {
     return this.write.update(plant)
+  }
+
+  public async addContainer(plantId: IDBValidKey, container: NewPlantContainer): AsyncResult<void, DOMException> {
+    const tx = this.db.transaction([TABLE_PLANT_CONTAINER_LOGS], 'readwrite')
+    const result = this.containerWriteRepo.saveNewContainer(plantId, container, tx)
+
+    await tx.done
+    return result
   }
 
   public async pourPlant(data: NewWateringLog): Promise<Result<void, unknown>> {

@@ -1,5 +1,6 @@
 import type { IDBPDatabase, IDBPIndex, IDBPObjectStore, IDBPTransaction } from 'idb'
 import type { AsyncResult, Result } from '../../types'
+import type PlantContainerWriteRepository from '../plant_container/plant_container_write_repository.ts'
 import type {
   EditPlant,
   NewPlant,
@@ -11,7 +12,6 @@ import type {
 } from './types'
 import { safeAsync } from '../../util.ts'
 import {
-  getDb,
   INDEX_PLANT_ID,
   INDEX_PLANT_IMAGE_ID,
   INDEX_PLANT_IMAGE_SORT,
@@ -23,7 +23,6 @@ import {
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANTS,
 } from '../db'
-import PlantContainerWriteRepository from '../plant_container/plant_container_write_repository.ts'
 
 export default class PlantWriteRepository {
   private readonly db: IDBPDatabase
@@ -34,10 +33,7 @@ export default class PlantWriteRepository {
     this.containerRepo = containerRepo
   }
 
-  public static async create() {
-    const db = await getDb()
-    const containerRepo = PlantContainerWriteRepository.create()
-
+  public static async create(db: IDBPDatabase, containerRepo: PlantContainerWriteRepository) {
     return new PlantWriteRepository(db, containerRepo)
   }
 

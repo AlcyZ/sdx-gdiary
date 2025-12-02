@@ -1,5 +1,5 @@
 import type PlantRepository from '../modules/plants/plant_repository.ts'
-import type { Plant, PlantImage, PlantImageSort } from '../modules/plants/types'
+import type { NewPlantContainer, Plant, PlantImage, PlantImageSort } from '../modules/plants/types'
 import { defineStore } from 'pinia'
 import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -80,6 +80,17 @@ export const usePlantStore = defineStore('plant', () => {
     return result
   }
 
+  const addContainer = async (container: NewPlantContainer) => {
+    if (!plant.value)
+      return err(undefined)
+
+    const result = await plantRepo.addContainer(plant.value.id, container)
+    if (result.ok)
+      await syncData()
+
+    return result
+  }
+
   return {
     plant,
     plants,
@@ -91,6 +102,7 @@ export const usePlantStore = defineStore('plant', () => {
     uploadPlantImage,
     sortPlantImages,
     markFavorit,
+    addContainer,
     deleteWateringLog,
   }
 })

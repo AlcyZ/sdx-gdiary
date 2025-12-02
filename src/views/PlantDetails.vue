@@ -31,8 +31,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { NewPlantContainer } from '../modules/plants/types'
 import type { TopNavigationAction } from '../types'
 import {
+  Cylinder as IconContainer,
   Trash as IconDelete,
   Edit as IconEdit,
   Cog as IconMenu,
@@ -42,7 +44,9 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import TopNavigation from '../components/layout/TopNavigation.vue'
 import PlantDetailsCards from '../components/PlantDetailsCards.vue'
+import PlantDetailsModalContainer from '../components/PlantDetailsModalContainer.vue'
 import IFab from '../components/ui/IFab.vue'
+import { useModal } from '../composables/useModal.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
@@ -64,6 +68,7 @@ const router = useRouter()
 const { fabActions } = usePlantView()
 const { getPlantName, showDeleteConfirmationModal } = usePlant()
 const { toast } = useToast()
+const { showModal } = useModal()
 
 const inputImage = ref<HTMLInputElement | undefined>()
 
@@ -88,7 +93,26 @@ const actions = ref<Array<TopNavigationAction>>([
         showDeleteConfirmationModal(plantStore.plant, () => router.push('/plants'))
     },
   },
+  {
+    label: 'Behälter ändern',
+    icon: IconContainer,
+    onClick: async () => await showPlantContainerModal(),
+  },
 ])
+
+async function showPlantContainerModal() {
+  const { close } = showModal(PlantDetailsModalContainer, {
+    onSave: async (container: NewPlantContainer) => {
+      const result = await plantStore.addContainer(container)
+
+      result.ok
+        ? toast('Neuer Behälter hinzugefügt', 'success')
+        : toast('Es ist ein Fehler beim hinzufügen des Behälters aufgetreten', 'error')
+
+      await close()
+    },
+  })
+}
 
 function selectImageViaInput() {
   inputImage.value?.click()
