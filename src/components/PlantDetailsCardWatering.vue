@@ -140,6 +140,7 @@ async function openDeleteWateringLogModal(log: WateringLog) {
   showConfirmationModal({
     title: 'Gießeintrag löschen?',
     text,
+    onEnter: deleteWateringLog,
     actions: [
       {
         label: 'Löschen',

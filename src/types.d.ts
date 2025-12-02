@@ -138,7 +138,7 @@ interface ShowConfirmationModalAction {
 interface ShowConfirmationModalProps {
   title: string
   text?: string
-  onEnter: () => any
+  onEnter?: () => any
   actions: Array<ShowConfirmationModalAction>
 }
 
