@@ -1,3 +1,4 @@
+import type { AsyncResult } from '../../types'
 import type {
   INDEX_PLANT_ID,
   INDEX_SORT,
@@ -13,6 +14,7 @@ import type {
 import type { FertilizerRow, FertilizerWateringSchemaRow, WateringSchemaRow } from '../nutrients/types'
 import type { PlantContainer } from '../plant_container/types'
 import type { PlantImageRow, PlantPhaseRow, PlantRow, WateringLogRow } from '../plants/types'
+import type ImportBackupError from './import_backup_error.ts'
 
 interface ImportExportData {
   [TABLE_PLANTS]: Array<PlantRow>
@@ -35,6 +37,12 @@ type BackupStoreNames = typeof TABLE_PLANTS
   | typeof TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA
 
 type BackupTxStores = BackupStoreNames[]
+
+type ImportVersion = '0.1' | '0.2'
+
+interface ImportStrategy {
+  importData: (file: File) => AsyncResult<void, ImportBackupError>
+}
 
 interface CleanPlantPhaseData {
   phase: string

@@ -24,6 +24,24 @@
       accept=".zip,application/zip"
     />
 
+    <div class="flex space-x-6">
+      <div
+        v-for="(item, i) in versions"
+        :key="i"
+      >
+        <label class="flex items-center">
+          <span class="mr-2">v{{ item }}</span>
+          <input
+            v-model="version"
+            type="radio"
+            class="radio"
+            name="import-version"
+            :value="item"
+          >
+        </label>
+      </div>
+    </div>
+
     <IBtn
       variant="secondary"
       class="w-full mt-4"
@@ -38,6 +56,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { ImportVersion } from '../modules/backup/types'
 import { AlertTriangle as IconAlert, Download as IconImport } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useToast } from '../composables/useToast.ts'
@@ -69,13 +88,16 @@ const importFile = ref<File | undefined>()
 
 const isLoading = ref(false)
 
+const versions = ref<Array<ImportVersion>>(['0.2', '0.1'])
+const version = ref<ImportVersion>('0.2')
+
 async function importData() {
   if (!importFile.value)
     return
 
   isLoading.value = true
   const service = await BackupService.create()
-  const result = await service.importBackup(importFile.value)
+  const result = await service.importBackup(importFile.value, version.value)
   isLoading.value = false
 
   if (!result.ok) {

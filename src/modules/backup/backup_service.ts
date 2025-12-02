@@ -9,6 +9,7 @@ import BackupServiceUtil from './backup_service_util.ts'
 import ExportRepository from './export_repository.ts'
 import ImportCleanRepository from './import_clean_repository.ts'
 import ImportRepository from './import_repository.ts'
+import type {ImportVersion} from "./types";
 
 export default class BackupService {
   private readonly importRepo: ImportRepository
@@ -46,10 +47,10 @@ export default class BackupService {
     return this.exportRepo.createBackupZip()
   }
 
-  public async importBackup(file: File, clean: boolean = false): AsyncResult<void, ImportBackupError> {
+  public async importBackup(file: File, version: ImportVersion, clean: boolean = false): AsyncResult<void, ImportBackupError> {
     return clean
       ? this.importCleanRepo.importBackup(file)
-      : this.importRepo.importBackup(file)
+      : this.importRepo.importBackup(file, version)
   }
 
   public isDbEmpty(): Promise<boolean> {
