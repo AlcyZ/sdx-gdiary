@@ -71,13 +71,20 @@ export default class PlantWriteRepository {
 
   public async update(plant: EditPlant) {
     return await safeAsync(async () => {
-      const tx = this.db.transaction([TABLE_PLANTS, TABLE_PLANT_PHASES], 'readwrite')
+      const tx = this.db.transaction([
+        TABLE_PLANTS,
+        TABLE_PLANT_PHASES,
+        TABLE_PLANT_CONTAINER_LOGS,
+      ], 'readwrite')
 
       const plantStore = tx.objectStore(TABLE_PLANTS)
       const phaseStore = tx.objectStore(TABLE_PLANT_PHASES)
 
-      await this.deletePlantAssociations(plant.id, TABLE_PLANT_PHASES, tx)
-      await this.insertPhases(plant.id, plant.phases, phaseStore)
+      await Promise.all([
+        this.deletePlantAssociations(plant.id, TABLE_PLANT_PHASES, tx),
+        this.insertPhases(plant.id, plant.phases, phaseStore),
+        this.containerRepo.updateContainer(plant.id, plant.container, tx),
+      ])
 
       const data: Record<string, string | number | undefined> = {
         strain: plant.strain,
@@ -107,13 +114,17 @@ export default class PlantWriteRepository {
     return await safeAsync(async () => {
       const tx = this.db.transaction([
         TABLE_PLANTS,
-        TABLE_PLANT_PHASES,
         TABLE_PLANT_IMAGES,
+        TABLE_PLANT_PHASES,
+        TABLE_PLANT_CONTAINER_LOGS,
+        TABLE_PLANT_WATERING_LOGS,
       ], 'readwrite')
 
       await Promise.all([
-        this.deletePlantAssociations(plantId, TABLE_PLANT_PHASES, tx),
         this.deletePlantAssociations(plantId, TABLE_PLANT_IMAGES, tx),
+        this.deletePlantAssociations(plantId, TABLE_PLANT_PHASES, tx),
+        this.deletePlantAssociations(plantId, TABLE_PLANT_CONTAINER_LOGS, tx),
+        this.deletePlantAssociations(plantId, TABLE_PLANT_WATERING_LOGS, tx),
       ])
 
       const plantsStore = tx.objectStore(TABLE_PLANTS)
@@ -226,7 +237,10 @@ export default class PlantWriteRepository {
 
   private async deletePlantAssociations(
     plantId: number,
-    table: typeof TABLE_PLANT_IMAGES | typeof TABLE_PLANT_PHASES | typeof TABLE_PLANT_IMAGES,
+    table: typeof TABLE_PLANT_IMAGES
+      | typeof TABLE_PLANT_PHASES
+      | typeof TABLE_PLANT_CONTAINER_LOGS
+      | typeof TABLE_PLANT_WATERING_LOGS,
     tx: IDBPTransaction<unknown, Array<string>, 'readwrite'>,
   ) {
     const store = tx.objectStore(table)

@@ -12,22 +12,28 @@ const ERR_STRAIN_MAX = ({ max }: { max: number }) => `Die Sorte dar maximal ${ma
 
 const ERR_CONTAINER_REQUIRED = 'Es muss ein Behälter ausgewählt werden'
 const ERR_MEDIUM_REQUIRED = 'Es muss ein Medium ausgewählt werden'
-const ERR_VOLUME_SIZE_REQUIRED = 'Es muss eine Substratgröße angegeben werden'
+const ERR_VOLUME_REQUIRED = 'Es muss eine Substratgröße angegeben werden'
+const ERR_DATETIME_REQUIRED = 'Es muss ein Datum angegeben werden'
 const ERR_PHASES_NOT_CHRONOLOGICALLY = 'Die Phasen müssen chronologisch aufeinander folgen'
 
 const phaseSchema = yup.object({
   phase: yup.mixed<PlantPhaseType>().required(),
-  startedAt: yup.string().required('Asd muss'),
+  startedAt: yup.string().required('Startdatum muss angegeben werden'),
   info: yup.string().optional(),
+})
+
+const containerSchema = yup.object({
+  container: yup.string().required(ERR_CONTAINER_REQUIRED),
+  medium: yup.string().required(ERR_MEDIUM_REQUIRED),
+  volume: yup.number().required(ERR_VOLUME_REQUIRED),
+  notes: yup.string().optional(),
+  datetime: yup.string().required(ERR_DATETIME_REQUIRED),
 })
 
 const plantSchema = yup.object({
   strain: yup.string().required(ERR_STRAIN_REQUIRED).max(64, ERR_STRAIN_MAX),
   name: yup.string().optional(),
-  container: yup.string().required(ERR_CONTAINER_REQUIRED),
-  medium: yup.string().required(ERR_MEDIUM_REQUIRED),
-  volume: yup.number().required(ERR_VOLUME_SIZE_REQUIRED),
-  notes: yup.string().optional(),
+  container: containerSchema.required(),
   phases: yup.array()
     .of(phaseSchema)
     .test('is-ascending', ERR_PHASES_NOT_CHRONOLOGICALLY, isChronologicallySorted),
@@ -69,10 +75,13 @@ export function usePlantForm() {
     initialValues: {
       strain: '',
       name: '',
-      container: '',
-      medium: 'soil',
-      volume: 0.5,
-      notes: undefined,
+      container: {
+        container: '',
+        medium: '',
+        volume: 1.5,
+        notes: undefined,
+        datetime: '',
+      },
       phases: [],
     },
   })
@@ -81,10 +90,11 @@ export function usePlantForm() {
 
   const [strain] = defineField('strain')
   const [name] = defineField('name')
-  const [container] = defineField<'container', string>('container')
-  const [medium] = defineField<'medium', PlantContainerMedium>('medium')
-  const [volume] = defineField<'volume', number>('volume')
-  const [notes] = defineField<'notes', string>('notes')
+  const [container] = defineField<'container.container', string>('container.container')
+  const [medium] = defineField<'container.medium', PlantContainerMedium>('container.medium')
+  const [volume] = defineField<'container.volume', number>('container.volume')
+  const [notes] = defineField<'container.notes', string>('container.notes')
+  const [containerDatetime] = defineField<'container.datetime', string>('container.datetime')
   const [phases] = defineField<'phases', Array<NewPlantPhase>>('phases')
 
   const wateringSchema = ref<WateringSchema | undefined>()
@@ -96,6 +106,7 @@ export function usePlantForm() {
     medium,
     volume,
     notes,
+    containerDatetime,
     phases,
     wateringSchema,
     validate,

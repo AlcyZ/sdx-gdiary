@@ -1,5 +1,8 @@
 <template>
-  <div class="flex items-center">
+  <div
+    class="flex items-center"
+    @click="tryOpenViaLabel"
+  >
     <span
       class=""
       :class="labelClass"
@@ -33,13 +36,13 @@ import { computed, ref } from 'vue'
 import IBtn from './IBtn.vue'
 
 interface Props {
-
+  openViaLabel?: boolean
 }
 interface Emits {
 
 }
 
-defineProps<Props>()
+const { openViaLabel = false } = defineProps<Props>()
 defineEmits<Emits>()
 
 const input = ref<HTMLInputElement | null>(null)
@@ -60,5 +63,10 @@ const labelClass = computed(() => [
 function openPicker() {
   input.value?.showPicker()
   input.value?.focus()
+}
+
+function tryOpenViaLabel() {
+  if (openViaLabel)
+    openPicker()
 }
 </script>

@@ -20,6 +20,7 @@
         v-model:medium="medium"
         v-model:volume="volume"
         v-model:notes="notes"
+        v-model:container-datetime="containerDatetime"
         v-model:phases="phases"
         v-model:watering-schema="wateringSchema"
         v-model:images="images"
@@ -50,6 +51,7 @@
 <script lang="ts" setup>
 import type PlantRepository from '../modules/plants/plant_repository.ts'
 import type { EditPlant } from '../modules/plants/types'
+import dayjs from 'dayjs'
 import {
   Cog as IconMenu,
   Save as IconSave,
@@ -104,6 +106,7 @@ const {
   medium,
   volume,
   notes,
+  containerDatetime,
   phases,
   wateringSchema,
   validate,
@@ -134,7 +137,7 @@ async function updatePlant() {
       container: container.value,
       volume: volume.value,
       notes: notes.value,
-      date: Date.now(), // Todo: Replace with form field
+      datetime: containerDatetime.value,
     },
   }
 
@@ -174,10 +177,13 @@ onMounted(async () => {
     values: {
       strain: plantStore.plant.strain,
       name: plantStore.plant.name,
-      container: plantStore.plant.container.container,
-      medium: plantStore.plant.container.medium,
-      volume: plantStore.plant.container.volume,
-      notes: plantStore.plant.container.notes,
+      container: {
+        container: plantStore.plant.container.container,
+        medium: plantStore.plant.container.medium,
+        volume: plantStore.plant.container.volume,
+        notes: plantStore.plant.container.notes,
+        datetime: dayjs(new Date(plantStore.plant.container.timestamp)).format('YYYY-MM-DDTHH:mm'),
+      },
       phases: plantStore.plant.phases,
     },
   })

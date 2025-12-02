@@ -5,7 +5,7 @@ type PlantContainerMedium = 'soil' | 'coco' | 'hydro' | 'rockwool' | 'custom'
 interface PlantContainerRow {
   id: number
   [INDEX_PLANT_ID]: IDBValidKey
-  date: number
+  timestamp: number
   medium: PlantContainerMedium
   container: string
   volume: number

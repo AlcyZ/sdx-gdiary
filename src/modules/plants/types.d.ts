@@ -8,9 +8,10 @@ interface NewPlantContainer {
   medium: PlantContainerMedium
   volume: number
   notes?: string
+  datetime: string
 }
 
-type PlantContainer = WithId<NewPlantContainer, number>
+type EditPlantContainer = WithId<NewPlantContainer, number>
 
 interface NewPlantPhase {
   phase: PlantPhaseType
@@ -27,7 +28,7 @@ interface NewPlant {
 }
 
 type EditPlant = Omit<WithId<NewPlant, number>, 'container'> & {
-  container: PlantContainer
+  container: EditPlantContainer
   [INDEX_WATERING_SCHEMA_ID]?: number
 }
 

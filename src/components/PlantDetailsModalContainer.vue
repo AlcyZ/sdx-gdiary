@@ -16,6 +16,7 @@
       v-model:container="container"
       v-model:volume="volume"
       v-model:notes="notes"
+      v-model:datetime="datetime"
     />
 
     <template #action>
@@ -41,6 +42,7 @@
 <script lang="ts" setup>
 import type { PlantContainerMedium } from '../modules/plant_container/types'
 import type { NewPlantContainer } from '../modules/plants/types'
+import dayjs from 'dayjs'
 import {
   X as IconClose,
   Save as IconSave,
@@ -66,6 +68,7 @@ const medium = ref<PlantContainerMedium>('soil')
 const container = ref<string>('')
 const volume = ref<number>(0.5)
 const notes = ref<string | undefined>()
+const datetime = ref<string>(dayjs().format('YYYY-MM-DDTHH:mm'))
 
 function saveContainer() {
   const data: NewPlantContainer = {
@@ -73,6 +76,7 @@ function saveContainer() {
     container: container.value,
     volume: volume.value,
     notes: notes.value,
+    datetime: datetime.value,
   }
   emit('save', data)
 }

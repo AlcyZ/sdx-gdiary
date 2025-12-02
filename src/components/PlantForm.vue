@@ -45,6 +45,7 @@
       v-model:medium="medium"
       v-model:volume="volume"
       v-model:notes="notes"
+      v-model:datetime="containerDatetime"
       :container-error="errors.container"
       :medium-error="errors.medium"
       :volume-error="errors.volume"
@@ -125,10 +126,13 @@ const wateringSchemaStore = useWateringSchemaStore()
 
 const strain = defineModel<string>('strain')
 const name = defineModel<string>('name')
+
 const medium = defineModel<PlantContainerMedium>('medium', { required: true })
 const container = defineModel<string>('container', { required: true })
 const volume = defineModel<number>('volume', { required: true })
 const notes = defineModel<string>('notes')
+const containerDatetime = defineModel<string>('containerDatetime', { required: true })
+
 const phases = defineModel<Array<NewPlantPhase>>('phases', { required: true })
 const wateringSchema = defineModel<WateringSchema>('wateringSchema')
 const images = defineModel<FileList>('images')

@@ -7,7 +7,7 @@ export function isPlantContainerRow(value: any): value is PlantContainerRow {
     && value !== null
     && hasNumKey(value, 'id')
     && hasNumKey(value, INDEX_PLANT_ID)
-    && hasNumKey(value, 'date')
+    && hasNumKey(value, 'timestamp')
     && hasNumKey(value, 'volume')
     && hasStrKey(value, 'medium')
     && hasStrKey(value, 'container')

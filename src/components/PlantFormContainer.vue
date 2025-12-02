@@ -85,6 +85,18 @@
         v-text="notesError"
       />
     </div>
+
+    <div class="mt-2">
+      <h4 class="underline decoration-gray-300">
+        Datum & Uhrzeit
+      </h4>
+
+      <IInputDatetime
+        v-model="datetime"
+        open-via-label
+        class="justify-between"
+      />
+    </div>
   </ICard>
 </template>
 
@@ -97,6 +109,7 @@ import IAlert from './ui/IAlert.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInput from './ui/IInput.vue'
+import IInputDatetime from './ui/IInputDatetime.vue'
 
 interface Props {
   mediumError?: string
@@ -125,4 +138,5 @@ const medium = defineModel<PlantContainerMedium>('medium', { required: true })
 const container = defineModel<string>('container', { required: true })
 const volume = defineModel<number>('volume', { required: true })
 const notes = defineModel<string>('notes')
+const datetime = defineModel<string>('datetime', { required: true })
 </script>

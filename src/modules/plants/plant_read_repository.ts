@@ -201,7 +201,7 @@ export default class PlantReadRepository {
   }
 
   private getCurrentContainer(containers: Array<PlantContainer>): PlantContainer {
-    return containers.reduce((latest, current) => current.date > latest.date ? current : latest)
+    return containers.reduce((latest, current) => current.timestamp > latest.timestamp ? current : latest)
   }
 
   private getCurrentPhase(phases: Array<PlantPhaseRow>): PlantPhaseRow {

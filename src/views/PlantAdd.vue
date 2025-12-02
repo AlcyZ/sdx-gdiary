@@ -20,6 +20,7 @@
         v-model:medium="medium"
         v-model:volume="volume"
         v-model:notes="notes"
+        v-model:container-datetime="containerDatetime"
         v-model:phases="phases"
         v-model:watering-schema="wateringSchema"
         v-model:images="images"
@@ -106,6 +107,7 @@ const {
   medium,
   volume,
   notes,
+  containerDatetime,
   phases,
   wateringSchema,
   validate,
@@ -168,6 +170,7 @@ async function savePlant(): Promise<Result<IDBValidKey, string>> {
       medium: medium.value,
       volume: volume.value,
       notes: notes.value,
+      datetime: containerDatetime.value,
     },
     phases: phases.value,
     [INDEX_WATERING_SCHEMA_ID]: wateringSchema.value?.id,
