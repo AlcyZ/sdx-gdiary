@@ -27,6 +27,10 @@ interface ImportExportData {
   [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA]: Array<FertilizerWateringSchemaRow>
 }
 
+interface WithPlantImageRows {
+  [TABLE_PLANT_IMAGES]: Array<PlantImageRow>
+}
+
 type BackupStoreNames = typeof TABLE_PLANTS
   | typeof TABLE_PLANT_IMAGES
   | typeof TABLE_PLANT_PHASES

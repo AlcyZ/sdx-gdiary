@@ -8,19 +8,18 @@ import type {
   PlantContainerMedium,
 } from '../plant_container/types'
 import type {
-  PlantImageRow,
   PlantPhaseRow,
   PlantRow,
   WateringLogRow,
   WithPlantId,
 } from '../plants/types'
 import type BackupServiceUtil from './backup_service_util.ts'
-import type { BackupStoreNames, BackupTxStores, ImportStrategy } from './types'
+import type ImportStrategyHelper from './import_strategy_helper.ts'
+import type { BackupTxStores, ImportStrategy, WithPlantImageRows } from './types'
 import JSZip from 'jszip'
-import { err, ok, safeAsync, safeParseJson } from '../../util.ts'
+import { err, ok, safeAsync } from '../../util.ts'
 import {
   INDEX_PLANT_ID,
-  INDEX_SORT,
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_IMAGES,
@@ -39,7 +38,6 @@ import {
 } from '../plants/guard.ts'
 import { hasNumKey, hasOptionalStrKey, hasStrKey } from '../type_guard'
 import TypeGuardError from '../type_guard/type_guard_error.ts'
-import { BACKUP_FILENAME_DATA } from './constants.ts'
 import ImportBackupError from './import_backup_error.ts'
 
 interface NotArrayError {
@@ -62,9 +60,8 @@ type PlantSubstrateRow = WithPlantId<{
   info?: string
 }>
 
-interface ImportDataV01 {
+type ImportDataV01 = {
   [TABLE_PLANTS]: Array<PlantRow>
-  [TABLE_PLANT_IMAGES]: Array<PlantImageRow>
   [TABLE_PLANT_PHASES]: Array<PlantPhaseRow>
   [TABLE_PLANT_WATERING_LOGS]: Array<WateringLogRow>
   [TABLE_PLANT_CONTAINER_LOGS]: Array<PlantContainer>
@@ -74,7 +71,7 @@ interface ImportDataV01 {
 
   // refactored in v0.2 to plantContainers store
   plantSubstrates: Array<PlantSubstrateRow>
-}
+} & WithPlantImageRows
 
 const GUARDS: Array<[keyof ImportDataV01, (item: any) => item is any]> = [
   [TABLE_PLANTS, isPlantRow],
@@ -144,31 +141,27 @@ function isPlantSubstrateRow(value: any): value is PlantSubstrateRow {
 }
 
 export default class ImportStrategyV01 implements ImportStrategy {
+  private readonly helper: ImportStrategyHelper<ImportDataV01>
   private readonly db: IDBPDatabase
   private readonly util: BackupServiceUtil
 
-  constructor(db: IDBPDatabase, util: BackupServiceUtil) {
+  constructor(helper: ImportStrategyHelper<ImportDataV01>, db: IDBPDatabase, util: BackupServiceUtil) {
+    this.helper = helper
     this.db = db
     this.util = util
   }
 
-  public static create(db: IDBPDatabase, util: BackupServiceUtil): ImportStrategyV01 {
-    return new ImportStrategyV01(db, util)
+  public static create(helper: ImportStrategyHelper<ImportDataV01>, db: IDBPDatabase, util: BackupServiceUtil): ImportStrategyV01 {
+    return new ImportStrategyV01(helper, db, util)
   }
 
   public async importData(file: File): AsyncResult<void, ImportBackupError> {
     return safeAsync(async () => {
       const zip = await JSZip.loadAsync(file)
 
-      const json = zip.file(BACKUP_FILENAME_DATA)
-      if (!json)
-        throw ImportBackupError.dataJsonNotFound(BACKUP_FILENAME_DATA)
-
-      const content = await json.async('text')
-
-      const result = safeParseJson(content, isImportData)
+      const result = await this.helper.tryLoadData(zip, isImportData)
       if (!result.ok)
-        throw ImportBackupError.invalidBackupData(result.error)
+        throw result.error
 
       const importResult = await this.import(result.value, zip)
       if (!importResult.ok)
@@ -179,7 +172,7 @@ export default class ImportStrategyV01 implements ImportStrategy {
   private async import(data: ImportDataV01, zip: JSZip): AsyncResult<void, DOMException> {
     return safeAsync(async () => {
       await Promise.all([
-        this.loadImages(data, zip),
+        this.helper.loadImages(data, zip),
         this.util.truncateStores(this.db),
       ])
 
@@ -197,46 +190,16 @@ export default class ImportStrategyV01 implements ImportStrategy {
 
       await Promise.all([
         await this.addContainers(storePlantContainer, data),
-        this.addData(TABLE_PLANTS, storePlants, data),
-        this.addData(TABLE_PLANT_IMAGES, storePlantImages, data),
-        this.addData(TABLE_PLANT_PHASES, storePlantPhases, data),
-        this.addData(TABLE_PLANT_WATERING_LOGS, storePlantWateringLogs, data),
-        this.addData(TABLE_FERTILIZERS, storeFertilizers, data),
-        this.addData(TABLE_WATERING_SCHEMAS, storeWateringSchema, data),
-        this.addData(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, storeFertilizerWateringSchema, data),
+        this.helper.addData(TABLE_PLANTS, storePlants, data),
+        this.helper.addData(TABLE_PLANT_IMAGES, storePlantImages, data),
+        this.helper.addData(TABLE_PLANT_PHASES, storePlantPhases, data),
+        this.helper.addData(TABLE_PLANT_WATERING_LOGS, storePlantWateringLogs, data),
+        this.helper.addData(TABLE_FERTILIZERS, storeFertilizers, data),
+        this.helper.addData(TABLE_WATERING_SCHEMAS, storeWateringSchema, data),
+        this.helper.addData(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, storeFertilizerWateringSchema, data),
       ])
       await tx.done
     })
-  }
-
-  private async loadImages(data: ImportDataV01, zip: JSZip) {
-    const loadById = this.util.loadImageByIdCallback(zip)
-
-    for (const [i, plantImage] of data[TABLE_PLANT_IMAGES].entries()) {
-      const option = await loadById(plantImage.id)
-
-      if (option.exist) {
-        data[TABLE_PLANT_IMAGES][i] = {
-          [INDEX_PLANT_ID]: plantImage.plantId,
-          id: plantImage.id,
-          ...option.value,
-          [INDEX_SORT]: i + 1,
-        }
-      }
-    }
-  }
-
-  private async addData<S extends BackupStoreNames>(
-    table: S,
-    store: IDBPObjectStore<
-      unknown,
-      BackupTxStores,
-      S,
-      'readwrite'
-    >,
-    data: ImportDataV01,
-  ) {
-    await Promise.all(data[table].map(row => store.add(row)))
   }
 
   private async addContainers(
