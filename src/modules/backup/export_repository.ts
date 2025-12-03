@@ -6,6 +6,14 @@ import JSZip from 'jszip'
 import { mapMimeToExtension, safeAsync } from '../../util.ts'
 import {
   getDb,
+  TABLE_FERTILIZERS,
+  TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
+  TABLE_PLANT_CONTAINER_LOGS,
+  TABLE_PLANT_IMAGES,
+  TABLE_PLANT_PHASES,
+  TABLE_PLANT_WATERING_LOGS,
+  TABLE_PLANTS,
+  TABLE_WATERING_SCHEMAS,
   TABLES_DB,
 } from '../db'
 import { isPlantImageRow } from '../plants/guard.ts'
@@ -71,14 +79,14 @@ export default class ExportRepository {
       } = this.util.unpackStores(tx)
 
       const results = await Promise.all([
-        storePlants.getAll().then(plants => ({ plants })),
-        storePlantImages.getAll().then(plantImages => ({ plantImages })),
-        storePlantPhases.getAll().then(plantPhases => ({ plantPhases })),
-        storePlantContainer.getAll().then(plantContainers => ({ plantContainers })),
-        storePlantWateringLogs.getAll().then(plantWateringLogs => ({ plantWateringLogs })),
-        storeFertilizers.getAll().then(fertilizers => ({ fertilizers })),
-        storeWateringSchema.getAll().then(wateringSchema => ({ wateringSchema })),
-        storeFertilizerWateringSchema.getAll().then(fertilizerWateringSchema => ({ fertilizerWateringSchema })),
+        storePlants.getAll().then(plants => ({ [TABLE_PLANTS]: plants })),
+        storePlantImages.getAll().then(plantImages => ({ [TABLE_PLANT_IMAGES]: plantImages })),
+        storePlantPhases.getAll().then(plantPhases => ({ [TABLE_PLANT_PHASES]: plantPhases })),
+        storePlantContainer.getAll().then(plantContainers => ({ [TABLE_PLANT_CONTAINER_LOGS]: plantContainers })),
+        storePlantWateringLogs.getAll().then(plantWateringLogs => ({ [TABLE_PLANT_WATERING_LOGS]: plantWateringLogs })),
+        storeFertilizers.getAll().then(fertilizers => ({ [TABLE_FERTILIZERS]: fertilizers })),
+        storeWateringSchema.getAll().then(wateringSchema => ({ [TABLE_WATERING_SCHEMAS]: wateringSchema })),
+        storeFertilizerWateringSchema.getAll().then(fertilizerWateringSchema => ({ [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA]: fertilizerWateringSchema })),
       ])
 
       return Object.assign({}, ...results)

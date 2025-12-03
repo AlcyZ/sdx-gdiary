@@ -1,7 +1,6 @@
 import type { AsyncResult } from '../../types'
 import type ImportBackupError from './import_backup_error.ts'
 import type { ImportStrategy } from './types'
-import ImportStrategyV02 from './import_strategy_v0_2.ts'
 
 export default class BackupImporter {
   private strategy: ImportStrategy
@@ -10,8 +9,7 @@ export default class BackupImporter {
     this.strategy = strategy
   }
 
-  public static default(): BackupImporter {
-    const strategy = new ImportStrategyV02()
+  public static create(strategy: ImportStrategy): BackupImporter {
     return new BackupImporter(strategy)
   }
 

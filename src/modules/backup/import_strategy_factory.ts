@@ -1,6 +1,7 @@
 import type { IDBPDatabase } from 'idb'
 import type BackupServiceUtil from './backup_service_util.ts'
-import type { ImportStrategy, ImportVersion } from './types'
+import type { ImportDataV01, ImportExportData, ImportStrategy, ImportVersion } from './types'
+import ImportStrategyHelper from './import_strategy_helper.ts'
 import ImportStrategyV01 from './import_strategy_v0_1.ts'
 import ImportStrategyV02 from './import_strategy_v0_2.ts'
 
@@ -28,10 +29,12 @@ export default class ImportStrategyFactory {
   }
 
   public createV01(): ImportStrategyV01 {
-    return ImportStrategyV01.create(this.db, this.util)
+    const helper = ImportStrategyHelper.create<ImportDataV01>(this.util)
+    return ImportStrategyV01.create(helper, this.db, this.util)
   }
 
   public createV02(): ImportStrategyV02 {
-    return new ImportStrategyV02()
+    const helper = ImportStrategyHelper.create<ImportExportData>(this.util)
+    return ImportStrategyV02.create(helper, this.db, this.util)
   }
 }

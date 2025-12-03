@@ -4,6 +4,7 @@ import { err, ok } from '../../util.ts'
 import {
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
+  TABLE_PLANT_CONTAINER_LOGS,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_WATERING_LOGS,
@@ -11,6 +12,7 @@ import {
   TABLE_WATERING_SCHEMAS,
 } from '../db'
 import { isFertilizerRow, isFertilizerWateringSchemaRow, isWateringSchemaRow } from '../nutrients/guard.ts'
+import { isPlantContainerRow } from '../plant_container/guard.ts'
 import {
   isPlantBackupImageRow,
   isPlantPhaseRow,
@@ -172,17 +174,15 @@ export function validateImportExportData(value: unknown): Result<void, TypeGuard
 
   const obj = value as Record<string, unknown>
 
-  const guardAllow = (_v: any): _v is any => true
-
   const arrayKeys: Array<[string, (item: any) => item is any]> = [
     [TABLE_PLANTS, isPlantRow],
     [TABLE_PLANT_IMAGES, isPlantBackupImageRow],
     [TABLE_PLANT_PHASES, isPlantPhaseRow],
     [TABLE_PLANT_WATERING_LOGS, isWateringLogRow],
-
-    [TABLE_FERTILIZERS, guardAllow],
-    [TABLE_WATERING_SCHEMAS, guardAllow],
-    [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, guardAllow],
+    [TABLE_PLANT_CONTAINER_LOGS, isPlantContainerRow],
+    [TABLE_FERTILIZERS, isFertilizerRow],
+    [TABLE_WATERING_SCHEMAS, isWateringSchemaRow],
+    [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, isFertilizerWateringSchemaRow],
   ]
 
   const errors: Array<ValidationError> = []

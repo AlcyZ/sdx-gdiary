@@ -16,7 +16,11 @@ import type { PlantContainer } from '../plant_container/types'
 import type { PlantImageRow, PlantPhaseRow, PlantRow, WateringLogRow } from '../plants/types'
 import type ImportBackupError from './import_backup_error.ts'
 
-interface ImportExportData {
+interface WithPlantImageRows {
+  [TABLE_PLANT_IMAGES]: Array<PlantImageRow>
+}
+
+type ImportExportData = {
   [TABLE_PLANTS]: Array<PlantRow>
   [TABLE_PLANT_IMAGES]: Array<PlantImageRow>
   [TABLE_PLANT_PHASES]: Array<PlantPhaseRow>
@@ -25,11 +29,20 @@ interface ImportExportData {
   [TABLE_FERTILIZERS]: Array<FertilizerRow>
   [TABLE_WATERING_SCHEMAS]: Array<WateringSchemaRow>
   [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA]: Array<FertilizerWateringSchemaRow>
-}
+} & WithPlantImageRows
 
-interface WithPlantImageRows {
-  [TABLE_PLANT_IMAGES]: Array<PlantImageRow>
-}
+type ImportDataV01 = {
+  [TABLE_PLANTS]: Array<PlantRow>
+  [TABLE_PLANT_PHASES]: Array<PlantPhaseRow>
+  [TABLE_PLANT_WATERING_LOGS]: Array<WateringLogRow>
+  [TABLE_PLANT_CONTAINER_LOGS]: Array<PlantContainer>
+  [TABLE_FERTILIZERS]: Array<FertilizerRow>
+  [TABLE_WATERING_SCHEMAS]: Array<WateringSchemaRow>
+  [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA]: Array<FertilizerWateringSchemaRow>
+
+  // refactored in v0.2 to plantContainers store
+  plantSubstrates: Array<PlantSubstrateRow>
+} & WithPlantImageRows
 
 type BackupStoreNames = typeof TABLE_PLANTS
   | typeof TABLE_PLANT_IMAGES

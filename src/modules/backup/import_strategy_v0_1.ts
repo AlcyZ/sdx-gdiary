@@ -1,21 +1,16 @@
 import type { IDBPDatabase, IDBPObjectStore } from 'idb'
 import type { AsyncResult, Result } from '../../types'
 import type { TABLE_PLANT_CONTAINER_LOGS } from '../db'
-import type { FertilizerRow, FertilizerWateringSchemaRow, WateringSchemaRow } from '../nutrients/types'
 import type {
   NewPlantContainerRow,
-  PlantContainer,
   PlantContainerMedium,
 } from '../plant_container/types'
 import type {
-  PlantPhaseRow,
-  PlantRow,
-  WateringLogRow,
   WithPlantId,
 } from '../plants/types'
 import type BackupServiceUtil from './backup_service_util.ts'
 import type ImportStrategyHelper from './import_strategy_helper.ts'
-import type { BackupTxStores, ImportStrategy, WithPlantImageRows } from './types'
+import type { BackupTxStores, ImportDataV01, ImportStrategy } from './types'
 import JSZip from 'jszip'
 import { err, ok, safeAsync } from '../../util.ts'
 import {
@@ -59,19 +54,6 @@ type PlantSubstrateRow = WithPlantId<{
   size: string
   info?: string
 }>
-
-type ImportDataV01 = {
-  [TABLE_PLANTS]: Array<PlantRow>
-  [TABLE_PLANT_PHASES]: Array<PlantPhaseRow>
-  [TABLE_PLANT_WATERING_LOGS]: Array<WateringLogRow>
-  [TABLE_PLANT_CONTAINER_LOGS]: Array<PlantContainer>
-  [TABLE_FERTILIZERS]: Array<FertilizerRow>
-  [TABLE_WATERING_SCHEMAS]: Array<WateringSchemaRow>
-  [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA]: Array<FertilizerWateringSchemaRow>
-
-  // refactored in v0.2 to plantContainers store
-  plantSubstrates: Array<PlantSubstrateRow>
-} & WithPlantImageRows
 
 const GUARDS: Array<[keyof ImportDataV01, (item: any) => item is any]> = [
   [TABLE_PLANTS, isPlantRow],

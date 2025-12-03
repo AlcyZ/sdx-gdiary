@@ -5,7 +5,6 @@ import type { ImportVersion } from './types'
 import {
   getDb,
 } from '../db'
-
 import BackupImporter from './backup_importer.ts'
 import ImportStrategyFactory from './import_strategy_factory.ts'
 
@@ -23,8 +22,11 @@ export default class ImportRepository {
 
   public static async create(util: BackupServiceUtil): Promise<ImportRepository> {
     const db = await getDb()
-    const importer = BackupImporter.default()
     const factory = ImportStrategyFactory.create(db, util)
+
+    const defaultStrategy = factory.createV02()
+    const importer = BackupImporter.create(defaultStrategy)
+
     return new ImportRepository(importer, factory)
   }
 
