@@ -4,12 +4,12 @@ import type { AsyncResult, Result } from '../../types'
 import type DeleteDatabaseError from '../db/delete_database_error.ts'
 import type ExportBackupError from './export_backup_error.ts'
 import type ImportBackupError from './import_backup_error.ts'
+import type { ImportVersion } from './types'
 import { getDb, safeDeleteDatabase } from '../db'
 import BackupServiceUtil from './backup_service_util.ts'
 import ExportRepository from './export_repository.ts'
 import ImportCleanRepository from './import_clean_repository.ts'
 import ImportRepository from './import_repository.ts'
-import type {ImportVersion} from "./types";
 
 export default class BackupService {
   private readonly importRepo: ImportRepository

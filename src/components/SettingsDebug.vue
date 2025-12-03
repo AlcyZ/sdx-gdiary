@@ -77,7 +77,7 @@ async function handleCleanImport() {
     return
   }
 
-  const importResult = await service.importBackup(backupFile.value, true)
+  const importResult = await service.importBackup(backupFile.value, '0.1', true)
   if (!importResult.ok) {
     'log' in importResult.error && typeof importResult.error.log === 'function'
       ? importResult.error.log()

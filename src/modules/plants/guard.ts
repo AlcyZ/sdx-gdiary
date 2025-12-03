@@ -4,7 +4,6 @@ import type {
   PlantPhaseRow,
   PlantPhaseType,
   PlantRow,
-  PlantSubstrateRow,
   WateringLog,
   WateringLogFertilizer,
   WateringLogRow,
@@ -44,15 +43,6 @@ export function isPlantBackupImageRow(value: any): value is PlantImageRow {
     && hasNumKey(value, INDEX_PLANT_ID)
     && hasStrKey(value, 'mime')
     && hasEmptyObjectKey(value, 'data')
-}
-
-export function isPlantSubstrateRow(value: any): value is PlantSubstrateRow {
-  return typeof value === 'object'
-    && hasNumKey(value, 'id')
-    && hasNumKey(value, INDEX_PLANT_ID)
-    && hasStrKey(value, 'substrate')
-    && hasStrKey(value, 'size')
-    && hasOptionalStrKey(value, 'info')
 }
 
 export function isPlantPhaseRow(value: any): value is PlantPhaseRow {

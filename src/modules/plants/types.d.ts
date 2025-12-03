@@ -91,12 +91,6 @@ interface PlantImageSort {
 interface HasPlantId { [INDEX_PLANT_ID]: number }
 type WithPlantId<T> = WithId<T, number> & HasPlantId
 
-type PlantSubstrateRow = WithPlantId<{
-  substrate: string
-  size: string
-  info?: string
-}, number>
-
 type PlantPhaseRow = WithPlantId<{
   phase: PlantPhaseType
   startedAt: string

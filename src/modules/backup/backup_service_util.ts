@@ -5,6 +5,7 @@ import { andThen, getExtension, mapExtensionToMime, some, unwrapOr, wrapOption }
 import {
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
+  TABLE_PLANT_CONTAINER_LOGS,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_WATERING_LOGS,
@@ -21,6 +22,7 @@ export default class BackupServiceUtil {
     const storePlants = tx.objectStore(TABLE_PLANTS)
     const storePlantImages = tx.objectStore(TABLE_PLANT_IMAGES)
     const storePlantPhases = tx.objectStore(TABLE_PLANT_PHASES)
+    const storePlantContainer = tx.objectStore(TABLE_PLANT_CONTAINER_LOGS)
     const storePlantWateringLogs = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
     const storeFertilizers = tx.objectStore(TABLE_FERTILIZERS)
     const storeWateringSchema = tx.objectStore(TABLE_WATERING_SCHEMAS)
@@ -30,6 +32,7 @@ export default class BackupServiceUtil {
       storePlants,
       storePlantImages,
       storePlantPhases,
+      storePlantContainer,
       storePlantWateringLogs,
       storeFertilizers,
       storeWateringSchema,
