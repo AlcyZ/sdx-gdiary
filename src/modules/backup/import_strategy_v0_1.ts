@@ -62,7 +62,7 @@ type PlantSubstrateRow = WithPlantId<{
   info?: string
 }>
 
-interface ImportData {
+interface ImportDataV01 {
   [TABLE_PLANTS]: Array<PlantRow>
   [TABLE_PLANT_IMAGES]: Array<PlantImageRow>
   [TABLE_PLANT_PHASES]: Array<PlantPhaseRow>
@@ -76,7 +76,7 @@ interface ImportData {
   plantSubstrates: Array<PlantSubstrateRow>
 }
 
-const GUARDS: Array<[keyof ImportData, (item: any) => item is any]> = [
+const GUARDS: Array<[keyof ImportDataV01, (item: any) => item is any]> = [
   [TABLE_PLANTS, isPlantRow],
   [TABLE_PLANT_IMAGES, isPlantBackupImageRow],
   [TABLE_PLANT_PHASES, isPlantPhaseRow],
@@ -89,7 +89,7 @@ const GUARDS: Array<[keyof ImportData, (item: any) => item is any]> = [
   ['plantSubstrates', isPlantSubstrateRow],
 ]
 
-function isImportData(value: any): value is ImportData {
+function isImportData(value: any): value is ImportDataV01 {
   const result = validateImportData(value)
   if (!result.ok)
     result.error.log()
@@ -176,7 +176,7 @@ export default class ImportStrategyV01 implements ImportStrategy {
     })
   }
 
-  private async import(data: ImportData, zip: JSZip): AsyncResult<void, DOMException> {
+  private async import(data: ImportDataV01, zip: JSZip): AsyncResult<void, DOMException> {
     return safeAsync(async () => {
       await Promise.all([
         this.loadImages(data, zip),
@@ -209,7 +209,7 @@ export default class ImportStrategyV01 implements ImportStrategy {
     })
   }
 
-  private async loadImages(data: ImportData, zip: JSZip) {
+  private async loadImages(data: ImportDataV01, zip: JSZip) {
     const loadById = this.util.loadImageByIdCallback(zip)
 
     for (const [i, plantImage] of data[TABLE_PLANT_IMAGES].entries()) {
@@ -234,7 +234,7 @@ export default class ImportStrategyV01 implements ImportStrategy {
       S,
       'readwrite'
     >,
-    data: ImportData,
+    data: ImportDataV01,
   ) {
     await Promise.all(data[table].map(row => store.add(row)))
   }
@@ -246,7 +246,7 @@ export default class ImportStrategyV01 implements ImportStrategy {
       typeof TABLE_PLANT_CONTAINER_LOGS,
       'readwrite'
     >,
-    data: ImportData,
+    data: ImportDataV01,
   ) {
     const mapSubstrateToMedium = (medium: string): PlantContainerMedium => {
       switch (medium) {
@@ -264,12 +264,12 @@ export default class ImportStrategyV01 implements ImportStrategy {
 
     await Promise.all(data.plantSubstrates.map((row) => {
       const data: NewPlantContainerRow = {
-        container: `Air Pot`,
+        container: `(Migriert, bitte aktualisieren): ${row.size}`,
         medium: mapSubstrateToMedium(row.substrate),
-        volume: 12,
+        volume: 1,
         [INDEX_PLANT_ID]: row.plantId,
         notes: row.info,
-        timestamp: 1756112400000,
+        timestamp: Date.now(),
       }
       return store.add(data)
     }))
