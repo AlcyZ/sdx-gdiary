@@ -61,6 +61,7 @@ import { AlertTriangle as IconAlert, Download as IconImport } from 'lucide-vue-n
 import { ref } from 'vue'
 import { useToast } from '../composables/useToast.ts'
 import BackupService from '../modules/backup/backup_service.ts'
+import ImportBackupError from '../modules/backup/import_backup_error.ts'
 import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
@@ -101,7 +102,11 @@ async function importData() {
   isLoading.value = false
 
   if (!result.ok) {
-    toast('Es ist ein Fehler beim importieren des Backups aufgetreten', 'error')
+    const errorMessage = result.error.isCode(ImportBackupError.CODE_INVALID_BACKUP_DATA)
+      ? 'Das Backup enthält ein ungültiges Datenformat. Bitte versuche es mit einer anderen Version erneut.'
+      : 'Es ist ein Fehler beim importieren des Backups aufgetreten.'
+
+    toast(errorMessage, 'error', 3000)
     result.error.log()
     return
   }
