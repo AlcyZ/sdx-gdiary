@@ -52,7 +52,7 @@ export default class ImportStrategyV02 implements ImportStrategy {
     return safeAsync(async () => {
       await Promise.all([
         this.helper.loadImages(data, zip),
-        // this.util.truncateStores(this.db),
+        this.util.truncateStores(this.db),
       ])
 
       const tx = this.db.transaction(TABLES_DB, 'readwrite')

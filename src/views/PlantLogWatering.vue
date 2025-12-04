@@ -166,7 +166,7 @@
 
 <script lang="ts" setup>
 import type { Fertilizer, WateringSchemaFertilizer } from '../modules/nutrients/types'
-import type { NewWateringLog } from '../modules/plants/types'
+import type { NewWateringLog } from '../modules/watering/types'
 import {
   MoveLeft as IconBack,
   Cog as IconMenu,

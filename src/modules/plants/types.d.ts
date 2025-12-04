@@ -1,5 +1,15 @@
 import type { HasId, HasTimestamps, WithId } from '../../types'
-import type { type INDEX_PLANT_ID, type INDEX_PLANT_IMAGE_ID, INDEX_SORT, type INDEX_WATERING_SCHEMA_ID } from '../db'
+import type {
+  type INDEX_PLANT_ID,
+  type INDEX_PLANT_IMAGE_ID,
+  type INDEX_SORT,
+  type INDEX_WATERING_SCHEMA_ID,
+  TABLE_PLANT_CONTAINER_LOGS,
+  TABLE_PLANT_IMAGES,
+  TABLE_PLANT_PHASES,
+  TABLE_PLANT_WATERING_LOGS,
+  TABLE_PLANTS,
+} from '../db'
 import type { WateringSchema } from '../nutrients/types'
 import type { PlantContainer, PlantContainerMedium } from '../plant_container/types'
 
@@ -108,21 +118,10 @@ interface GetPlantErrorInvalidData {
 
 type GetPlantError = GetPlantNotFoundError | GetPlantErrorInvalidData
 
-interface WateringLogFertilizer {
-  id?: number
-  name: string
-  manufacturer?: string
-  amount: number
-}
-
-interface NewWateringLog {
-  plantId: number
-  date: number
-  amount: number
-  ph?: number
-  ec?: number
-  fertilizers: Array<WateringLogFertilizer>
-}
-
-type WateringLogRow = WithId<NewWateringLog, number>
-type WateringLog = Omit<WateringLogRow, 'plantId'>
+type PlantRepoTxStores
+  = (typeof TABLE_PLANTS
+    | typeof TABLE_PLANT_IMAGES
+    | typeof TABLE_PLANT_PHASES
+    | typeof TABLE_PLANT_WATERING_LOGS
+    | typeof TABLE_PLANT_CONTAINER_LOGS
+  )[]

@@ -78,7 +78,8 @@
 </template>
 
 <script lang="ts" setup>
-import type { Plant, WateringLog } from '../modules/plants/types'
+import type { Plant } from '../modules/plants/types'
+import type { WateringLog } from '../modules/watering/types'
 import dayjs from 'dayjs'
 import {
   Trash as IconDelete,

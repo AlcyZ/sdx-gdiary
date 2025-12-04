@@ -17,9 +17,9 @@ import {
   isPlantBackupImageRow,
   isPlantPhaseRow,
   isPlantRow,
-  isWateringLogRow,
 } from '../plants/guard.ts'
 import TypeGuardError from '../type_guard/type_guard_error.ts'
+import { isWateringLogRow } from '../watering/guard.ts'
 
 type TableKey = keyof ImportExportData
 

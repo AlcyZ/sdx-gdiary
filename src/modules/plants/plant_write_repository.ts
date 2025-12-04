@@ -5,7 +5,6 @@ import type {
   EditPlant,
   NewPlant,
   NewPlantPhase,
-  NewWateringLog,
   Plant,
   PlantImage,
   PlantImageSort,
@@ -100,16 +99,6 @@ export default class PlantWriteRepository {
     })
   }
 
-  public async pourPlant(data: NewWateringLog): Promise<Result<void, unknown>> {
-    return safeAsync(async () => {
-      const tx = this.db.transaction(TABLE_PLANT_WATERING_LOGS, 'readwrite')
-      const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
-
-      await store.put(data)
-      await tx.done
-    }, { method: 'pourPlant', message: 'Failed to save watering log', payload: data })
-  }
-
   public async delete(plantId: number) {
     return await safeAsync(async () => {
       const tx = this.db.transaction([
@@ -132,16 +121,6 @@ export default class PlantWriteRepository {
 
       await tx.done
     }, { method: 'delete', message: 'Failed to delete plant', payload: { plantId }, kind: 'error' })
-  }
-
-  public async deleteWateringLog(logId: number) {
-    return safeAsync(async () => {
-      const tx = this.db.transaction([TABLE_PLANT_WATERING_LOGS], 'readwrite')
-      const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
-
-      await store.delete(logId)
-      await tx.done
-    })
   }
 
   public async deleteContainer(containerId: number): AsyncResult<void, DOMException> {

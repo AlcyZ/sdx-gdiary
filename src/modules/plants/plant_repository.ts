@@ -1,12 +1,12 @@
 import type { IDBPDatabase } from 'idb'
 import type { AsyncResult, Option, Result } from '../../types'
+import type { NewWateringLog } from '../watering/types'
 import type {
   EditPlant,
   EditPlantContainer,
   GetPlantError,
   NewPlant,
   NewPlantContainer,
-  NewWateringLog,
   Plant,
   PlantImage,
   PlantImageData,
@@ -15,6 +15,7 @@ import type {
 import { err, ok } from '../../util.ts'
 import { getDb, TABLE_PLANT_CONTAINER_LOGS } from '../db'
 import PlantContainerWriteRepository from '../plant_container/plant_container_write_repository.ts'
+import WateringWriteRepository from '../watering/watering_write_repository.ts'
 import PlantReadRepository from './plant_read_repository.ts'
 import PlantWriteRepository from './plant_write_repository.ts'
 
@@ -23,28 +24,32 @@ export default class PlantRepository {
   private readonly read: PlantReadRepository
   private readonly write: PlantWriteRepository
   private readonly containerWriteRepo: PlantContainerWriteRepository
+  private readonly wateringWriteRepo: WateringWriteRepository
 
   constructor(
     db: IDBPDatabase,
     read: PlantReadRepository,
     write: PlantWriteRepository,
     containerWriteRepo: PlantContainerWriteRepository,
+    wateringWriteRepo: WateringWriteRepository,
   ) {
     this.db = db
     this.read = read
     this.write = write
     this.containerWriteRepo = containerWriteRepo
+    this.wateringWriteRepo = wateringWriteRepo
   }
 
   public static async create() {
     const db = await getDb()
     const containerWriteRepo = PlantContainerWriteRepository.create()
+    const wateringWriteRepo = WateringWriteRepository.create(db)
     const [read, write] = await Promise.all([
       PlantReadRepository.create(db),
       PlantWriteRepository.create(db, containerWriteRepo),
     ])
 
-    return new PlantRepository(db, read, write, containerWriteRepo)
+    return new PlantRepository(db, read, write, containerWriteRepo, wateringWriteRepo)
   }
 
   public async save(plant: NewPlant): Promise<Result<IDBValidKey, unknown>> {
@@ -64,7 +69,7 @@ export default class PlantRepository {
   }
 
   public async pourPlant(data: NewWateringLog): Promise<Result<void, unknown>> {
-    return this.write.pourPlant(data)
+    return this.wateringWriteRepo.pourPlant(data)
   }
 
   public async getAll(): Promise<Array<Plant>> {
@@ -84,7 +89,7 @@ export default class PlantRepository {
   }
 
   public async deleteWateringLog(logId: number): AsyncResult<void, unknown> {
-    return this.write.deleteWateringLog(logId)
+    return this.wateringWriteRepo.deleteWateringLog(logId)
   }
 
   public async deleteContainer(containerId: number): AsyncResult<void, unknown> {

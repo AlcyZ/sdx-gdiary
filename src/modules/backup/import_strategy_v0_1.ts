@@ -29,10 +29,10 @@ import {
   isPlantBackupImageRow,
   isPlantPhaseRow,
   isPlantRow,
-  isWateringLogRow,
 } from '../plants/guard.ts'
 import { hasNumKey, hasOptionalStrKey, hasStrKey } from '../type_guard'
 import TypeGuardError from '../type_guard/type_guard_error.ts'
+import { isWateringLogRow } from '../watering/guard.ts'
 import ImportBackupError from './import_backup_error.ts'
 
 interface NotArrayError {

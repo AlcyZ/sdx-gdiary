@@ -8,8 +8,8 @@ import type {
   PlantImage,
   PlantImageData,
   PlantPhaseRow,
+  PlantRepoTxStores,
   PlantRow,
-  WateringLog,
 } from './types'
 import { err, none, ok, some, unwrapOrUndefined } from '../../util.ts'
 import {
@@ -24,32 +24,33 @@ import {
 } from '../db'
 import WateringSchemaReadRepository from '../nutrients/watering_schema_read_repository.ts'
 import PlantContainerReadRepository from '../plant_container/plant_container_read_repository.ts'
-import { isPlantImageRow, isPlantPhaseRow, isPlantRow, isWateringLogRow } from './guard.ts'
-
-type PlantRepoTxStores
-  = (typeof TABLE_PLANTS
-    | typeof TABLE_PLANT_IMAGES
-    | typeof TABLE_PLANT_PHASES
-    | typeof TABLE_PLANT_WATERING_LOGS
-    | typeof TABLE_PLANT_CONTAINER_LOGS
-  )[]
+import WateringReadRepository from '../watering/watering_read_repository.ts'
+import { isPlantImageRow, isPlantPhaseRow, isPlantRow } from './guard.ts'
 
 export default class PlantReadRepository {
   private readonly db: IDBPDatabase
-  private readonly wateringRepo: WateringSchemaReadRepository
+  private readonly wateringSchemaReadRepo: WateringSchemaReadRepository
+  private readonly wateringLogReadRepo: WateringReadRepository
   private readonly containerRepo: PlantContainerReadRepository
 
-  constructor(db: IDBPDatabase, wateringRepo: WateringSchemaReadRepository, containerRepo: PlantContainerReadRepository) {
+  constructor(
+    db: IDBPDatabase,
+    wateringSchemaReadRepo: WateringSchemaReadRepository,
+    wateringLogReadRepo: WateringReadRepository,
+    containerRepo: PlantContainerReadRepository,
+  ) {
     this.db = db
-    this.wateringRepo = wateringRepo
+    this.wateringSchemaReadRepo = wateringSchemaReadRepo
+    this.wateringLogReadRepo = wateringLogReadRepo
     this.containerRepo = containerRepo
   }
 
   public static async create(db: IDBPDatabase) {
-    const wateringRepo = await WateringSchemaReadRepository.create()
+    const wateringSchemaReadRepo = await WateringSchemaReadRepository.create()
+    const wateringLogReadRepo = WateringReadRepository.create()
     const containerRepo = PlantContainerReadRepository.create()
 
-    return new PlantReadRepository(db, wateringRepo, containerRepo)
+    return new PlantReadRepository(db, wateringSchemaReadRepo, wateringLogReadRepo, containerRepo)
   }
 
   public async getAll(): Promise<Array<Plant>> {
@@ -129,15 +130,16 @@ export default class PlantReadRepository {
   ): Promise<Result<Plant, string>> {
     const [
       phasesResult,
-      wateringLogs,
+      wateringLogsResult,
       images,
       containers,
     ] = await Promise.all([
       this.fetchPhases(plantData, tx),
-      this.fetchWateringLogs(plantData, tx),
+      this.wateringLogReadRepo.fetchWateringLogs(plantData.id, tx),
       this.fetchImages(plantData, tx),
       this.containerRepo.getAllByPlantId(plantData.id, tx.objectStore(TABLE_PLANT_CONTAINER_LOGS)),
     ])
+    const wateringLogs = wateringLogsResult.ok ? wateringLogsResult.value : []
 
     if (phasesResult.ok) {
       const phase = this.getCurrentPhase(phasesResult.value)
@@ -177,27 +179,8 @@ export default class PlantReadRepository {
     if (plant.wateringSchemaId === undefined)
       return undefined
 
-    const schemaOption = await this.wateringRepo.getById(plant.wateringSchemaId)
+    const schemaOption = await this.wateringSchemaReadRepo.getById(plant.wateringSchemaId)
     return unwrapOrUndefined(schemaOption)
-  }
-
-  private async fetchWateringLogs(
-    plantRow: PlantRow,
-    tx: IDBPTransaction<unknown, PlantRepoTxStores>,
-  ): Promise<Array<WateringLog>> {
-    const store = tx.objectStore(TABLE_PLANT_WATERING_LOGS)
-    const index = store.index(INDEX_PLANT_ID)
-    const logs = await index.getAll(plantRow.id)
-
-    return logs.filter(isWateringLogRow)
-      .map((row): WateringLog => ({
-        id: row.id,
-        amount: row.amount,
-        ec: row.ec,
-        ph: row.ph,
-        date: row.date,
-        fertilizers: row.fertilizers,
-      }))
   }
 
   private getCurrentContainer(containers: Array<PlantContainer>): PlantContainer {

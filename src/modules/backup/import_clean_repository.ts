@@ -1,7 +1,8 @@
 import type { IDBPDatabase, IDBPObjectStore } from 'idb'
 import type { AsyncResult } from '../../types'
-import type { TABLE_FERTILIZERS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, TABLE_PLANT_IMAGES, TABLE_PLANT_PHASES, TABLE_PLANT_WATERING_LOGS, TABLE_PLANTS, TABLE_WATERING_SCHEMAS } from '../db'
+import type { TABLE_FERTILIZERS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, TABLE_PLANT_IMAGES, TABLE_PLANT_PHASES, TABLE_PLANTS, TABLE_WATERING_SCHEMAS } from '../db'
 import type { PlantPhaseType, PlantRow } from '../plants/types'
+import type { WateringLogFertilizer } from '../watering/types'
 import type BackupServiceUtil from './backup_service_util.ts'
 import type {
   BackupTxStores,
@@ -21,11 +22,13 @@ import type {
 import JSZip from 'jszip'
 import { omitKeys, safeAsync, safeParseJson } from '../../util.ts'
 import {
+
   getDb,
   INDEX_FERTILIZER_ID,
   INDEX_PLANT_ID,
   INDEX_SORT,
   INDEX_WATERING_SCHEMA_ID,
+  TABLE_PLANT_WATERING_LOGS,
   TABLES_DB,
 
 } from '../db'
@@ -192,14 +195,14 @@ export default class ImportCleanRepository {
       phases: data.plantPhases.filter(phase => phase.plantId === plant.id)
         .toSorted((lhs, rhs) => sortPlantPhases(lhs.phase, rhs.phase)),
       logs: {
-        watering: data.plantWateringLogs.filter(log => log.plantId === plant.id)
+        watering: data[TABLE_PLANT_WATERING_LOGS].filter(log => log.plantId === plant.id)
           .toSorted((lhs, rhs) => lhs.date - rhs.date)
           .map(log => ({
             date: log.date,
             amount: log.amount,
             ph: log.ph,
             ec: log.ec,
-            fertilizers: log.fertilizers.map(fertilizer => ({
+            fertilizers: log.fertilizers.map((fertilizer: WateringLogFertilizer) => ({
               amount: fertilizer.amount,
               name: fertilizer.name,
               manufacturer: fertilizer.manufacturer,
