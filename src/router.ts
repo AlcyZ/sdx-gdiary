@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Gallery from './views/Gallery.vue'
+import HarvestSession from './views/HarvestSession.vue'
 import NotFound from './views/NotFound.vue'
 import NutrientsFertilizerAdd from './views/NutrientsFertilizerAdd.vue'
 import NutrientsOverview from './views/NutrientsOverview.vue'
@@ -42,6 +43,16 @@ const routes = [
             path: 'edit',
             name: 'plant.edit',
             component: PlantEdit,
+          },
+          {
+            path: 'harvest',
+            children: [
+              {
+                name: 'plant.harvest.session',
+                path: 'session',
+                component: HarvestSession,
+              },
+            ],
           },
           {
             path: 'log',
