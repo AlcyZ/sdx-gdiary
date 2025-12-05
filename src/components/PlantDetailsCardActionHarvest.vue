@@ -8,7 +8,7 @@
       size="lg"
       soft
       @click="$router.push({
-        name: 'plant.harvest.session',
+        name: ROUTE_PLANT_HARVEST_SESSION,
         params: { plantId: plant.id },
       })"
     >
@@ -21,6 +21,7 @@
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
 import { Plus as IconPlus } from 'lucide-vue-next'
+import { ROUTE_PLANT_HARVEST_SESSION } from '../routes.ts'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
 

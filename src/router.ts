@@ -1,4 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import {
+  ROUTE_404,
+  ROUTE_GALLERY,
+  ROUTE_NUTRIENTS_FERTILIZER_ADD,
+  ROUTE_NUTRIENTS_OVERVIEW,
+  ROUTE_NUTRIENTS_SCHEMA_ADD,
+  ROUTE_NUTRIENTS_SCHEMA_EDIT,
+  ROUTE_PLANT_ADD,
+  ROUTE_PLANT_EDIT,
+  ROUTE_PLANT_HARVEST_SESSION,
+  ROUTE_PLANT_LISTING,
+  ROUTE_PLANT_LOG_WATERING,
+  ROUTE_PLANT_DETAILS,
+  ROUTE_SETTINGS,
+} from './routes.ts'
 import Gallery from './views/Gallery.vue'
 import HarvestSession from './views/HarvestSession.vue'
 import NotFound from './views/NotFound.vue'
@@ -23,12 +38,12 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'plant.listing',
+        name: ROUTE_PLANT_LISTING,
         component: PlantListing,
       },
       {
         path: 'add',
-        name: 'plant.add',
+        name: ROUTE_PLANT_ADD,
         component: PlantAdd,
       },
       {
@@ -36,19 +51,19 @@ const routes = [
         children: [
           {
             path: '',
-            name: 'plant.show',
+            name: ROUTE_PLANT_DETAILS,
             component: PlantDetails,
           },
           {
             path: 'edit',
-            name: 'plant.edit',
+            name: ROUTE_PLANT_EDIT,
             component: PlantEdit,
           },
           {
             path: 'harvest',
             children: [
               {
-                name: 'plant.harvest.session',
+                name: ROUTE_PLANT_HARVEST_SESSION,
                 path: 'session',
                 component: HarvestSession,
               },
@@ -59,7 +74,7 @@ const routes = [
             children: [
               {
                 path: 'watering',
-                name: 'plant.log.watering',
+                name: ROUTE_PLANT_LOG_WATERING,
                 component: PlantLogWatering,
               },
             ],
@@ -73,7 +88,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'nutrients.overview',
+        name: ROUTE_NUTRIENTS_OVERVIEW,
         component: NutrientsOverview,
       },
       {
@@ -81,7 +96,7 @@ const routes = [
         children: [
           {
             path: 'add',
-            name: 'nutrients.fertilizer.add',
+            name: ROUTE_NUTRIENTS_FERTILIZER_ADD,
             component: NutrientsFertilizerAdd,
           },
         ],
@@ -91,12 +106,12 @@ const routes = [
         children: [
           {
             path: 'add',
-            name: 'nutrients.schema.add',
+            name: ROUTE_NUTRIENTS_SCHEMA_ADD,
             component: NutrientsSchemaAdd,
           },
           {
             path: ':schemaId/edit',
-            name: 'nutrients.schema.edit',
+            name: ROUTE_NUTRIENTS_SCHEMA_EDIT,
             component: NutrientsSchemaEdit,
           },
         ],
@@ -105,16 +120,17 @@ const routes = [
   },
   {
     path: '/gallery',
+    name: ROUTE_GALLERY,
     component: Gallery,
   },
   {
     path: '/settings',
-    name: 'settings',
+    name: ROUTE_SETTINGS,
     component: Settings,
   },
   {
     path: '/:pathMatch(.*)*',
-    name: 'NotFound',
+    name: ROUTE_404,
     component: NotFound,
   },
 ]
