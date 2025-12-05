@@ -22,8 +22,6 @@ import type {
 import JSZip from 'jszip'
 import { omitKeys, safeAsync, safeParseJson } from '../../util.ts'
 import {
-
-  getDb,
   INDEX_FERTILIZER_ID,
   INDEX_PLANT_ID,
   INDEX_SORT,
@@ -46,9 +44,7 @@ export default class ImportCleanRepository {
     this.util = util
   }
 
-  public static async create(util: BackupServiceUtil): Promise<ImportCleanRepository> {
-    const db = await getDb()
-
+  public static create(db: IDBPDatabase, util: BackupServiceUtil): ImportCleanRepository {
     return new ImportCleanRepository(db, util)
   }
 

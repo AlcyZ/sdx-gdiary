@@ -37,21 +37,12 @@ async function bootstrap() {
     autoClose: 3000,
   } as ToastContainerOptions)
 
-  // Todo: Inject IDBPDatabase here centrally
   const db = await getDb()
 
-  const [
-    plantRepo,
-    fertilizerRepo,
-    wateringRepo,
-    backupService,
-  ] = await Promise.all([
-    PlantRepository.create(),
-    FertilizerRepository.create(),
-    WateringSchemaRepository.create(),
-    BackupService.create(),
-
-  ])
+  const plantRepo = PlantRepository.create(db)
+  const fertilizerRepo = FertilizerRepository.create(db)
+  const wateringRepo = WateringSchemaRepository.create(db)
+  const backupService = BackupService.create(db)
   const harvestRepo = HarvestRepository.create(db)
 
   app.provide(REPO_PLANT, plantRepo)

@@ -22,6 +22,7 @@
 import { Check as IconCheck, TestTube as IconSeed } from 'lucide-vue-next'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
+import { getDb } from '../modules/db'
 import DevSeeder from '../seeder/devSeeder.ts'
 import SettingsCard from './SettingsCard.vue'
 import IBtn from './ui/IBtn.vue'
@@ -55,8 +56,9 @@ function openSeedModal() {
 }
 
 async function seed() {
+  const db = await getDb()
   const count = 6
-  const seeder = await DevSeeder.create()
+  const seeder = await DevSeeder.create(db)
 
   await seeder.seed(count)
   showToast({

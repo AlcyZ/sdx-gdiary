@@ -3,7 +3,6 @@ import type { Option } from '../../types'
 import type { WateringSchema, WateringSchemaFertilizer } from './types'
 import { tryAsync } from '../../util.ts'
 import {
-  getDb,
   INDEX_WATERING_SCHEMA_ID,
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
@@ -18,8 +17,7 @@ export default class WateringSchemaReadRepository {
     this.db = db
   }
 
-  public static async create(): Promise<WateringSchemaReadRepository> {
-    const db = await getDb()
+  public static create(db: IDBPDatabase): WateringSchemaReadRepository {
     return new WateringSchemaReadRepository(db)
   }
 

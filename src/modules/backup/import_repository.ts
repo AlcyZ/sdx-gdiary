@@ -1,10 +1,9 @@
+import type { IDBPDatabase } from 'idb'
 import type { AsyncResult } from '../../types'
 import type BackupServiceUtil from './backup_service_util.ts'
 import type ImportBackupError from './import_backup_error.ts'
 import type { ImportVersion } from './types'
-import {
-  getDb,
-} from '../db'
+
 import BackupImporter from './backup_importer.ts'
 import ImportStrategyFactory from './import_strategy_factory.ts'
 
@@ -20,8 +19,7 @@ export default class ImportRepository {
     this.factory = factory
   }
 
-  public static async create(util: BackupServiceUtil): Promise<ImportRepository> {
-    const db = await getDb()
+  public static create(db: IDBPDatabase, util: BackupServiceUtil): ImportRepository {
     const factory = ImportStrategyFactory.create(db, util)
 
     const defaultStrategy = factory.createV02()

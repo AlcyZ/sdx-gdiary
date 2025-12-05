@@ -5,7 +5,6 @@ import type BackupServiceUtil from './backup_service_util.ts'
 import JSZip from 'jszip'
 import { mapMimeToExtension, safeAsync } from '../../util.ts'
 import {
-  getDb,
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_CONTAINER_LOGS,
@@ -30,8 +29,7 @@ export default class ExportRepository {
     this.util = util
   }
 
-  public static async create(util: BackupServiceUtil): Promise<ExportRepository> {
-    const db = await getDb()
+  public static create(db: IDBPDatabase, util: BackupServiceUtil): ExportRepository {
     return new ExportRepository(db, util)
   }
 

@@ -1,3 +1,4 @@
+import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
 import type { Fertilizer, NewFertilizer } from './types'
 import FertilizerReadRepository from './fertilizer_read_repository.ts'
@@ -12,11 +13,10 @@ export default class FertilizerRepository {
     this.write = write
   }
 
-  public static async create(): Promise<FertilizerRepository> {
-    const [read, write] = await Promise.all([
-      FertilizerReadRepository.create(),
-      FertilizerWriteRepository.create(),
-    ])
+  public static create(db: IDBPDatabase): FertilizerRepository {
+    const read = FertilizerReadRepository.create(db)
+    const write = FertilizerWriteRepository.create(db)
+
     return new FertilizerRepository(read, write)
   }
 

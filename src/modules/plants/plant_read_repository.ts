@@ -45,8 +45,8 @@ export default class PlantReadRepository {
     this.containerRepo = containerRepo
   }
 
-  public static async create(db: IDBPDatabase) {
-    const wateringSchemaReadRepo = await WateringSchemaReadRepository.create()
+  public static create(db: IDBPDatabase) {
+    const wateringSchemaReadRepo = WateringSchemaReadRepository.create(db)
     const wateringLogReadRepo = WateringReadRepository.create()
     const containerRepo = PlantContainerReadRepository.create()
 

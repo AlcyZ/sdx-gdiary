@@ -32,7 +32,7 @@ export default class PlantWriteRepository {
     this.containerRepo = containerRepo
   }
 
-  public static async create(db: IDBPDatabase, containerRepo: PlantContainerWriteRepository) {
+  public static create(db: IDBPDatabase, containerRepo: PlantContainerWriteRepository) {
     return new PlantWriteRepository(db, containerRepo)
   }
 

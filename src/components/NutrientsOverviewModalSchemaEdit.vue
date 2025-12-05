@@ -48,7 +48,6 @@
 <script lang="ts" setup>
 import type {
   Fertilizer,
-  NewWateringSchemaFertilizer,
   WateringSchema,
   WateringSchemaFertilizer,
 } from '../modules/nutrients/types'
@@ -57,7 +56,6 @@ import {
   Save as IconSave,
 } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
-import WateringSchemaRepository from '../modules/nutrients/watering_schema_repository.ts'
 import IBtn from './ui/IBtn.vue'
 import IInputNumber from './ui/IInputNumber.vue'
 import IModal from './ui/IModal.vue'
@@ -73,7 +71,7 @@ interface Emits {
 }
 
 const { wateringSchema, fertilizer: schemaFertilizer, fertilizers } = defineProps<Props>()
-const emit = defineEmits<Emits>()
+defineEmits<Emits>()
 
 const fertilizer = ref<Fertilizer>(schemaFertilizer.fertilizer)
 const amount = ref(schemaFertilizer.amount)
@@ -92,14 +90,15 @@ function isSelected(check: Fertilizer): boolean {
 }
 
 async function update() {
-  const repo = await WateringSchemaRepository.create()
-
-  const data: NewWateringSchemaFertilizer = {
-    fertilizer: fertilizer.value,
-    amount: amount.value,
-  }
-  const result = await repo.updateSchemaFertilizer(wateringSchema.id, schemaFertilizer.id, data)
-  if (result.ok)
-    emit('saved')
+  // Todo: Fix by sending event with data and save it in the other vue app, because all services are setup there (unless proper DI is implemented).
+  // const repo = await WateringSchemaRepository.create()
+  //
+  // const data: NewWateringSchemaFertilizer = {
+  //   fertilizer: fertilizer.value,
+  //   amount: amount.value,
+  // }
+  // const result = await repo.updateSchemaFertilizer(wateringSchema.id, schemaFertilizer.id, data)
+  // if (result.ok)
+  //   emit('saved')
 }
 </script>

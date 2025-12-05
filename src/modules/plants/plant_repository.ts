@@ -13,7 +13,7 @@ import type {
   PlantImageSort,
 } from './types'
 import { err, ok } from '../../util.ts'
-import { getDb, TABLE_PLANT_CONTAINER_LOGS } from '../db'
+import { TABLE_PLANT_CONTAINER_LOGS } from '../db'
 import PlantContainerWriteRepository from '../plant_container/plant_container_write_repository.ts'
 import WateringWriteRepository from '../watering/watering_write_repository.ts'
 import PlantReadRepository from './plant_read_repository.ts'
@@ -40,14 +40,11 @@ export default class PlantRepository {
     this.wateringWriteRepo = wateringWriteRepo
   }
 
-  public static async create() {
-    const db = await getDb()
+  public static create(db: IDBPDatabase) {
     const containerWriteRepo = PlantContainerWriteRepository.create()
     const wateringWriteRepo = WateringWriteRepository.create(db)
-    const [read, write] = await Promise.all([
-      PlantReadRepository.create(db),
-      PlantWriteRepository.create(db, containerWriteRepo),
-    ])
+    const read = PlantReadRepository.create(db)
+    const write = PlantWriteRepository.create(db, containerWriteRepo)
 
     return new PlantRepository(db, read, write, containerWriteRepo, wateringWriteRepo)
   }

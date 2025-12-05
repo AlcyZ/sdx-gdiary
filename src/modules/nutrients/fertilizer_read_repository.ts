@@ -1,6 +1,6 @@
 import type { IDBPDatabase } from 'idb'
 import type { Fertilizer } from './types'
-import { getDb, TABLE_FERTILIZERS } from '../db'
+import { TABLE_FERTILIZERS } from '../db'
 import { isFertilizer } from './guard.ts'
 
 export default class FertilizerReadRepository {
@@ -10,8 +10,7 @@ export default class FertilizerReadRepository {
     this.db = db
   }
 
-  public static async create(): Promise<FertilizerReadRepository> {
-    const db = await getDb()
+  public static create(db: IDBPDatabase): FertilizerReadRepository {
     return new FertilizerReadRepository(db)
   }
 

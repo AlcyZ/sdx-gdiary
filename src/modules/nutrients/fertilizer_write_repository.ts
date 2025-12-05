@@ -2,7 +2,7 @@ import type { IDBPDatabase } from 'idb'
 import type { Result } from '../../types'
 import type { Fertilizer, NewFertilizer } from './types'
 import { err, ok } from '../../util.ts'
-import { getDb, INDEX_FERTILIZER_ID, TABLE_FERTILIZERS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA } from '../db'
+import { INDEX_FERTILIZER_ID, TABLE_FERTILIZERS, TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA } from '../db'
 
 export default class FertilizerWriteRepository {
   private readonly db: IDBPDatabase
@@ -11,8 +11,7 @@ export default class FertilizerWriteRepository {
     this.db = db
   }
 
-  public static async create(): Promise<FertilizerWriteRepository> {
-    const db = await getDb()
+  public static create(db: IDBPDatabase): FertilizerWriteRepository {
     return new FertilizerWriteRepository(db)
   }
 

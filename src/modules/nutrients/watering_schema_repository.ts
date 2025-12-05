@@ -1,3 +1,4 @@
+import type { IDBPDatabase } from 'idb'
 import type { Option, Result } from '../../types'
 import type {
   EditedWateringSchema,
@@ -18,11 +19,10 @@ export default class WateringSchemaRepository {
     this.write = write
   }
 
-  public static async create(): Promise<WateringSchemaRepository> {
-    const [read, write] = await Promise.all([
-      WateringSchemaReadRepository.create(),
-      WateringSchemaWriteRepository.create(),
-    ])
+  public static create(db: IDBPDatabase): WateringSchemaRepository {
+    const read = WateringSchemaReadRepository.create(db)
+    const write = WateringSchemaWriteRepository.create(db)
+
     return new WateringSchemaRepository(read, write)
   }
 

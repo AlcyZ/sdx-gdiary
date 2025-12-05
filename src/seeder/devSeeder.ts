@@ -1,3 +1,4 @@
+import type { IDBPDatabase } from 'idb'
 import type { NewPlant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import FertilizerRepository from '../modules/nutrients/fertilizer_repository.ts'
@@ -108,14 +109,14 @@ export default class DevSeeder {
     // this.wateringSchemaRepository = wateringSchemaRepository
   }
 
-  public static async create(): Promise<DevSeeder> {
+  public static async create(db: IDBPDatabase): Promise<DevSeeder> {
     const [
       plantRepository,
       fertilizerRepository,
       // wateringSchemaRepository,
     ] = await Promise.all([
-      PlantRepository.create(),
-      FertilizerRepository.create(),
+      PlantRepository.create(db),
+      FertilizerRepository.create(db),
       // WateringSchemaRepository.create(),
     ])
 

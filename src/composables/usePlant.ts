@@ -1,7 +1,9 @@
+import type PlantRepository from '../modules/plants/plant_repository.ts'
 import type { Plant } from '../modules/plants/types'
 import type { Option } from '../types'
 import dayjs from 'dayjs'
-import PlantRepository from '../modules/plants/plant_repository.ts'
+import { inject } from 'vue'
+import { REPO_PLANT } from '../di_keys.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { none, some } from '../util.ts'
 import { useModal } from './useModal.ts'
@@ -9,6 +11,7 @@ import { useToast } from './useToast.ts'
 
 export function usePlant() {
   const plantStore = usePlantStore()
+  const plantRepo = inject(REPO_PLANT) as PlantRepository
 
   const { toast } = useToast()
   const { showConfirmationModal } = useModal()
@@ -45,8 +48,8 @@ export function usePlant() {
     const text = `Bist du sicher, dass die Pflanze '${plantName}' gelöscht werden soll? Diese Aktion kann nicht rückgängig gemacht werden.`
 
     const deleteAndSync = async () => {
-      const repo = await PlantRepository.create()
-      const result = await repo.delete(plant.id)
+      // Todo: Properly integrate in plant store
+      const result = await plantRepo.delete(plant.id)
 
       if (result.ok) {
         toast(`${plantName} wurde erfolgreich gelöscht`, 'success')

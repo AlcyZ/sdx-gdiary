@@ -21,11 +21,12 @@
 </template>
 
 <script lang="ts" setup>
+import type BackupService from '../modules/backup/backup_service.ts'
 import dayjs from 'dayjs'
 import { Upload as IconExport } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useToast } from '../composables/useToast.ts'
-import BackupService from '../modules/backup/backup_service.ts'
+import { SERVICE_BACKUP } from '../di_keys.ts'
 import SettingsCard from './SettingsCard.vue'
 import IBtn from './ui/IBtn.vue'
 
@@ -40,6 +41,8 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
+const backupService = inject(SERVICE_BACKUP) as BackupService
+
 const { toast } = useToast()
 
 const isLoading = ref(false)
@@ -47,8 +50,7 @@ const isLoading = ref(false)
 async function exportData() {
   isLoading.value = true
 
-  const service = await BackupService.create()
-  const result = await service.createBackupZip()
+  const result = await backupService.createBackupZip()
   isLoading.value = false
 
   if (!result.ok) {

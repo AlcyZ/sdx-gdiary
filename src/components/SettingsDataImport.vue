@@ -56,11 +56,12 @@
 </template>
 
 <script lang="ts" setup>
+import type BackupService from '../modules/backup/backup_service.ts'
 import type { ImportVersion } from '../modules/backup/types'
 import { AlertTriangle as IconAlert, Download as IconImport } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useToast } from '../composables/useToast.ts'
-import BackupService from '../modules/backup/backup_service.ts'
+import { SERVICE_BACKUP } from '../di_keys.ts'
 import ImportBackupError from '../modules/backup/import_backup_error.ts'
 import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
@@ -80,6 +81,8 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
+const backupService = inject(SERVICE_BACKUP) as BackupService
+
 const plantStore = usePlantStore()
 const fertilizerStore = useFertilizerStore()
 const wateringSchemaStore = useWateringSchemaStore()
@@ -97,8 +100,7 @@ async function importData() {
     return
 
   isLoading.value = true
-  const service = await BackupService.create()
-  const result = await service.importBackup(importFile.value, version.value)
+  const result = await backupService.importBackup(importFile.value, version.value)
   isLoading.value = false
 
   if (!result.ok) {

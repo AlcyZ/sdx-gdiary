@@ -5,7 +5,7 @@ import type DeleteDatabaseError from '../db/delete_database_error.ts'
 import type ExportBackupError from './export_backup_error.ts'
 import type ImportBackupError from './import_backup_error.ts'
 import type { ImportVersion } from './types'
-import { getDb, safeDeleteDatabase } from '../db'
+import { safeDeleteDatabase } from '../db'
 import BackupServiceUtil from './backup_service_util.ts'
 import ExportRepository from './export_repository.ts'
 import ImportCleanRepository from './import_clean_repository.ts'
@@ -32,14 +32,12 @@ export default class BackupService {
     this.db = db
   }
 
-  public static async create(): Promise<BackupService> {
+  public static create(db: IDBPDatabase): BackupService {
     const util = new BackupServiceUtil()
-    const [importRepo, importCleanRepo, exportRepo, db] = await Promise.all([
-      ImportRepository.create(util),
-      ImportCleanRepository.create(util),
-      ExportRepository.create(util),
-      getDb(),
-    ])
+    const importRepo = ImportRepository.create(db, util)
+    const importCleanRepo = ImportCleanRepository.create(db, util)
+    const exportRepo = ExportRepository.create(db, util)
+
     return new BackupService(importRepo, importCleanRepo, exportRepo, util, db)
   }
 
