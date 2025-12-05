@@ -5,8 +5,10 @@ import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import Vue3Toastify from 'vue3-toastify'
 import App from './App.vue'
-import { REPO_FERTILIZERS, REPO_PLANT, REPO_WATERING_SCHEMA, SERVICE_BACKUP } from './di_keys.ts'
+import { REPO_FERTILIZERS, REPO_HARVEST, REPO_PLANT, REPO_WATERING_SCHEMA, SERVICE_BACKUP } from './di_keys.ts'
 import BackupService from './modules/backup/backup_service.ts'
+import { getDb } from './modules/db'
+import HarvestRepository from './modules/harvest/harvest_repository.ts'
 import FertilizerRepository from './modules/nutrients/fertilizer_repository.ts'
 import WateringSchemaRepository from './modules/nutrients/watering_schema_repository.ts'
 import PlantRepository from './modules/plants/plant_repository.ts'
@@ -35,17 +37,28 @@ async function bootstrap() {
     autoClose: 3000,
   } as ToastContainerOptions)
 
-  const [plantRepo, fertilizerRepo, wateringRepo, backupService] = await Promise.all([
+  // Todo: Inject IDBPDatabase here centrally
+  const db = await getDb()
+
+  const [
+    plantRepo,
+    fertilizerRepo,
+    wateringRepo,
+    backupService,
+  ] = await Promise.all([
     PlantRepository.create(),
     FertilizerRepository.create(),
     WateringSchemaRepository.create(),
     BackupService.create(),
+
   ])
+  const harvestRepo = HarvestRepository.create(db)
 
   app.provide(REPO_PLANT, plantRepo)
   app.provide(REPO_FERTILIZERS, fertilizerRepo)
   app.provide(REPO_WATERING_SCHEMA, wateringRepo)
   app.provide(SERVICE_BACKUP, backupService)
+  app.provide(REPO_HARVEST, harvestRepo)
 
   app.mount('#app')
 }

@@ -17,9 +17,12 @@ type HarvestBase = WithPlantId<{
   container?: string
   info?: string
 }>
-
 type HarvestLogRow = (HarvestSession | HarvestFinished) & HarvestBase
 
-type NewHarvestSession = Omit<HarvestBase, 'timestamp'> & Omit<HarvestSession, 'type'> & {
+type NewHarvestBase = Omit<HarvestBase, 'id' | 'timestamp'> & {
   date: string
 }
+type NewHarvestSession = HarvestSession & NewHarvestBase
+type NewHarvestFinished = HarvestFinished & NewHarvestBase
+
+type NewHarvest = NewHarvestSession | NewHarvestFinished

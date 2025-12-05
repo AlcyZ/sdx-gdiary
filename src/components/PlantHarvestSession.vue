@@ -44,12 +44,16 @@
 </template>
 
 <script lang="ts" setup>
+import type HarvestRepository from '../modules/harvest/harvest_repository.ts'
+import type { NewHarvestSession } from '../modules/harvest/types'
 import type { Plant } from '../modules/plants/types'
 import {
   Save as IconSave,
 } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useHarvestSessionForm } from '../composables/useHarvestSessionForm.ts'
+import { useToast } from '../composables/useToast.ts'
+import { REPO_HARVEST } from '../di_keys.ts'
 import HarvestSessionForm from './HarvestSessionForm.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
@@ -60,11 +64,13 @@ interface Props {
   plant: Plant
 }
 interface Emits {
-
+  saved: []
 }
 
-defineProps<Props>()
-defineEmits<Emits>()
+const { plant } = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const harvestRepo = inject(REPO_HARVEST) as HarvestRepository
 
 const {
   date,
@@ -75,16 +81,37 @@ const {
   errors,
   hasFormErrors,
   validate,
-  resetForm,
 } = useHarvestSessionForm()
+
+const { toast } = useToast()
 
 const loading = ref(false)
 
 async function save() {
   const validationResult = await validate()
-  console.info('todo: save', validationResult)
+  if (!validationResult.valid) {
+    toast('Bitte fülle alle Pflichtfelder aus!', 'error')
+    return
+  }
 
-  loading.value = true
-  setTimeout(() => loading.value = false, 2500)
+  const harvest: NewHarvestSession = {
+    type: 'session',
+    date: date.value,
+    weight: weight.value,
+    container: container.value,
+    info: info.value,
+    state: state.value,
+    plantId: plant.id,
+  }
+  const result = await harvestRepo.save(harvest)
+
+  if (!result.ok) {
+    toast('Es ist ein Fehler beim speichern der Ernte aufgetreten', 'error')
+    console.error('[PlantHarvestSession.save]:', result.error)
+    return
+  }
+
+  toast('Ernte gespeichert!', 'success')
+  emit('saved')
 }
 </script>
