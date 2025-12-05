@@ -1,5 +1,7 @@
 <template>
-  <div class="">
+  <div class="flex flex-col min-h-screen w-full pb-20 overflow-hidden">
+    <slot name="top-navigation" />
+
     <slot />
   </div>
 </template>
