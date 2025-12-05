@@ -10,6 +10,7 @@
       <PlantHarvestSession
         v-if="plantStore.plant"
         :plant="plantStore.plant"
+        @saved="handleHarvestSessionSaved"
       />
       <NotFound
         v-else
@@ -20,9 +21,11 @@
 
 <script lang="ts" setup>
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import TopNavigation from '../components/layout/TopNavigation.vue'
 import PlantHarvestSession from '../components/PlantHarvestSession.vue'
 import LayoutForm from '../layouts/LayoutForm.vue'
+import { ROUTE_PLANT_DETAILS } from '../routes.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import NotFound from './NotFound.vue'
 
@@ -37,6 +40,17 @@ defineProps<Props>()
 defineEmits<Emits>()
 
 const plantStore = usePlantStore()
+const router = useRouter()
+
+async function handleHarvestSessionSaved() {
+  await Promise.all([
+    plantStore.syncData(),
+    router.push({
+      name: ROUTE_PLANT_DETAILS,
+      params: { plantId: plantStore.plant?.id },
+    }),
+  ])
+}
 
 onMounted(async () => await plantStore.syncPlantWithRoute())
 </script>
