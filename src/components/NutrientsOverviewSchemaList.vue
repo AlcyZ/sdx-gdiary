@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { WateringSchema, WateringSchemaFertilizer } from '../modules/nutrients/types'
+import type {NewWateringSchemaFertilizer, WateringSchema, WateringSchemaFertilizer} from '../modules/nutrients/types'
 import {
   Trash as IconDelete,
   Trash2 as IconDelete2,
@@ -150,8 +150,11 @@ async function editSchemaFertilizer(wateringSchema: WateringSchema, fertilizer: 
     wateringSchema,
     fertilizer,
     fertilizers: fertilizerStore.fertilizers,
-    onSaved: async () => {
-      await wateringStore.syncWateringSchemas()
+    onEdit: async (data: NewWateringSchemaFertilizer) => {
+      const result = await wateringStore.updateSchemaFertilizer(wateringSchema.id, fertilizer.id, data)
+      result.ok
+        ? toast('Schema aktualisiert', 'success')
+        : toast('Es ist ein Fehler aufgetreten', 'error')
       await close()
     },
   })

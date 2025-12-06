@@ -48,6 +48,7 @@
 <script lang="ts" setup>
 import type {
   Fertilizer,
+  NewWateringSchemaFertilizer,
   WateringSchema,
   WateringSchemaFertilizer,
 } from '../modules/nutrients/types'
@@ -67,11 +68,11 @@ interface Props {
 }
 interface Emits {
   close: []
-  saved: []
+  edit: [schema: NewWateringSchemaFertilizer]
 }
 
 const { wateringSchema, fertilizer: schemaFertilizer, fertilizers } = defineProps<Props>()
-defineEmits<Emits>()
+const emit = defineEmits<Emits>()
 
 const fertilizer = ref<Fertilizer>(schemaFertilizer.fertilizer)
 const amount = ref(schemaFertilizer.amount)
@@ -90,15 +91,10 @@ function isSelected(check: Fertilizer): boolean {
 }
 
 async function update() {
-  // Todo: Fix by sending event with data and save it in the other vue app, because all services are setup there (unless proper DI is implemented).
-  // const repo = await WateringSchemaRepository.create()
-  //
-  // const data: NewWateringSchemaFertilizer = {
-  //   fertilizer: fertilizer.value,
-  //   amount: amount.value,
-  // }
-  // const result = await repo.updateSchemaFertilizer(wateringSchema.id, schemaFertilizer.id, data)
-  // if (result.ok)
-  //   emit('saved')
+  const data: NewWateringSchemaFertilizer = {
+    fertilizer: fertilizer.value,
+    amount: amount.value,
+  }
+  emit('edit', data)
 }
 </script>
