@@ -27,15 +27,9 @@ const imgSrc = ref(BASE64_PLACEHOLDER)
 
 const isLoading = ref(false)
 
-function waitFor(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
 async function loadImage() {
   isLoading.value = true
   const imageOption = await plantRepo?.getImageByImageId(image.id) || none()
-
-  await waitFor(500)
 
   isLoading.value = false
   if (imageOption.exist) {

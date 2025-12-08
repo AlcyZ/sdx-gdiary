@@ -55,17 +55,22 @@ export function usePlant() {
 
   function getLastWateringText(plant: Plant): string {
     const isNotWateredText = 'Neu'
-    const lastWatering = getLastWatering(plant)
+    const today = 'Heute'
 
+    const lastWatering = getLastWatering(plant)
     if (!lastWatering.exist)
       return isNotWateredText
 
     const lastWateringDate = dayjs(new Date(lastWatering.value.date))
     const daysPastSinceWatering = dayjs().diff(lastWateringDate, 'days')
 
-    return daysPastSinceWatering >= 10
-      ? lastWateringDate.format('DD.MM.YYYY')
-      : `vor ${daysPastSinceWatering} Tagen`
+    if (daysPastSinceWatering === 0)
+      return today
+
+    if (daysPastSinceWatering >= 10)
+      return lastWateringDate.format('DD.MM.YYYY')
+
+    return `vor ${daysPastSinceWatering} Tagen`
   }
 
   async function showDeleteConfirmationModal(plant: Plant, onDeleted?: () => any) {

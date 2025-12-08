@@ -64,7 +64,7 @@
 
 <script lang="ts" setup>
 import type { Plant, PlantPhase } from '../modules/plants/types'
-import { formatDate } from 'sdx-php-date'
+import dayjs from 'dayjs'
 import { computed } from 'vue'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import ICard from './ui/ICard.vue'
@@ -97,7 +97,6 @@ const plantPhases = computed(
 )
 
 function formatStartedAt(startedAt: string): string {
-  const date = new Date(startedAt)
-  return formatDate('d.m.Y', date)
+  return dayjs(new Date(startedAt)).format('DD.MM.YYYY')
 }
 </script>

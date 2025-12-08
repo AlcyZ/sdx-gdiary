@@ -34,7 +34,7 @@
           v-if="plant.image"
           :image="plant.image"
         >
-          <template #default="{ src, isLoading }">
+          <template #default="{ src }">
             <img
               :src="src"
               :alt="`image-${plant.name}-${plant.image.id}`"

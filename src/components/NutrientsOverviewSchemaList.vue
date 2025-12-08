@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts" setup>
-import type {NewWateringSchemaFertilizer, WateringSchema, WateringSchemaFertilizer} from '../modules/nutrients/types'
+import type { NewWateringSchemaFertilizer, WateringSchema, WateringSchemaFertilizer } from '../modules/nutrients/types'
 import {
   Trash as IconDelete,
   Trash2 as IconDelete2,
