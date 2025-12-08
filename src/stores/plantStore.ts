@@ -17,7 +17,7 @@ export const usePlantStore = defineStore('plant', () => {
   const hasPlants = computed(() => plants.value.length > 0)
 
   const syncPlant = async (plantId: number) => {
-    const plantResult = await plantRepo?.getById(plantId) || err(undefined)
+    const plantResult = await plantRepo.getById(plantId)
     if (plantResult.ok)
       plant.value = plantResult.value
   }
@@ -41,7 +41,7 @@ export const usePlantStore = defineStore('plant', () => {
     if (!plant.value)
       return err(undefined)
 
-    const result = await plantRepo?.uploadPlantImage(plant.value, file) || err(undefined)
+    const result = await plantRepo.uploadPlantImage(plant.value, file)
     if (result.ok && sync)
       await syncData()
 
@@ -92,7 +92,7 @@ export const usePlantStore = defineStore('plant', () => {
     if (!plant.value)
       return err(undefined)
 
-    const result = await plantRepo?.markFavorit(plant.value, image) || err(undefined)
+    const result = await plantRepo.markFavorit(plant.value, image)
     if (result.ok)
       await syncData()
 
