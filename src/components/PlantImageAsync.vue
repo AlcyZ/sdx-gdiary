@@ -1,9 +1,17 @@
 <template>
-  <IImgAsync
-    :img-src="imgSrc"
-    :loading="isLoading"
-    :size-class="sizeClass"
-  />
+  <div
+    class="
+      overflow-hidden
+      shadow-md
+      bg-gray-200
+    "
+  >
+    <img
+      :src="imgSrc"
+      :alt="`plant-image-${image.id}`"
+      class="w-full h-full object-cover"
+    >
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -11,11 +19,9 @@ import type { PlantImage } from '../modules/plants/types'
 import { inject, onMounted, ref } from 'vue'
 import { REPO_PLANT } from '../di_keys.ts'
 import { BASE64_PLACEHOLDER, none } from '../util.ts'
-import IImgAsync from './ui/IImgAsync.vue'
 
 interface Props {
   image: PlantImage
-  sizeClass: string
 }
 interface Emits {
 

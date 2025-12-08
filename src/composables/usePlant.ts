@@ -1,5 +1,6 @@
 import type PlantRepository from '../modules/plants/plant_repository.ts'
 import type { Plant } from '../modules/plants/types'
+import type { WateringLog } from '../modules/watering/types'
 import type { Option } from '../types'
 import dayjs from 'dayjs'
 import { inject } from 'vue'
@@ -41,6 +42,32 @@ export function usePlant() {
     return some(diff)
   }
 
+  function getLastWatering(plant: Plant): Option<WateringLog> {
+    if (plant.logs.watering.length === 0)
+      return none()
+
+    return some(
+      plant.logs.watering.reduce(
+        (lhs, rhs) => lhs.date > rhs.date ? lhs : rhs,
+      ),
+    )
+  }
+
+  function getLastWateringText(plant: Plant): string {
+    const isNotWateredText = 'Neu'
+    const lastWatering = getLastWatering(plant)
+
+    if (!lastWatering.exist)
+      return isNotWateredText
+
+    const lastWateringDate = dayjs(new Date(lastWatering.value.date))
+    const daysPastSinceWatering = dayjs().diff(lastWateringDate, 'days')
+
+    return daysPastSinceWatering >= 10
+      ? lastWateringDate.format('DD.MM.YYYY')
+      : `vor ${daysPastSinceWatering} Tagen`
+  }
+
   async function showDeleteConfirmationModal(plant: Plant, onDeleted?: () => any) {
     const plantName = plant.name !== undefined && plant.name !== ''
       ? `${plant.name} (${plant.strain})`
@@ -79,6 +106,7 @@ export function usePlant() {
     getPlantName,
     getPlantAge,
     getFlowerDay,
+    getLastWateringText,
     showDeleteConfirmationModal,
   }
 }

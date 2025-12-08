@@ -2,6 +2,7 @@ import type { HasId, HasTimestamps, WithId } from '../../types'
 import type { type INDEX_PLANT_ID, type INDEX_PLANT_IMAGE_ID, type INDEX_SORT, type INDEX_WATERING_SCHEMA_ID, type TABLE_PLANT_CONTAINER_LOGS, TABLE_PLANT_HARVEST_LOGS, type TABLE_PLANT_IMAGES, type TABLE_PLANT_PHASES, type TABLE_PLANT_WATERING_LOGS, type TABLE_PLANTS } from '../db'
 import type { WateringSchema } from '../nutrients/types'
 import type { PlantContainer, PlantContainerMedium } from '../plant_container/types'
+import type { WateringLog } from '../watering/types'
 
 interface NewPlantContainer {
   container: string

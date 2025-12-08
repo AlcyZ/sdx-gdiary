@@ -10,8 +10,7 @@
         <PlantImageAsync
           v-if="plant.image"
           :image="plant.image"
-          class="rounded-full mr-4"
-          size-class="w-14 h-14"
+          class="rounded-full mr-4 w-14 h-14"
         />
         <img
           v-else
@@ -46,16 +45,16 @@
       </div>
 
       <div class="text-xs flex flex-col items-center justify-center text-center">
-        <div class="font-semibold opacity-75">
-          {{ plant.lastWatering }}
+        <div class="flex items-center">
+          <IconWater :size="14" />
+          <span class="font-semibold opacity-75 ml-0.5">{{ plant.lastWatering }}</span>
         </div>
         <div class="flex items-center opacity-60">
-          <!-- Todo: Refactor substrat stuff -->
-          <!--          <component -->
-          <!--            :is="plant.substrate.icon" -->
-          <!--            :size="14" -->
-          <!--          /> -->
-          <!--          <span>{{ plant.substrate.label }} | {{ plant.substrate.size }}</span> -->
+          <component
+            :is="plant.container.icon"
+            :size="14"
+          />
+          <span>{{ plant.container.label }} | {{ plant.container.size }}</span>
         </div>
       </div>
 
@@ -81,16 +80,17 @@
 
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
-import dayjs from 'dayjs'
 import {
   Edit as IconEdit,
   Eye as IconShow,
   Trash as IconTrash,
+  Droplets as IconWater,
   Droplet as IconWatering,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePlant } from '../composables/usePlant.ts'
+import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
@@ -113,8 +113,9 @@ defineEmits<Emits>()
 const plantStore = usePlantStore()
 
 const router = useRouter()
-const { getPlantAge, getFlowerDay, getPlantName, showDeleteConfirmationModal } = usePlant()
+const { getPlantAge, getFlowerDay, getPlantName, getLastWateringText, showDeleteConfirmationModal } = usePlant()
 const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
+const { getContainerIcon, getContainerLabel } = usePlantContainer()
 
 const plantsList = computed(
   () => plantStore.plants.map(plant => ({
@@ -128,13 +129,12 @@ const plantsList = computed(
       icon: getPhaseIcon(plant.phase.phase),
       class: getPlantStatusClass(plant),
     },
-    // Todo: Refactor substrat/container stuff!
-    // substrate: {
-    //   label: getSubstrateLabel(plant.substrate.substrate),
-    //   size: plant.substrate.size,
-    //   icon: getSubstrateIcon(plant.substrate.substrate),
-    // },
-    lastWatering: getLastWatering(plant),
+    container: {
+      label: getContainerLabel(plant.container.medium),
+      icon: getContainerIcon(plant.container.medium),
+      size: `${plant.container.volume}L`,
+    },
+    lastWatering: getLastWateringText(plant),
     actions: [
       {
         icon: IconShow,
@@ -169,17 +169,6 @@ function getPlantStatusClass(plant: Plant): string {
   const colors = getPhaseColor(plant.phase.phase)
 
   return `${colors.bg} ${colors.text}`
-}
-
-function getLastWatering(plant: Plant): string {
-  if (plant.logs.watering.length === 0) {
-    return 'Kein Protokoll'
-  }
-
-  const latestLog = plant.logs.watering.reduce((lhs, rhs) => lhs.date > rhs.date ? lhs : rhs)
-  const logDate = dayjs(new Date(latestLog.date)).format('DD.MM.YYYY')
-
-  return `Zuletzt gegossen: ${logDate}`
 }
 
 function navigateToDetails(plantId: number) {
