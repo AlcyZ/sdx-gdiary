@@ -69,8 +69,14 @@ export default class PlantRepository {
     return this.wateringWriteRepo.pourPlant(data)
   }
 
-  public async getAll(): Promise<Array<Plant>> {
-    return this.read.getAll()
+  public async getAll(sortCallback?: (lhs: Plant, rhs: Plant) => number): Promise<Array<Plant>> {
+    const plants = await this.read.getAll()
+
+    if (sortCallback) {
+      return plants.toSorted(sortCallback)
+    }
+
+    return plants
   }
 
   public async getById(id: number | IDBValidKey): Promise<Result<Plant, GetPlantError>> {

@@ -29,7 +29,8 @@ export const usePlantStore = defineStore('plant', () => {
     await syncPlant(plantId)
   }
   const syncPlants = async () => {
-    plants.value = await plantRepo?.getAll() || []
+    const sortCallback = (lhs: Plant, rhs: Plant): number => rhs.id - lhs.id
+    plants.value = await plantRepo.getAll(sortCallback)
   }
 
   const syncData = async () => await Promise.all([
