@@ -7,7 +7,7 @@
     </template>
 
     <div class="flex justify-center py-4">
-      <PlantHarvestSession
+      <PlantHarvest
         v-if="plantStore.plant"
         :plant="plantStore.plant"
         @saved="handleHarvestSessionSaved"
@@ -23,7 +23,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import TopNavigation from '../components/layout/TopNavigation.vue'
-import PlantHarvestSession from '../components/PlantHarvestSession.vue'
+import PlantHarvest from '../components/PlantHarvest.vue'
 import LayoutForm from '../layouts/LayoutForm.vue'
 import { ROUTE_PLANT_DETAILS } from '../routes.ts'
 import { usePlantStore } from '../stores/plantStore.ts'

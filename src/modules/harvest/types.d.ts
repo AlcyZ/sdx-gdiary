@@ -1,5 +1,5 @@
+import type { INDEX_PLANT_ID } from '../db'
 import type { WithPlantId } from '../plants/types'
-import type {INDEX_PLANT_ID} from "../db";
 
 type DryingState = 'wet' | 'semi_dry' | 'dry'
 

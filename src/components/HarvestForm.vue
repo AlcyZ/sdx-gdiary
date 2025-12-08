@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4">
-    <HarvestSessionFormLabel
+    <HarvestFormLabel
       label="Trocknungsgrad"
       :error="errorState"
       required
@@ -17,9 +17,9 @@
           {{ dryingState.label }}
         </option>
       </select>
-    </HarvestSessionFormLabel>
+    </HarvestFormLabel>
 
-    <HarvestSessionFormLabel
+    <HarvestFormLabel
       label="Gewicht"
       :error="errorWeight"
     >
@@ -30,9 +30,9 @@
         class="input w-full"
         placeholder="Erntegewicht in Gram"
       >
-    </HarvestSessionFormLabel>
+    </HarvestFormLabel>
 
-    <HarvestSessionFormLabel
+    <HarvestFormLabel
       label="Behälter"
       :error="errorContainer"
     >
@@ -42,9 +42,9 @@
         class="input w-full"
         placeholder="Behälter, in dem die Ernte gelagert wird. z.b: Glas, Netz oder auch Pizzakarton"
       >
-    </HarvestSessionFormLabel>
+    </HarvestFormLabel>
 
-    <HarvestSessionFormLabel
+    <HarvestFormLabel
       label="Anmerkung"
       :error="errorInfo"
     >
@@ -54,14 +54,14 @@
         class="textarea w-full"
         placeholder="Zusatzinformation bzgl. der Ernte"
       />
-    </HarvestSessionFormLabel>
+    </HarvestFormLabel>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { DryingState } from '../modules/harvest/types'
 import { useDryingState } from '../composables/useDryingState.ts'
-import HarvestSessionFormLabel from './HarvestSessionFormLabel.vue'
+import HarvestFormLabel from './HarvestFormLabel.vue'
 
 interface Props {
   errorDate?: string

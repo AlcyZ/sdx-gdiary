@@ -13,7 +13,7 @@
       />
     </div>
 
-    <HarvestSessionForm
+    <HarvestForm
       v-model:date="date"
       v-model:weight="weight"
       v-model:container="container"
@@ -54,7 +54,7 @@ import { inject, ref } from 'vue'
 import { useHarvestSessionForm } from '../composables/useHarvestSessionForm.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_HARVEST } from '../di_keys.ts'
-import HarvestSessionForm from './HarvestSessionForm.vue'
+import HarvestForm from './HarvestForm.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
