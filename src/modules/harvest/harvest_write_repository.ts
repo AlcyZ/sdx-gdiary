@@ -3,7 +3,7 @@ import type { AsyncResult } from '../../types'
 import type { HarvestLogRow, NewHarvest } from './types'
 import dayjs from 'dayjs'
 import { omitKeys, safeAsync } from '../../util.ts'
-import { TABLE_PLANT_HARVEST_LOGS } from '../db'
+import { INDEX_PLANT_ID, TABLE_PLANT_HARVEST_LOGS } from '../db'
 
 export default class HarvestWriteRepository {
   public static create() {
@@ -13,6 +13,7 @@ export default class HarvestWriteRepository {
   public async save<
     Tx extends IDBPTransaction<any, ArrayLike<string>, 'readwrite'>,
   >(
+    plantId: number,
     harvest: NewHarvest,
     tx: typeof TABLE_PLANT_HARVEST_LOGS extends Tx['objectStoreNames'][number]
       ? Tx
@@ -23,6 +24,7 @@ export default class HarvestWriteRepository {
       const data: Omit<HarvestLogRow, 'id'> = {
         ...omitKeys(harvest, ['date']),
         timestamp: dayjs(harvest.date).valueOf(),
+        [INDEX_PLANT_ID]: plantId,
       }
 
       await store.add(data)

@@ -19,12 +19,12 @@ export default class HarvestRepository {
     return new HarvestRepository(db, write)
   }
 
-  public async save(harvest: NewHarvest): AsyncResult<void, DOMException> {
+  public async save(plantId: number, harvest: NewHarvest): AsyncResult<void, DOMException> {
     const tx = this.db.transaction([
       TABLE_PLANT_HARVEST_LOGS,
     ], 'readwrite')
 
-    const result = await this.write.save(harvest, tx)
+    const result = await this.write.save(plantId, harvest, tx)
     await tx.done
 
     return result

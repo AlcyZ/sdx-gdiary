@@ -22,7 +22,7 @@ type HarvestLogRow = (HarvestSession | HarvestFinished) & HarvestBase
 
 type Harvest = Omit<HarvestLogRow, typeof INDEX_PLANT_ID>
 
-type NewHarvestBase = Omit<HarvestBase, 'id' | 'timestamp'> & {
+type NewHarvestBase = Omit<HarvestBase, 'id' | 'timestamp' | typeof INDEX_PLANT_ID> & {
   date: string
 }
 type NewHarvestSession = HarvestSession & NewHarvestBase
