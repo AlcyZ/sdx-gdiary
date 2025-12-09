@@ -1,11 +1,11 @@
 <template>
-  <label
+  <div
     class="swap"
     :class="swapClass"
     @click="$emit('update:modelValue', !isActive)"
   >
     <slot />
-  </label>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -16,7 +16,7 @@ interface Props {
   flip?: boolean
 }
 interface Emits {
-
+  'update:modelValue': [value: boolean]
 }
 
 const { rotate, flip } = defineProps<Props>()
