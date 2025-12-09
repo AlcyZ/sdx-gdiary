@@ -8,12 +8,12 @@
 import type { Component } from 'vue'
 
 interface Props {
-  as: string | Component
+  as?: string | Component
 }
 interface Emits {
 
 }
 
-defineProps<Props>()
+const { as = 'div' } = defineProps<Props>()
 defineEmits<Emits>()
 </script>
