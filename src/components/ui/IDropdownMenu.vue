@@ -64,7 +64,7 @@
   <DropdownMenuRadioGroup
     v-else-if="item.type === 'radio'"
     :model-value="item.selected"
-    @update:model-value="asd"
+    @update:model-value="handleSelected"
   >
     <DropdownMenuRadioItem
       v-for="(radio, i) in item.items"
@@ -105,7 +105,7 @@ interface Emits {
 defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-function asd(value: T) {
+function handleSelected(value: string) {
   emit('update:selected', value)
 }
 </script>
