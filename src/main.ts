@@ -12,7 +12,6 @@ import WateringSchemaRepository from './modules/nutrients/watering_schema_reposi
 import PlantRepository from './modules/plants/plant_repository.ts'
 import { router } from './router.ts'
 import './style.css'
-import 'vue3-toastify/dist/index.css'
 
 const debug = false
 
