@@ -128,13 +128,13 @@ import ICard from './ui/ICard.vue'
 import IDropdownLegacy from './ui/IDropdownLegacy.vue'
 
 interface Props {
-
+  config: PlantListingConfig
 }
 interface Emits {
 
 }
 
-defineProps<Props>()
+const { config } = defineProps<Props>()
 defineEmits<Emits>()
 
 const plantStore = usePlantStore()
@@ -145,7 +145,7 @@ const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getContainerIcon, getContainerLabel } = usePlantContainer()
 
 const plantsList = computed(
-  () => plantStore.plants.map(plant => ({
+  () => plantStore.plants.filter(plantListingFilter).map(plant => ({
     id: plant.id,
     image: getPlantImage(plant),
     name: getPlantName(plant),
@@ -182,6 +182,10 @@ const plantsList = computed(
     ],
   })),
 )
+
+function plantListingFilter(plant: Plant): boolean {
+  return config.filter === 'show-all' || !plant.isHarvested
+}
 
 function getPlantImage(plant: Plant) {
   if (plant.favoritImage)
