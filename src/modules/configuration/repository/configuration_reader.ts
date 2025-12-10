@@ -1,7 +1,7 @@
 import type { Option } from '../../../types'
 import { none, safeParseJson, some } from '../../../util.ts'
+import { CONFIG_PLANT_LISTING } from '../constants.ts'
 import { isPlantListingConfig } from '../guard.ts'
-import {CONFIG_PLANT_LISTING} from "../constants.ts";
 
 export default class ConfigurationReader {
   public static create() {
