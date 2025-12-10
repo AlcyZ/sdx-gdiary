@@ -22,12 +22,20 @@
         <component :is="substrate.icon" :size="14" />
         {{ substrate.label }} ({{ substrate.size }})
       </IBadge>
+
+      <IBadge v-if="plant.isHarvested" variant="success" class="text-base-100">
+        <IconHarvested :size="14" />
+        Geerntet
+      </IBadge>
     </div>
   </ICard>
 </template>
 
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
+import {
+  Tractor as IconHarvested,
+} from 'lucide-vue-next'
 import { computed } from 'vue'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantContainer } from '../composables/usePlantContainer.ts'

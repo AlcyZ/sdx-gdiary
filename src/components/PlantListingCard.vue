@@ -58,6 +58,15 @@
 
       <div class="flex flex-col items-center justify-center">
         <IBadge
+          v-if="plant.isHarvested"
+          variant="success"
+          class="mt-0.5 text-base-100"
+        >
+          <IconHarvested :size="16" />
+          Geerntet
+        </IBadge>
+        <IBadge
+          v-else
           class="mt-0.5"
           :class="plant.status.class"
         >
@@ -99,6 +108,7 @@
 import type { Plant } from '../modules/plants/types'
 import {
   Edit as IconEdit,
+  Tractor as IconHarvested,
   Eye as IconShow,
   Trash as IconTrash,
   Droplets as IconWater,
@@ -152,6 +162,7 @@ const plantsList = computed(
       size: `${plant.container.volume}L`,
     },
     lastWatering: getLastWateringText(plant),
+    isHarvested: plant.isHarvested,
     actions: [
       {
         icon: IconShow,
