@@ -1,4 +1,5 @@
-import type { Component } from 'vue'
+import type { CheckedState } from 'radix-vue/dist/Menu/utils'
+import type { Component, SetupContext, VNodeChild } from 'vue'
 
 /**
  * Represents a result type that can either hold a successful value of type `T` or an error value of type `E`.
@@ -40,9 +41,15 @@ interface HasId<T> {
 
 type WithId<T, I> = T & HasId<I>
 
+type Attrs = SetupContext<any>['attrs']
+
 interface HasTimestamps {
   createdAt: string
   updatedAt: string
+}
+
+interface HasLabel {
+  label: string
 }
 
 interface DockItem {
@@ -64,17 +71,51 @@ interface DropdownItemLegacy {
   onClick?: () => unknown
 }
 
-type DropdownPosition = 'start'
-  | 'center'
-  | 'end'
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right'
-
-interface StepItem {
-
+type DropdownMenuBase = HasLabel & {
+  icon: Component | VNodeChild
+  iconAttrs?: Attrs
 }
+
+type DropdownMenuItem = {
+  type: 'item'
+  onClick?: () => any
+} & DropdownMenuBase
+
+interface DropdownMenuSeparator {
+  type: 'separator'
+}
+
+type DropdownMenuSub = {
+  type: 'sub'
+  items: Array<DropdownMenu>
+} & DropdownMenuBase
+
+type DropdownMenuCheckboxItem = {
+  type: 'checkbox'
+  checked: CheckedState
+} & HasLabel
+
+interface DropdownMenuRadioGroup {
+  type: 'radio'
+  selected: T
+  items: Array<DropdownMenuRadioGroupItem>
+}
+
+type DropdownMenuRadioGroupItem = HasLabel & {
+  value: string
+}
+
+interface DropdownMenuLabel {
+  type: 'label'
+  label: string
+}
+
+type DropdownMenu = DropdownMenuItem
+  | DropdownMenuSeparator
+  | DropdownMenuSub
+  | DropdownMenuCheckboxItem
+  | DropdownMenuRadioGroup
+  | DropdownMenuLabel
 
 interface ListItemAction {
   icon: Component
