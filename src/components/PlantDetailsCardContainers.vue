@@ -24,7 +24,7 @@
             <span class="opacity-60">{{ log.time }}</span>
           </h3>
 
-          <IDropdown
+          <IDropdownLegacy
             :items="log.actions"
             class="dropdown-end"
           />
@@ -95,7 +95,7 @@ import PlantDetailsModalContainerEdit from './PlantDetailsModalContainerEdit.vue
 import IBadge from './ui/IBadge.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
-import IDropdown from './ui/IDropdown.vue'
+import IDropdownLegacy from './ui/IDropdownLegacy.vue'
 import IPopperSelf from './ui/IPopperSelf.vue'
 
 interface Props {

@@ -20,7 +20,7 @@
           <IconWatering />
         </IBtn>
 
-        <IDropdown
+        <IDropdownLegacy
           :items="plant.actions"
           class="dropdown-end sm:dropdown-center"
           :class="i === plantsList.length - 1 ? 'dropdown-top' : undefined"
@@ -125,7 +125,7 @@ import PlantImgAsync from './PlantImgAsync.vue'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
-import IDropdown from './ui/IDropdown.vue'
+import IDropdownLegacy from './ui/IDropdownLegacy.vue'
 
 interface Props {
 

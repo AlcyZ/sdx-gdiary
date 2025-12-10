@@ -30,14 +30,14 @@
 </template>
 
 <script lang="ts" setup>
-import type { DropdownItem } from '../../types'
+import type { DropdownItemLegacy } from '../../types'
 import {
   EllipsisVertical as IconMore,
 } from 'lucide-vue-next'
 import IBtn from './IBtn.vue'
 
 interface Props {
-  items: Array<DropdownItem>
+  items: Array<DropdownItemLegacy>
   btnClass?: string
 }
 interface Emits {

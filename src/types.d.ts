@@ -58,7 +58,7 @@ interface ListItem {
   actions: Array<ListItemAction>
 }
 
-interface DropdownItem {
+interface DropdownItemLegacy {
   label: string
   icon?: Component
   onClick?: () => unknown
