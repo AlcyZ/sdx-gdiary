@@ -3,8 +3,16 @@
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from './App.vue'
-import { REPO_FERTILIZERS, REPO_HARVEST, REPO_PLANT, REPO_WATERING_SCHEMA, SERVICE_BACKUP } from './di_keys.ts'
+import {
+  REPO_CONFIG,
+  REPO_FERTILIZERS,
+  REPO_HARVEST,
+  REPO_PLANT,
+  REPO_WATERING_SCHEMA,
+  SERVICE_BACKUP,
+} from './di_keys.ts'
 import BackupService from './modules/backup/backup_service.ts'
+import ConfigurationRepository from './modules/configuration/configuration_repository.ts'
 import { getDb } from './modules/db'
 import HarvestRepository from './modules/harvest/harvest_repository.ts'
 import FertilizerRepository from './modules/nutrients/fertilizer_repository.ts'
@@ -38,12 +46,14 @@ async function bootstrap() {
   const wateringRepo = WateringSchemaRepository.create(db)
   const backupService = BackupService.create(db)
   const harvestRepo = HarvestRepository.create(db)
+  const configRepo = ConfigurationRepository.create()
 
   app.provide(REPO_PLANT, plantRepo)
   app.provide(REPO_FERTILIZERS, fertilizerRepo)
   app.provide(REPO_WATERING_SCHEMA, wateringRepo)
   app.provide(SERVICE_BACKUP, backupService)
   app.provide(REPO_HARVEST, harvestRepo)
+  app.provide(REPO_CONFIG, configRepo)
 
   app.mount('#app')
 }
