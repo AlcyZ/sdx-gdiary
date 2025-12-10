@@ -11,7 +11,7 @@ function isHarvestBase(value: any): value is HarvestBase {
     && value !== null
     && hasNumKey(value, 'id')
     && hasNumKey(value, INDEX_PLANT_ID)
-    && hasNumKey(value, 'date')
+    && hasNumKey(value, 'timestamp')
     && hasOptionalNumKey(value, 'weight')
     && hasOptionalStrKey(value, 'container')
     && hasOptionalStrKey(value, 'info')
@@ -32,10 +32,12 @@ function isHarvestFinished(value: any): value is HarvestFinished {
 
 export function isHarvestLogRow(value: any): value is HarvestLogRow {
   if (typeof value !== 'object' || value === null) {
+    console.warn('[DBG:GUARD]: No Object', value)
     return false
   }
 
   if (!isHarvestBase(value)) {
+    console.warn('[DBG:GUARD]: Not base', value)
     return false
   }
 

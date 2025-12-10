@@ -17,11 +17,13 @@ import {
   INDEX_PLANT_IMAGE_ID,
   INDEX_PLANT_IMAGE_SORT,
   TABLE_PLANT_CONTAINER_LOGS,
+  TABLE_PLANT_HARVEST_LOGS,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANTS,
 } from '../db'
+import HarvestReadRepository from '../harvest/harvest_read_repository.ts'
 import WateringSchemaReadRepository from '../nutrients/watering_schema_read_repository.ts'
 import PlantContainerReadRepository from '../plant_container/plant_container_read_repository.ts'
 import WateringReadRepository from '../watering/watering_read_repository.ts'
@@ -32,25 +34,29 @@ export default class PlantReadRepository {
   private readonly wateringSchemaReadRepo: WateringSchemaReadRepository
   private readonly wateringLogReadRepo: WateringReadRepository
   private readonly containerRepo: PlantContainerReadRepository
+  private readonly harvestRepo: HarvestReadRepository
 
   constructor(
     db: IDBPDatabase,
     wateringSchemaReadRepo: WateringSchemaReadRepository,
     wateringLogReadRepo: WateringReadRepository,
     containerRepo: PlantContainerReadRepository,
+    harvestRepo: HarvestReadRepository,
   ) {
     this.db = db
     this.wateringSchemaReadRepo = wateringSchemaReadRepo
     this.wateringLogReadRepo = wateringLogReadRepo
     this.containerRepo = containerRepo
+    this.harvestRepo = harvestRepo
   }
 
   public static create(db: IDBPDatabase) {
     const wateringSchemaReadRepo = WateringSchemaReadRepository.create(db)
     const wateringLogReadRepo = WateringReadRepository.create()
     const containerRepo = PlantContainerReadRepository.create()
+    const harvestRepo = HarvestReadRepository.create()
 
-    return new PlantReadRepository(db, wateringSchemaReadRepo, wateringLogReadRepo, containerRepo)
+    return new PlantReadRepository(db, wateringSchemaReadRepo, wateringLogReadRepo, containerRepo, harvestRepo)
   }
 
   public async getAll(): Promise<Array<Plant>> {
@@ -60,6 +66,7 @@ export default class PlantReadRepository {
       TABLE_PLANT_PHASES,
       TABLE_PLANT_WATERING_LOGS,
       TABLE_PLANT_CONTAINER_LOGS,
+      TABLE_PLANT_HARVEST_LOGS,
     ])
     const plantStore = tx.objectStore(TABLE_PLANTS)
 
@@ -86,6 +93,7 @@ export default class PlantReadRepository {
       TABLE_PLANT_PHASES,
       TABLE_PLANT_WATERING_LOGS,
       TABLE_PLANT_CONTAINER_LOGS,
+      TABLE_PLANT_HARVEST_LOGS,
     ])
     const store = tx.objectStore(TABLE_PLANTS)
 
@@ -133,11 +141,13 @@ export default class PlantReadRepository {
       wateringLogsResult,
       images,
       containers,
+      harvests,
     ] = await Promise.all([
       this.fetchPhases(plantData, tx),
       this.wateringLogReadRepo.fetchWateringLogs(plantData.id, tx),
       this.fetchImages(plantData, tx),
       this.containerRepo.getAllByPlantId(plantData.id, tx.objectStore(TABLE_PLANT_CONTAINER_LOGS)),
+      this.harvestRepo.getByPlantId(plantData.id, tx),
     ])
     const wateringLogs = wateringLogsResult.ok ? wateringLogsResult.value : []
 
@@ -147,6 +157,8 @@ export default class PlantReadRepository {
       const favoritImage = this.getFavoritImage(plantData, images)
 
       const wateringSchema = await this.fetchPlantsWateringSchema(plantData)
+
+      const isHarvested = harvests.some(harvest => harvest.type === 'done')
 
       return ok({
         id: plantData.id,
@@ -159,9 +171,11 @@ export default class PlantReadRepository {
         logs: {
           watering: wateringLogs,
           containers,
+          harvests,
         },
         images,
         favoritImage,
+        isHarvested,
         createdAt: 'todo',
         updatedAt: 'todo',
       })

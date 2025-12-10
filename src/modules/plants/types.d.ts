@@ -1,5 +1,6 @@
 import type { HasId, HasTimestamps, WithId } from '../../types'
 import type { type INDEX_PLANT_ID, type INDEX_PLANT_IMAGE_ID, type INDEX_SORT, type INDEX_WATERING_SCHEMA_ID, type TABLE_PLANT_CONTAINER_LOGS, TABLE_PLANT_HARVEST_LOGS, type TABLE_PLANT_IMAGES, type TABLE_PLANT_PHASES, type TABLE_PLANT_WATERING_LOGS, type TABLE_PLANTS } from '../db'
+import type { Harvest } from '../harvest/types'
 import type { WateringSchema } from '../nutrients/types'
 import type { PlantContainer, PlantContainerMedium } from '../plant_container/types'
 import type { WateringLog } from '../watering/types'
@@ -43,6 +44,7 @@ type PlantImageData = PlantImage & {
 interface PlantLogs {
   watering: Array<WateringLog>
   containers: Array<PlantContainer>
+  harvests: Array<Harvest>
 }
 
 type Plant = {
@@ -55,6 +57,7 @@ type Plant = {
   logs: PlantLogs
   images: Array<PlantImage>
   favoritImage?: PlantImage
+  isHarvested: boolean
 } & HasId<number> & HasTimestamps
 
 type PlantSubstrateType = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
