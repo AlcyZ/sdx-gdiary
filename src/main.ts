@@ -1,9 +1,7 @@
 /* eslint-disable no-console */
 
-import type { ToastContainerOptions } from 'vue3-toastify'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
-import Vue3Toastify from 'vue3-toastify'
 import App from './App.vue'
 import { REPO_FERTILIZERS, REPO_HARVEST, REPO_PLANT, REPO_WATERING_SCHEMA, SERVICE_BACKUP } from './di_keys.ts'
 import BackupService from './modules/backup/backup_service.ts'
@@ -33,9 +31,6 @@ async function bootstrap() {
 
   app.use(router)
   app.use(pinia)
-  app.use(Vue3Toastify, {
-    autoClose: 3000,
-  } as ToastContainerOptions)
 
   const db = await getDb()
 
