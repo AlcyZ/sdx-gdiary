@@ -45,15 +45,16 @@ import {
   Funnel as IconFilter,
   Cog as IconMenu,
 } from 'lucide-vue-next'
-import { computed, shallowRef } from 'vue'
+import { computed } from 'vue'
 import PlantListingCard from '../components/PlantListingCard.vue'
 import PlantListingEmpty from '../components/PlantListingEmpty.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import IDropdown from '../components/ui/IDropdown.vue'
 import IFab from '../components/ui/IFab.vue'
 import { usePlantView } from '../composables/usePlantView.ts'
+import { useToast } from '../composables/useToast.ts'
 import LayoutDock from '../layouts/LayoutDock.vue'
-import { isPlantListingFilter } from '../modules/configuration/guard.ts'
+import { isPlantListingFilter, isPlantListingSort } from '../modules/configuration/guard.ts'
 import { useConfigurationStore } from '../stores/configurationStore.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 
@@ -69,8 +70,13 @@ const { fabActions } = usePlantView()
 
 const plantStore = usePlantStore()
 const configStore = useConfigurationStore()
+const { toast } = useToast()
 
 const dropdown = computed((): Array<DropdownMenu> => [
+  {
+    type: 'label',
+    label: 'Filter:',
+  },
   {
     type: 'radio',
     selected: configStore.plantListingConfiguration.filter,
@@ -85,11 +91,58 @@ const dropdown = computed((): Array<DropdownMenu> => [
       },
     ],
   },
+  {
+    type: 'separator',
+  },
+  {
+    type: 'label',
+    label: 'Sortierreihenfolge',
+  },
+  {
+    type: 'radio',
+    selected: configStore.plantListingConfiguration.sort,
+    items: [
+      {
+        label: 'Standard (Zuerst angelegt)',
+        value: 'default',
+      },
+      {
+        label: 'Zuletzt angelegt',
+        value: 'created-desc',
+      },
+      {
+        label: 'Gepflanzt aufsteigend',
+        value: 'planted-asc',
+      },
+      {
+        label: 'Gepflanzt absteigend',
+        value: 'planted-desc',
+      },
+    ],
+  },
 ])
 
-function handleSelectedFilter(filter: string) {
-  if (isPlantListingFilter(filter)) {
-    configStore.savePlantListingConfiguration({ filter })
+function handleSelectedFilter(value: string) {
+  if (isPlantListingFilter(value)) {
+    const result = configStore.savePlantListingConfiguration({
+      filter: value,
+      sort: configStore.plantListingConfiguration.sort,
+    })
+
+    result.ok
+      ? toast('Filter gespeichert', 'success')
+      : toast('Es ist ein Fehler beim Speichern des Filters aufgetreten', 'error')
+  }
+
+  else if (isPlantListingSort(value)) {
+    const result = configStore.savePlantListingConfiguration({
+      filter: configStore.plantListingConfiguration.filter,
+      sort: value,
+    })
+
+    result.ok
+      ? toast('Sortierreihenfolge gespeichert', 'success')
+      : toast('Es ist ein Fehler beim Speichern der Sortierreihenfolge aufgetreten', 'error')
   }
 }
 </script>

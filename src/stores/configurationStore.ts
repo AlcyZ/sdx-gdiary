@@ -8,6 +8,7 @@ export const useConfigurationStore = defineStore('configuration', () => {
 
   const plantListingConfiguration = ref<PlantListingConfig>({
     filter: 'show-all',
+    sort: 'default',
   })
 
   const syncPlantListingConfiguration = () => {
@@ -17,8 +18,11 @@ export const useConfigurationStore = defineStore('configuration', () => {
   }
 
   const savePlantListingConfiguration = (config: PlantListingConfig) => {
-    configRepo.savePlantListingConfig(config)
-    plantListingConfiguration.value = config
+    const result = configRepo.savePlantListingConfig(config)
+    if (result.ok)
+      plantListingConfiguration.value = config
+
+    return result
   }
 
   return {

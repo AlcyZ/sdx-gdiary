@@ -1,4 +1,4 @@
-import type { Option } from '../../types'
+import type { Option, Result } from '../../types'
 import ConfigurationReader from './repository/configuration_reader.ts'
 import ConfigurationWriter from './repository/configuration_writer.ts'
 
@@ -22,7 +22,7 @@ export default class ConfigurationRepository {
     return this.reader.fetchPlantListingConfig()
   }
 
-  public savePlantListingConfig(config: PlantListingConfig) {
-    this.writer.storePlantListingConfig(config)
+  public savePlantListingConfig(config: PlantListingConfig): Result<void, void> {
+    return this.writer.storePlantListingConfig(config)
   }
 }
