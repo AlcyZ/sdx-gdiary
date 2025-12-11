@@ -21,6 +21,10 @@
     :plant
   />
 
+  <PlantDetailsCardHarvest
+    :plant
+  />
+
   <PlantDetailsCardWatering
     :plant
   />
@@ -45,6 +49,7 @@ import PlantDetailsCardGallery from './PlantDetailsCardGallery.vue'
 import PlantDetailsCardHeader from './PlantDetailsCardHeader.vue'
 import PlantDetailsCardPhases from './PlantDetailsCardPhases.vue'
 import PlantDetailsCardWatering from './PlantDetailsCardWatering.vue'
+import PlantDetailsCardHarvest from "./PlantDetailsCardHarvest.vue";
 
 interface Props {
   plant: Plant
