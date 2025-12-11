@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
 import {
-  Tractor as IconHarvested,
+  Leaf as IconHarvested,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { usePlant } from '../composables/usePlant.ts'

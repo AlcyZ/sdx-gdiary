@@ -112,6 +112,7 @@ import {
   Eye as IconShow,
   Trash as IconTrash,
   Droplets as IconWater,
+  Leaf as IconHarvested,
   Droplet as IconWatering,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
