@@ -20,12 +20,17 @@
           <IconWatering />
         </IBtn>
 
-        <IDropdownLegacy
+        <IDropdown
           :items="plant.actions"
-          class="dropdown-end sm:dropdown-center"
-          :class="i === plantsList.length - 1 ? 'dropdown-top' : undefined"
           @click.stop
-        />
+        >
+          <IBtn
+            square
+            ghost
+          >
+            <IconMore />
+          </IBtn>
+        </IDropdown>
       </div>
     </div>
     <div class="grid grid-cols-[68px_1fr_1fr] gap-x-2">
@@ -106,17 +111,19 @@
 
 <script lang="ts" setup>
 import type { Plant } from '../modules/plants/types'
+import type { DropdownMenu } from '../types'
 import {
   Edit as IconEdit,
-  Tractor as IconHarvested,
+  Leaf as IconHarvested,
+  EllipsisVertical as IconMore,
   Eye as IconShow,
   Trash as IconTrash,
   Droplets as IconWater,
-  Leaf as IconHarvested,
   Droplet as IconWatering,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useDropdown } from '../composables/useDropdown.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
@@ -126,7 +133,7 @@ import PlantImgAsync from './PlantImgAsync.vue'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
-import IDropdownLegacy from './ui/IDropdownLegacy.vue'
+import IDropdown from './ui/IDropdown.vue'
 
 interface Props {
   config: PlantListingConfig
@@ -144,6 +151,7 @@ const router = useRouter()
 const { getPlantAge, getFlowerDay, getPlantName, getLastWateringText, showDeleteConfirmationModal } = usePlant()
 const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getContainerIcon, getContainerLabel } = usePlantContainer()
+const { createItem } = useDropdown()
 
 const plantsList = computed(
   () => plantStore.plants.filter(plantListingFilter).map(plant => ({
@@ -166,21 +174,21 @@ const plantsList = computed(
     isHarvested: plant.isHarvested,
     actions: [
       {
-        icon: IconShow,
-        label: 'Details',
+        type: 'item',
+        content: createItem('Details', IconShow),
         onClick: () => router.push(`/plants/${plant.id}`),
       },
       {
-        icon: IconEdit,
-        label: 'Bearbeiten',
+        type: 'item',
+        content: createItem('Bearbeiten', IconEdit),
         onClick: () => router.push(`/plants/${plant.id}/edit`),
       },
       {
-        icon: IconTrash,
-        label: 'Löschen',
+        type: 'item',
+        content: createItem('Löschen', IconTrash),
         onClick: () => showDeleteConfirmationModal(plant),
       },
-    ],
+    ] as Array<DropdownMenu>,
   })),
 )
 
