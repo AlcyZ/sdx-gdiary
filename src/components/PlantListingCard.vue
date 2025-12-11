@@ -66,10 +66,19 @@
         <IBadge
           v-if="plant.isHarvested"
           variant="success"
-          class="mt-0.5 text-base-100"
+          soft
+          class="mt-0.5"
         >
           <IconHarvested :size="16" />
           Geerntet
+        </IBadge>
+        <IBadge
+          v-else-if="plant.isHarvesting"
+          variant="accent"
+          soft
+        >
+          <IconHarvesting :size="14" />
+          Am ernten
         </IBadge>
         <IBadge
           v-else
@@ -116,6 +125,7 @@ import type { DropdownMenu } from '../types'
 import {
   Edit as IconEdit,
   Leaf as IconHarvested,
+  Scissors as IconHarvesting,
   EllipsisVertical as IconMore,
   Eye as IconShow,
   Trash as IconTrash,
@@ -177,6 +187,7 @@ const plantsList = computed(
       },
       lastWatering: getLastWateringText(plant),
       isHarvested: plant.isHarvested,
+      isHarvesting: plant.isHarvesting,
       actions: [
         {
           type: 'item',

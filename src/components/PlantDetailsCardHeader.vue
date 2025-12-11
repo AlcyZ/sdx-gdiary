@@ -23,9 +23,14 @@
         {{ substrate.label }} ({{ substrate.size }})
       </IBadge>
 
-      <IBadge v-if="plant.isHarvested" variant="success" class="text-base-100">
+      <IBadge v-if="plant.isHarvested" variant="success" soft>
         <IconHarvested :size="14" />
         Geerntet
+      </IBadge>
+
+      <IBadge v-else-if="plant.isHarvesting" variant="accent" soft>
+        <IconHarvesting :size="14" />
+        Am ernten
       </IBadge>
     </div>
   </ICard>
@@ -35,6 +40,7 @@
 import type { Plant } from '../modules/plants/types'
 import {
   Leaf as IconHarvested,
+  Scissors as IconHarvesting,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { usePlant } from '../composables/usePlant.ts'

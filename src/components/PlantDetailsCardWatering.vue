@@ -16,7 +16,7 @@
       <div
         v-for="(log, i) in sortedWateringLogs"
         :key="i"
-        class="shadow-sm rounded-field px-6 py-2"
+        class="shadow-sm rounded-field px-6 py-4"
       >
         <div class="flex items-center justify-between">
           <h3>
