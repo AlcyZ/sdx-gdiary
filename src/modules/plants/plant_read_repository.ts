@@ -159,6 +159,7 @@ export default class PlantReadRepository {
       const wateringSchema = await this.fetchPlantsWateringSchema(plantData)
 
       const isHarvested = harvests.some(harvest => harvest.type === 'done')
+      const isHarvesting = !isHarvested && harvests.length > 0
 
       return ok({
         id: plantData.id,
@@ -176,6 +177,7 @@ export default class PlantReadRepository {
         images,
         favoritImage,
         isHarvested,
+        isHarvesting,
         createdAt: 'todo',
         updatedAt: 'todo',
       })

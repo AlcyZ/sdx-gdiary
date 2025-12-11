@@ -58,6 +58,7 @@ type Plant = {
   images: Array<PlantImage>
   favoritImage?: PlantImage
   isHarvested: boolean
+  isHarvesting: boolean
 } & HasId<number> & HasTimestamps
 
 type PlantSubstrateType = 'Erde' | 'Coco' | 'Hydro' | 'Custom'
