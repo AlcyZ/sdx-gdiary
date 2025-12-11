@@ -1,14 +1,16 @@
+import type HarvestRepository from '../modules/harvest/harvest_repository.ts'
 import type PlantRepository from '../modules/plants/plant_repository.ts'
 import type { EditPlantContainer, NewPlantContainer, Plant, PlantImage, PlantImageSort } from '../modules/plants/types'
 import { defineStore } from 'pinia'
 import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePlantConfiguration } from '../composables/usePlantConfiguration.ts'
-import { REPO_PLANT } from '../di_keys.ts'
+import { REPO_HARVEST, REPO_PLANT } from '../di_keys.ts'
 import { err } from '../util.ts'
 
 export const usePlantStore = defineStore('plant', () => {
   const plantRepo = inject(REPO_PLANT) as PlantRepository
+  const harvestRepo = inject(REPO_HARVEST) as HarvestRepository
 
   const route = useRoute()
 
@@ -102,6 +104,17 @@ export const usePlantStore = defineStore('plant', () => {
     return result
   }
 
+  const deleteHarvest = async (harvestId: number) => {
+    if (!plant.value)
+      return err()
+
+    const result = await harvestRepo.deleteHarvest(harvestId)
+    if (result.ok)
+      await syncData()
+
+    return result
+  }
+
   const addContainer = async (container: NewPlantContainer) => {
     if (!plant.value)
       return err(undefined)
@@ -127,6 +140,7 @@ export const usePlantStore = defineStore('plant', () => {
     addContainer,
     deleteWateringLog,
     deleteContainer,
+    deleteHarvest,
     updateContainer,
   }
 })

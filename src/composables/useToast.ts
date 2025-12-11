@@ -1,4 +1,4 @@
-import type { ToastProps, ToastVariant } from '../types'
+import type { Result, ToastProps, ToastVariant } from '../types'
 import { createApp, h } from 'vue'
 import IToast from '../components/ui/IToast.vue'
 
@@ -36,8 +36,15 @@ export function useToast() {
     }, close ? { close } : undefined)
   }
 
+  const resultToast = (msgSuccess: string, msgError: string, result: Result<any, any>) => {
+    result.ok
+      ? toast(msgSuccess, 'success')
+      : toast(`Es ist ein Fehler beim ${msgError} aufgetreten`, 'error')
+  }
+
   return {
     showToast,
     toast,
+    resultToast,
   }
 }

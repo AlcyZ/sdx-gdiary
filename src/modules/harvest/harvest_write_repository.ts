@@ -28,7 +28,20 @@ export default class HarvestWriteRepository {
       }
 
       await store.add(data)
-      await tx.done
+    })
+  }
+
+  public async deleteHarvest<
+    Tx extends IDBPTransaction<any, ArrayLike<string>, 'readwrite'>,
+  >(
+    harvestId: number,
+    tx: typeof TABLE_PLANT_HARVEST_LOGS extends Tx['objectStoreNames'][number]
+      ? Tx
+      : never,
+  ): AsyncResult<void, DOMException> {
+    return safeAsync(async () => {
+      const store = tx.objectStore(TABLE_PLANT_HARVEST_LOGS)
+      await store.delete(harvestId)
     })
   }
 }

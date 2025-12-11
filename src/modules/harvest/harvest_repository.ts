@@ -29,4 +29,15 @@ export default class HarvestRepository {
 
     return result
   }
+
+  public async deleteHarvest(harvestId: number): AsyncResult<void, DOMException> {
+    const tx = this.db.transaction([
+      TABLE_PLANT_HARVEST_LOGS,
+    ], 'readwrite')
+
+    const result = await this.write.deleteHarvest(harvestId, tx)
+    await tx.done
+
+    return result
+  }
 }
