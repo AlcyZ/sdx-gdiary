@@ -21,9 +21,7 @@
           </IDropdown>
         </header>
 
-        <PlantListingCard
-          :config="configStore.plantListingConfiguration"
-        />
+        <PlantListingCard />
       </template>
 
       <PlantListingEmpty

@@ -37,6 +37,7 @@
       <div class="flex items-center justify-center">
         <PlantImgAsync
           v-if="plant.image"
+          :key="plant.image.id"
           :image="plant.image"
         >
           <template #default="{ src }">
@@ -125,6 +126,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDropdown } from '../composables/useDropdown.ts'
 import { usePlant } from '../composables/usePlant.ts'
+import { usePlantConfiguration } from '../composables/usePlantConfiguration.ts'
 import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
@@ -136,13 +138,13 @@ import ICard from './ui/ICard.vue'
 import IDropdown from './ui/IDropdown.vue'
 
 interface Props {
-  config: PlantListingConfig
+
 }
 interface Emits {
 
 }
 
-const { config } = defineProps<Props>()
+defineProps<Props>()
 defineEmits<Emits>()
 
 const plantStore = usePlantStore()
@@ -151,50 +153,49 @@ const router = useRouter()
 const { getPlantAge, getFlowerDay, getPlantName, getLastWateringText, showDeleteConfirmationModal } = usePlant()
 const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getContainerIcon, getContainerLabel } = usePlantContainer()
+const { plantListingSort, plantListingFilter } = usePlantConfiguration()
 const { createItem } = useDropdown()
 
 const plantsList = computed(
-  () => plantStore.plants.filter(plantListingFilter).map(plant => ({
-    id: plant.id,
-    image: getPlantImage(plant),
-    name: getPlantName(plant),
-    status: {
-      phase: getPhaseLabel(plant.phase.phase),
-      age: getPlantAge(plant),
-      flowerDay: getFlowerDay(plant),
-      icon: getPhaseIcon(plant.phase.phase),
-      class: getPlantStatusClass(plant),
-    },
-    container: {
-      label: getContainerLabel(plant.container.medium),
-      icon: getContainerIcon(plant.container.medium),
-      size: `${plant.container.volume}L`,
-    },
-    lastWatering: getLastWateringText(plant),
-    isHarvested: plant.isHarvested,
-    actions: [
-      {
-        type: 'item',
-        content: createItem('Details', IconShow),
-        onClick: () => router.push(`/plants/${plant.id}`),
+  () => plantStore.plants.filter(plantListingFilter)
+    .toSorted(plantListingSort)
+    .map(plant => ({
+      id: plant.id,
+      image: getPlantImage(plant),
+      name: getPlantName(plant),
+      status: {
+        phase: getPhaseLabel(plant.phase.phase),
+        age: getPlantAge(plant),
+        flowerDay: getFlowerDay(plant),
+        icon: getPhaseIcon(plant.phase.phase),
+        class: getPlantStatusClass(plant),
       },
-      {
-        type: 'item',
-        content: createItem('Bearbeiten', IconEdit),
-        onClick: () => router.push(`/plants/${plant.id}/edit`),
+      container: {
+        label: getContainerLabel(plant.container.medium),
+        icon: getContainerIcon(plant.container.medium),
+        size: `${plant.container.volume}L`,
       },
-      {
-        type: 'item',
-        content: createItem('Löschen', IconTrash),
-        onClick: () => showDeleteConfirmationModal(plant),
-      },
-    ] as Array<DropdownMenu>,
-  })),
+      lastWatering: getLastWateringText(plant),
+      isHarvested: plant.isHarvested,
+      actions: [
+        {
+          type: 'item',
+          content: createItem('Details', IconShow),
+          onClick: () => router.push(`/plants/${plant.id}`),
+        },
+        {
+          type: 'item',
+          content: createItem('Bearbeiten', IconEdit),
+          onClick: () => router.push(`/plants/${plant.id}/edit`),
+        },
+        {
+          type: 'item',
+          content: createItem('Löschen', IconTrash),
+          onClick: () => showDeleteConfirmationModal(plant),
+        },
+      ] as Array<DropdownMenu>,
+    })),
 )
-
-function plantListingFilter(plant: Plant): boolean {
-  return config.filter === 'show-all' || !plant.isHarvested
-}
 
 function getPlantImage(plant: Plant) {
   if (plant.favoritImage)

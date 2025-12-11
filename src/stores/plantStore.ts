@@ -3,6 +3,7 @@ import type { EditPlantContainer, NewPlantContainer, Plant, PlantImage, PlantIma
 import { defineStore } from 'pinia'
 import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { usePlantConfiguration } from '../composables/usePlantConfiguration.ts'
 import { REPO_PLANT } from '../di_keys.ts'
 import { err } from '../util.ts'
 
@@ -15,6 +16,8 @@ export const usePlantStore = defineStore('plant', () => {
   const plants = ref<Array<Plant>>([])
 
   const hasPlants = computed(() => plants.value.length > 0)
+
+  const { plantListingSort } = usePlantConfiguration()
 
   const syncPlant = async (plantId: number) => {
     const plantResult = await plantRepo.getById(plantId)
@@ -29,8 +32,7 @@ export const usePlantStore = defineStore('plant', () => {
     await syncPlant(plantId)
   }
   const syncPlants = async () => {
-    const sortCallback = (lhs: Plant, rhs: Plant): number => rhs.id - lhs.id
-    plants.value = await plantRepo.getAll(sortCallback)
+    plants.value = await plantRepo.getAll(plantListingSort)
   }
 
   const syncData = async () => await Promise.all([
