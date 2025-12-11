@@ -13,17 +13,13 @@
     <span class="opacity-60 text-xs pl-6">{{ sortedWateringLogs.length }} Einträge</span>
 
     <div class="flex flex-col gap-y-5">
-      <div
+      <PlantDetailsLogCard
         v-for="(log, i) in sortedWateringLogs"
         :key="i"
-        class="shadow-sm rounded-field px-6 py-4"
+        :day="log.day"
+        :time="log.time"
       >
-        <div class="flex items-center justify-between">
-          <h3>
-            <span class="font-semibold opacity-80">{{ log.day }}</span>&nbsp;
-            <span class="opacity-60">{{ log.time }}</span>
-          </h3>
-
+        <template #actions>
           <IBtn
             ghost
             square
@@ -32,7 +28,7 @@
           >
             <IconDelete />
           </IBtn>
-        </div>
+        </template>
 
         <div class="my-3">
           <h2 class="text-lg font-semibold flex items-center">
@@ -72,7 +68,7 @@
             <span class="font-semibold">{{ fertilizer.amount }}ml</span>
           </IBadge>
         </div>
-      </div>
+      </PlantDetailsLogCard>
     </div>
   </ICard>
 </template>
@@ -90,6 +86,7 @@ import { computed } from 'vue'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
+import PlantDetailsLogCard from './PlantDetailsLogCard.vue'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'

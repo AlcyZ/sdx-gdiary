@@ -13,22 +13,18 @@
     <span class="opacity-60 text-xs pl-6">{{ sortedContainers.length }} Einträge</span>
 
     <div class="flex flex-col gap-y-5">
-      <div
+      <PlantDetailsLogCard
         v-for="(log, i) in sortedContainers"
         :key="i"
-        class="shadow-sm rounded-field px-6 py-4"
+        :day="log.day"
+        :time="log.time"
       >
-        <div class="flex items-center justify-between">
-          <h3>
-            <span class="font-semibold opacity-80">{{ log.day }}</span>&nbsp;
-            <span class="opacity-60">{{ log.time }}</span>
-          </h3>
-
+        <template #actions>
           <IDropdownLegacy
             :items="log.actions"
             class="dropdown-end"
           />
-        </div>
+        </template>
 
         <div class="flex items-center justify-between gap-x-2 mt-2">
           <div
@@ -70,7 +66,7 @@
         >
           {{ log.notes || '' }}
         </div>
-      </div>
+      </PlantDetailsLogCard>
     </div>
   </ICard>
 </template>
@@ -91,6 +87,7 @@ import { useModal } from '../composables/useModal.ts'
 import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { useToast } from '../composables/useToast.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
+import PlantDetailsLogCard from './PlantDetailsLogCard.vue'
 import PlantDetailsModalContainerEdit from './PlantDetailsModalContainerEdit.vue'
 import IBadge from './ui/IBadge.vue'
 import ICard from './ui/ICard.vue'
