@@ -60,12 +60,9 @@
           </div>
         </div>
 
-        <div
-          v-if="log.notes"
-          class="inset-shadow-sm bg-amber-50 inset-shadow-amber-400/40 px-4 py-2 rounded-field mt-3 text-sm text-gray-500"
-        >
+        <INote v-if="log.notes">
           {{ log.notes || '' }}
-        </div>
+        </INote>
       </PlantDetailsLogCard>
     </div>
   </ICard>
@@ -94,6 +91,7 @@ import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IDropdownLegacy from './ui/IDropdownLegacy.vue'
 import IPopperSelf from './ui/IPopperSelf.vue'
+import INote from "./ui/INote.vue";
 
 interface Props {
   plant: Plant

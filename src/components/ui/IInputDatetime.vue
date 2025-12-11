@@ -4,7 +4,6 @@
     @click="tryOpenViaLabel"
   >
     <span
-      class=""
       :class="labelClass"
     >{{ formatted }}</span>
 
@@ -58,6 +57,7 @@ const formatted = computed(
 
 const labelClass = computed(() => [
   model.value === undefined ? 'opacity-60' : undefined,
+  openViaLabel ? 'cursor-pointer' : undefined,
 ])
 
 function openPicker() {
