@@ -35,6 +35,8 @@ type AsyncResult<T, E> = Promise<Result<T, E>>
 
 type AsyncArray<T> = Promise<Array<T>>
 
+type Scalar = string | number | boolean | null | undefined | symbol | bigint
+
 interface HasId<T> {
   id: T
 }
