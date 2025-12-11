@@ -10,6 +10,7 @@
 
       <IInputDatetime
         v-model="date"
+        open-via-label
       />
     </div>
 
@@ -28,7 +29,7 @@
         </ISwap>
 
         <span
-          class="ml-2 text-gray-500"
+          class="ml-2 text-gray-500 cursor-pointer"
           @click="sessionForm = !sessionForm"
         >
           Jetzt im Modus: "<span class="font-semibold">{{ textMode }}</span>"
