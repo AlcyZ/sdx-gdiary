@@ -52,6 +52,18 @@ interface HasLabel {
   label: string
 }
 
+interface HasLabelNoContent {
+  label: string
+  content?: never
+}
+
+interface HasContentNoLabel {
+  label?: string
+  content: VNodeChild
+}
+
+type HasContentOrLabel = HasLabelNoContent | HasContentNoLabel
+
 interface DockItem {
   icon: Component
   label: string
@@ -71,15 +83,10 @@ interface DropdownItemLegacy {
   onClick?: () => unknown
 }
 
-type DropdownMenuBase = HasLabel & {
-  icon: Component | VNodeChild
-  iconAttrs?: Attrs
-}
-
 type DropdownMenuItem = {
   type: 'item'
   onClick?: () => any
-} & DropdownMenuBase
+} & HasContentOrLabel
 
 interface DropdownMenuSeparator {
   type: 'separator'
@@ -88,12 +95,12 @@ interface DropdownMenuSeparator {
 type DropdownMenuSub = {
   type: 'sub'
   items: Array<DropdownMenu>
-} & DropdownMenuBase
+} & HasContentOrLabel
 
 type DropdownMenuCheckboxItem = {
   type: 'checkbox'
   checked: CheckedState
-} & HasLabel
+} & HasContentOrLabel
 
 interface DropdownMenuRadioGroup {
   type: 'radio'
@@ -101,14 +108,13 @@ interface DropdownMenuRadioGroup {
   items: Array<DropdownMenuRadioGroupItem>
 }
 
-type DropdownMenuRadioGroupItem = HasLabel & {
+type DropdownMenuRadioGroupItem = HasContentOrLabel & {
   value: string
 }
 
-interface DropdownMenuLabel {
+type DropdownMenuLabel = {
   type: 'label'
-  label: string
-}
+} & HasContentOrLabel
 
 type DropdownMenu = DropdownMenuItem
   | DropdownMenuSeparator

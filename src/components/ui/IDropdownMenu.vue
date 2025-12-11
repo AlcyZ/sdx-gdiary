@@ -2,10 +2,12 @@
   <DropdownMenuItem
     v-if="item.type === 'item'"
     :class="itemClass"
-    class=""
+    @click="item.onClick"
   >
-    {{ item.label }}
-    <component :is="item.icon" v-bind="item.iconAttrs" />
+    <template v-if="isLabeled(item)">
+      {{ item.label }}
+    </template>
+    <component :is="item.content" v-else />
   </DropdownMenuItem>
 
   <DropdownMenuSeparator
@@ -18,7 +20,10 @@
     :class="itemClass"
     class="text-gray-500"
   >
-    {{ item.label }}
+    <template v-if="isLabeled(item)">
+      {{ item.label }}
+    </template>
+    <component :is="item.content" v-else />
   </DropdownMenuLabel>
 
   <DropdownMenuSub
@@ -27,8 +32,10 @@
     <DropdownMenuSubTrigger
       :class="itemClass"
     >
-      {{ item.label }}
-      <component :is="item.icon" v-bind="item.iconAttrs" />
+      <template v-if="isLabeled(item)">
+        {{ item.label }}
+      </template>
+      <component :is="item.content" v-else />
     </DropdownMenuSubTrigger>
     <DropdownMenuPortal>
       <DropdownMenuSubContent
@@ -58,7 +65,10 @@
       <IconDot class="stroke-success" />
     </DropdownMenuItemIndicator>
 
-    {{ item.label }}
+    <template v-if="isLabeled(item)">
+      {{ item.label }}
+    </template>
+    <component :is="item.content" v-else />
   </DropdownMenuCheckboxItem>
 
   <DropdownMenuRadioGroup
@@ -74,23 +84,27 @@
       :value="radio.value"
     >
       <DropdownMenuItemIndicator
-        class="absolute -left-1.5 inline-flex items-center justify-center"
+        class="absolute -left-1 inline-flex items-center justify-center"
       >
         <IconDot class="stroke-success" />
       </DropdownMenuItemIndicator>
 
-      {{ radio.label }}
+      <template v-if="isLabeled(radio)">
+        {{ radio.label }}
+      </template>
+      <component :is="radio.content" v-else />
     </DropdownMenuRadioItem>
   </DropdownMenuRadioGroup>
 </template>
 
 <script lang="ts" setup>
 import type { CheckboxCheckedState } from 'radix-vue'
-import type { DropdownMenu } from '../../types'
+import type { DropdownMenu, HasContentOrLabel, HasLabelNoContent } from '../../types'
 import {
   DotIcon as IconDot,
 } from 'lucide-vue-next'
 import { DropdownMenuCheckboxItem, DropdownMenuItem, DropdownMenuItemIndicator, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from 'radix-vue'
+import { isHasLabelNoContent } from '../../guard.ts'
 
 interface Props {
   item: DropdownMenu
@@ -107,5 +121,9 @@ const emit = defineEmits<Emits>()
 
 function handleSelected(value: string) {
   emit('update:selected', value)
+}
+
+function isLabeled(value: HasContentOrLabel): value is HasLabelNoContent {
+  return isHasLabelNoContent(value)
 }
 </script>

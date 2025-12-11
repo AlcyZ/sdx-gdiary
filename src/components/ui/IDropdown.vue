@@ -45,17 +45,24 @@ interface Emits {
   'update:selected': [value: string, index: number]
 }
 
-const { minW = 'min-w-48' } = defineProps<Props>()
+const { minW = 'min-w-40', items } = defineProps<Props>()
 defineEmits<Emits>()
 
 const dropdownContentClass = computed(() => `bg-white p-3 shadow-lg rounded-box ${minW}`)
 
-const itemClass = `
-  flex items-center justify-between
+const hasCheckbox = computed((): boolean => items.some(i => i.type === 'checkbox'))
+const hasRadio = computed((): boolean => items.some(i => i.type === 'radio'))
+
+const itemClass = computed(() => `
+  flex items-center gap-x-2
   leading-none text-sm
-  px-4 h-8
   transition-colors rounded-field
   hover:bg-neutral hover:text-neutral-content
   cursor-pointer
-`
+  h-9 py-1.5
+  ${hasCheckbox.value || hasRadio.value
+      ? 'pl-4 pr-2'
+      : 'px-2'
+  }
+`)
 </script>
