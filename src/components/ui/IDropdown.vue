@@ -1,11 +1,22 @@
 <template>
   <DropdownMenuRoot>
     <DropdownMenuTrigger>
-      <slot />
+      <slot v-if="!!$slots.default" />
+      <IBtn
+        v-else
+        square
+        ghost
+        role="button"
+        :class="btnClass"
+      >
+        <IconMore />
+      </IBtn>
     </DropdownMenuTrigger>
 
     <DropdownMenuPortal>
       <DropdownMenuContent
+        :side="side"
+        :align="align"
         :class="dropdownContentClass"
       >
         <IDropdownMenu
@@ -27,6 +38,9 @@
 import type { CheckboxCheckedState } from 'radix-vue'
 import type { DropdownMenu } from '../../types'
 import {
+  EllipsisVertical as IconMore,
+} from 'lucide-vue-next'
+import {
   DropdownMenuArrow,
   DropdownMenuContent,
   DropdownMenuPortal,
@@ -34,11 +48,15 @@ import {
   DropdownMenuTrigger,
 } from 'radix-vue'
 import { computed } from 'vue'
+import IBtn from './IBtn.vue'
 import IDropdownMenu from './IDropdownMenu.vue'
 
 interface Props {
   items: Array<DropdownMenu>
   minW?: string
+  btnClass?: string
+  side?: 'left' | 'right'
+  align?: 'start' | 'center' | 'end'
 }
 interface Emits {
   'update:checked': [value: CheckboxCheckedState, index: number]
