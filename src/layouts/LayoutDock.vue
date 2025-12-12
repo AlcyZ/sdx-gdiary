@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col min-h-screen w-full">
-    <div class="flex-1 flex flex-col">
+  <div class="flex flex-col h-screen w-full">
+    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
       <slot />
     </div>
 
-    <div class="flex border border-subtle bg-white">
+    <div class="shrink-0 flex border border-subtle bg-white">
       <RouterLink
         v-for="(dock, i) in docks"
         :key="i"
