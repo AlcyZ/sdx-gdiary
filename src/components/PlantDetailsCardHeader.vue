@@ -13,17 +13,17 @@
     </div>
 
     <div class="flex space-x-2 mt-3">
-      <IBadge variant="accent" class="text-base-100">
+      <IBadge variant="accent" class="text-base-100 text-xs">
         <component :is="currentPhase.icon" :size="14" />
         {{ currentPhase.label }}
       </IBadge>
 
-      <IBadge variant="neutral" class="text-base-100">
+      <IBadge variant="neutral" class="text-base-100 text-xs">
         <component :is="substrate.icon" :size="14" />
         {{ substrate.label }} ({{ substrate.size }})
       </IBadge>
 
-      <IBadge v-if="plant.isHarvested" variant="success" soft>
+      <IBadge v-if="plant.isHarvested" class="text-xs" variant="success" soft>
         <IconHarvested :size="14" />
         Geerntet
       </IBadge>

@@ -67,7 +67,7 @@
           v-if="plant.isHarvested"
           variant="success"
           soft
-          class="mt-0.5"
+          class="mt-0.5 text-xs"
         >
           <IconHarvested :size="16" />
           Geerntet
@@ -75,6 +75,7 @@
         <IBadge
           v-else-if="plant.isHarvesting"
           variant="accent"
+          class="mt-0.5 text-xs"
           soft
         >
           <IconHarvesting :size="14" />
@@ -82,7 +83,7 @@
         </IBadge>
         <IBadge
           v-else
-          class="mt-0.5"
+          class="mt-0.5 text-xs"
           :class="plant.status.class"
         >
           <component
