@@ -50,7 +50,7 @@ import { useModal } from '../composables/useModal.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
-import LayoutDock from '../layouts/LayoutDock.vue'
+import LayoutDock from '../layoutsBackup/LayoutDock.vue'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { getUploadedFiles } from '../util.ts'
 

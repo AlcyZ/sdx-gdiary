@@ -24,7 +24,7 @@ import SettingsDataImport from '../componentsBackup/SettingsDataImport.vue'
 import SettingsDebug from '../componentsBackup/SettingsDebug.vue'
 import SettingsSeed from '../componentsBackup/SettingsSeed.vue'
 import SettingsUpdate from '../componentsBackup/SettingsUpdate.vue'
-import LayoutDock from '../layouts/LayoutDock.vue'
+import LayoutDock from '../layoutsBackup/LayoutDock.vue'
 
 interface Props {
 

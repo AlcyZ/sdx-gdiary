@@ -66,7 +66,7 @@ import NutrientsOverviewSchemaList from '../componentsBackup/NutrientsOverviewSc
 import IBtn from '../componentsBackup/ui/IBtn.vue'
 import IFab from '../componentsBackup/ui/IFab.vue'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
-import LayoutDock from '../layouts/LayoutDock.vue'
+import LayoutDock from '../layoutsBackup/LayoutDock.vue'
 import { useFertilizerStore } from '../stores/fertilizerStore.ts'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
 

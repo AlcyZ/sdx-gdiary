@@ -35,7 +35,7 @@ import {
 } from 'lucide-vue-next'
 import IAlert from '../componentsBackup/ui/IAlert.vue'
 import IBtn from '../componentsBackup/ui/IBtn.vue'
-import LayoutDock from '../layouts/LayoutDock.vue'
+import LayoutDock from '../layoutsBackup/LayoutDock.vue'
 
 interface Props {
 
