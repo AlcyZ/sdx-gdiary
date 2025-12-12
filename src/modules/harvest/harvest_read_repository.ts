@@ -1,7 +1,6 @@
 import type { IDBPTransaction } from 'idb'
 import type { AsyncArray } from '../../types'
-import type { Harvest } from './types'
-import { omitKeys } from '../../util.ts'
+import type { Harvest, HarvestLogRow } from './types'
 import { INDEX_PLANT_ID, TABLE_PLANT_HARVEST_LOGS } from '../db'
 import { isHarvestLogRow } from './guard.ts'
 
@@ -23,9 +22,30 @@ export default class HarvestReadRepository {
 
     const data = await index.getAll(plantId)
     const logs = data.filter(isHarvestLogRow)
-      .map((row): Harvest => omitKeys(row, [INDEX_PLANT_ID]))
+      .map(this.mapRow)
 
     // sort descending by date
     return logs.toSorted((lhs, rhs) => rhs.timestamp - lhs.timestamp)
+  }
+
+  private mapRow(row: HarvestLogRow): Harvest {
+    const sharedData = {
+      id: row.id,
+      timestamp: row.timestamp,
+      weight: row.weight,
+      container: row.container,
+      info: row.info,
+    }
+
+    return row.type === 'session'
+      ? {
+          type: 'session',
+          state: row.state,
+          ...sharedData,
+        }
+      : {
+          type: 'done',
+          ...sharedData,
+        }
   }
 }
