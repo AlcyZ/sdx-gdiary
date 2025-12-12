@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-neutral-100 overflow-x-hidden">
+  <div class="flex flex-col min-h-screen bg-[#e4e8e6] overflow-x-hidden">
     <RouterView />
   </div>
 </template>
