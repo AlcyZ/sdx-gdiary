@@ -108,7 +108,7 @@ export const usePlantStore = defineStore('plant', () => {
     if (!plant.value)
       return err()
 
-    const result = await harvestRepo.deleteHarvest(harvestId)
+    const result = await harvestRepo.delete(harvestId)
     if (result.ok)
       await syncData()
 

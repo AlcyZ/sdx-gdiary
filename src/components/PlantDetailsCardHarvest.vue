@@ -50,9 +50,11 @@ import {
   Scissors as IconHarvest,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useDropdown } from '../composables/useDropdown.ts'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
+import { ROUTE_PLANT_HARVEST_EDIT } from '../routes.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import PlantDetailsCardHarvestFinish from './PlantDetailsCardHarvestFinish.vue'
 import PlantDetailsCardHarvestSession from './PlantDetailsCardHarvestSession.vue'
@@ -73,6 +75,7 @@ defineEmits<Emits>()
 
 const plantStore = usePlantStore()
 
+const router = useRouter()
 const { createItem } = useDropdown()
 const { showConfirmationModal } = useModal()
 const { resultToast } = useToast()
@@ -113,7 +116,10 @@ const sortedHarvests = computed(
         {
           type: 'item',
           content: createItem('Bearbeiten', IconEdit),
-          onClick: () => console.log('Todo: Edit'),
+          onClick: () => router.push({
+            name: ROUTE_PLANT_HARVEST_EDIT,
+            params: { plantId: plant.id, harvestId: log.id },
+          }),
         },
         {
           type: 'item',

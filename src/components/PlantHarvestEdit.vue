@@ -5,7 +5,7 @@
   >
     <div class="flex items-center justify-between">
       <ICardTitle class="text-3xl">
-        Pflanze ernten
+        Ernte bearbeiten
       </ICardTitle>
 
       <IInputDatetime
@@ -13,38 +13,6 @@
         open-via-label
       />
     </div>
-
-    <div>
-      <div class="flex items-center">
-        <ISwap
-          v-model="isSessionForm"
-          rotate
-        >
-          <ISwapOn>
-            <IconSessionForm />
-          </ISwapOn>
-          <ISwapOff>
-            <IconFinishForm />
-          </ISwapOff>
-        </ISwap>
-
-        <span
-          class="ml-2 text-gray-500 cursor-pointer"
-          @click="isSessionForm = !isSessionForm"
-        >
-          Jetzt im Modus: "<span class="font-semibold">{{ textMode }}</span>"
-        </span>
-      </div>
-
-      <div
-        class="text-xs text-gray-400 pl-8"
-        @click="isSessionForm = !isSessionForm"
-      >
-        (Klicken zum wechseln)
-      </div>
-    </div>
-
-    <PlantHarvestInfobox />
 
     <HarvestSessionForm
       v-if="isSessionForm"
@@ -80,10 +48,10 @@
         :disabled="loading || hasFormErrors"
         :loading="loading"
         loading-type="ring"
-        @click="save"
+        @click="update"
       >
         <IconSave />
-        Speichern
+        Bearbeiten
       </IBtn>
     </template>
   </ICard>
@@ -91,37 +59,33 @@
 
 <script lang="ts" setup>
 import type HarvestRepository from '../modules/harvest/harvest_repository.ts'
-import type { NewHarvest, NewHarvestBase } from '../modules/harvest/types'
+import type { Harvest, HarvestBase } from '../modules/harvest/types'
 import type { Plant } from '../modules/plants/types'
+import type { WithId } from '../types'
+import dayjs from 'dayjs'
 import {
-  BookCheck as IconFinishForm,
   Save as IconSave,
-  ClipboardClock as IconSessionForm,
 } from 'lucide-vue-next'
-import { computed, inject, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import { useHarvestForm } from '../composables/useHarvestForm.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_HARVEST } from '../di_keys.ts'
 import HarvestFinishForm from './HarvestFinishForm.vue'
 import HarvestSessionForm from './HarvestSessionForm.vue'
-import PlantHarvestInfobox from './PlantHarvestInfobox.vue'
 import IBtn from './ui/IBtn.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInputDatetime from './ui/IInputDatetime.vue'
-import ISwap from './ui/ISwap.vue'
-import ISwapOff from './ui/ISwapOff.vue'
-import ISwapOn from './ui/ISwapOn.vue'
 
 interface Props {
   plant: Plant
+  harvest: Harvest
 }
-
 interface Emits {
-  saved: []
+  updated: []
 }
 
-const { plant } = defineProps<Props>()
+const { plant, harvest } = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const harvestRepo = inject(REPO_HARVEST) as HarvestRepository
@@ -136,21 +100,14 @@ const {
   errors,
   hasFormErrors,
   validate,
+  resetForm,
 } = useHarvestForm()
 
-const { toast } = useToast()
-
-const TEXT_MODE_SESSION = 'Session protokollieren'
-const TEXT_MODE_FINISH = 'Ernte abschließen'
-
-const textMode = computed(() => isSessionForm.value
-  ? TEXT_MODE_SESSION
-  : TEXT_MODE_FINISH,
-)
+const { resultToast, toast } = useToast()
 
 const loading = ref(false)
 
-async function save() {
+async function update() {
   const validationResult = await validate()
   if (!validationResult.valid) {
     toast('Bitte fülle alle Pflichtfelder aus!', 'error')
@@ -158,27 +115,32 @@ async function save() {
   }
 
   const harvest = getHarvestData()
-  const result = await harvestRepo.save(plant.id, harvest)
+  const result = await harvestRepo.update(plant.id, harvest)
+
+  resultToast(
+    'Ernte aktualisiert',
+    'aktualisieren der Ernte',
+    result,
+  )
 
   if (!result.ok) {
-    toast('Es ist ein Fehler beim speichern der Ernte aufgetreten', 'error')
     console.error('[PlantHarvestSession.save]:', result.error)
     return
   }
 
-  toast('Ernte gespeichert!', 'success')
-  emit('saved')
+  emit('updated')
 }
 
-function getHarvestData(): NewHarvest {
+function getHarvestData(): Harvest {
   const convertNum = (v: any) => typeof v === 'number' ? v : undefined
   const convertStr = (v: any) => typeof v === 'string' ? v !== '' ? v : undefined : undefined
 
-  const baseData: NewHarvestBase = {
+  const baseData: WithId<HarvestBase, number> = {
+    id: harvest.id,
     weight: convertNum(weight.value),
     container: convertStr(container.value),
     info: convertStr(info.value),
-    date: date.value,
+    timestamp: dayjs(date.value).valueOf(),
   }
 
   return isSessionForm.value
@@ -192,4 +154,22 @@ function getHarvestData(): NewHarvest {
         type: 'done',
       }
 }
+
+function resetHarvestForm() {
+  const baseData = harvest.type === 'session'
+    ? { isSessionForm: true, state: harvest.state }
+    : { isSessionForm: false }
+
+  resetForm({
+    values: {
+      ...baseData,
+      date: dayjs(new Date(harvest.timestamp)).format('YYYY-MM-DDTHH:mm'),
+      weight: harvest.weight,
+      container: harvest.container,
+      info: harvest.info,
+    },
+  })
+}
+
+onMounted(resetHarvestForm)
 </script>

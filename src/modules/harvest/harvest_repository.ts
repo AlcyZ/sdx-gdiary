@@ -1,6 +1,6 @@
 import type { IDBPDatabase } from 'idb'
 import type { AsyncResult } from '../../types'
-import type { NewHarvest } from './types'
+import type { Harvest, NewHarvest } from './types'
 import { TABLE_PLANT_HARVEST_LOGS } from '../db'
 import HarvestWriteRepository from './harvest_write_repository.ts'
 
@@ -30,7 +30,18 @@ export default class HarvestRepository {
     return result
   }
 
-  public async deleteHarvest(harvestId: number): AsyncResult<void, DOMException> {
+  public async update(plantId: number, harvest: Harvest): AsyncResult<void, DOMException> {
+    const tx = this.db.transaction([
+      TABLE_PLANT_HARVEST_LOGS,
+    ], 'readwrite')
+
+    const result = await this.write.updateHarvest(plantId, harvest, tx)
+    await tx.done
+
+    return result
+  }
+
+  public async delete(harvestId: number): AsyncResult<void, DOMException> {
     const tx = this.db.transaction([
       TABLE_PLANT_HARVEST_LOGS,
     ], 'readwrite')

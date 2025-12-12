@@ -10,12 +10,14 @@ import {
   ROUTE_PLANT_DETAILS,
   ROUTE_PLANT_EDIT,
   ROUTE_PLANT_HARVEST,
+  ROUTE_PLANT_HARVEST_EDIT,
   ROUTE_PLANT_LISTING,
   ROUTE_PLANT_LOG_WATERING,
   ROUTE_SETTINGS,
 } from './routes.ts'
 import Gallery from './views/Gallery.vue'
 import HarvestPlant from './views/HarvestPlant.vue'
+import HarvestPlantEdit from './views/HarvestPlantEdit.vue'
 import NotFound from './views/NotFound.vue'
 import NutrientsFertilizerAdd from './views/NutrientsFertilizerAdd.vue'
 import NutrientsOverview from './views/NutrientsOverview.vue'
@@ -61,8 +63,23 @@ const routes = [
           },
           {
             path: 'harvest',
-            name: ROUTE_PLANT_HARVEST,
-            component: HarvestPlant,
+            children: [
+              {
+                path: '',
+                name: ROUTE_PLANT_HARVEST,
+                component: HarvestPlant,
+              },
+              {
+                path: ':harvestId',
+                children: [
+                  {
+                    path: 'edit',
+                    name: ROUTE_PLANT_HARVEST_EDIT,
+                    component: HarvestPlantEdit,
+                  },
+                ],
+              },
+            ],
           },
           {
             path: 'log',

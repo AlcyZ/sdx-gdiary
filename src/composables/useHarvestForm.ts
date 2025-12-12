@@ -8,11 +8,13 @@ import { boolean, number, object, string } from 'yup'
 const ERR_DRYING_STATE_REQUIRED = 'Es muss ein Trocknungsstand angegeben werden'
 const ERR_DATE_REQUIRED = 'Es muss ein Datum angegeben werden'
 
+const emptyStrToUndefined = (v: string) => v === '' ? undefined : v
+
 const harvestSchema = object({
   date: string().required(ERR_DATE_REQUIRED),
-  weight: number().typeError('Es muss eine Zahl (dezimal) angegeben werden').optional(),
-  container: string().optional(),
-  info: string().optional(),
+  weight: number().transform((v, o) => o === '' ? undefined : v).typeError('Es muss eine Zahl (dezimal) angegeben werden').optional(),
+  container: string().transform(emptyStrToUndefined).optional(),
+  info: string().transform(emptyStrToUndefined).optional(),
 
   isSessionForm: boolean().required(),
 

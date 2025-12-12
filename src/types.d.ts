@@ -1,3 +1,4 @@
+import type { IDBPTransaction } from 'idb'
 import type { CheckedState } from 'radix-vue/dist/Menu/utils'
 import type { Component, SetupContext, VNodeChild } from 'vue'
 
@@ -205,3 +206,11 @@ interface ParseJsonErrorTypeGuard {
 type ParseJsonError = (ParseJsonErrorParse | ParseJsonErrorTypeGuard) & {
   payload?: any
 }
+
+// idb util types
+type Transaction<Mode extends IDBTransactionMode = 'readonly'> = IDBPTransaction<any, ArrayLike<string>, Mode>
+
+type StoreFrom<T extends Transaction<any>> = T['objectStoreNames'][number]
+
+type EnsureStore<Store, Tx extends Transaction<any>>
+  = Store extends StoreFrom<Tx> ? Tx : never
