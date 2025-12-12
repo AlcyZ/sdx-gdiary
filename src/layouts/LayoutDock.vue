@@ -36,13 +36,11 @@
 
 <script lang="ts" setup>
 import type { DockItem } from '../types'
-import {
-  Images as IconGallery,
-  Apple as IconNutrients,
-  Flower2 as IconPlant,
-  Settings as IconSettings,
-} from 'lucide-vue-next'
 import { ref } from 'vue'
+import IconGalleryThumbnail from '../icons/IconGalleryThumbnail.vue'
+import IconLabResearch from '../icons/IconLabResearch.vue'
+import IconPottedPlant from '../icons/IconPottedPlant.vue'
+import IconSettings from '../icons/IconSettings.vue'
 
 interface Props {
 
@@ -61,17 +59,17 @@ defineSlots<{
 const docks = ref<Array<DockItem>>([
   {
     label: 'Pflanzen',
-    icon: IconPlant,
+    icon: IconPottedPlant,
     to: '/plants',
   },
   {
     label: 'Dünger',
-    icon: IconNutrients,
+    icon: IconLabResearch,
     to: '/nutrients',
   },
   {
     label: 'Galerie',
-    icon: IconGallery,
+    icon: IconGalleryThumbnail,
     to: '/gallery',
   },
   {
