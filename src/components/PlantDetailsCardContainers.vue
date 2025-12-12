@@ -90,8 +90,8 @@ import IBadge from './ui/IBadge.vue'
 import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IDropdownLegacy from './ui/IDropdownLegacy.vue'
+import INote from './ui/INote.vue'
 import IPopperSelf from './ui/IPopperSelf.vue'
-import INote from "./ui/INote.vue";
 
 interface Props {
   plant: Plant

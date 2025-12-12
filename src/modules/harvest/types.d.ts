@@ -27,7 +27,7 @@ type Harvest = WithId<HarvestSession | HarvestFinished, number>
 type NewHarvestBase = Omit<HarvestBase, 'id' | 'timestamp' | typeof INDEX_PLANT_ID> & {
   date: string
 }
-type NewHarvestSession = HarvestSession & NewHarvestBase
-type NewHarvestFinished = HarvestFinished & NewHarvestBase
+type NewHarvestSession = Omit<HarvestSession, keyof HarvestBase> & NewHarvestBase
+type NewHarvestFinished = Omit<HarvestFinished, keyof HarvestBase> & NewHarvestBase
 
 type NewHarvest = NewHarvestSession | NewHarvestFinished

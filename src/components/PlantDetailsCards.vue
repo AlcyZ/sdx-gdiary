@@ -46,10 +46,10 @@ import PlantDetailsCardActionHarvest from './PlantDetailsCardActionHarvest.vue'
 import PlantDetailsCardActionWatering from './PlantDetailsCardActionWatering.vue'
 import PlantDetailsCardContainers from './PlantDetailsCardContainers.vue'
 import PlantDetailsCardGallery from './PlantDetailsCardGallery.vue'
+import PlantDetailsCardHarvest from './PlantDetailsCardHarvest.vue'
 import PlantDetailsCardHeader from './PlantDetailsCardHeader.vue'
 import PlantDetailsCardPhases from './PlantDetailsCardPhases.vue'
 import PlantDetailsCardWatering from './PlantDetailsCardWatering.vue'
-import PlantDetailsCardHarvest from "./PlantDetailsCardHarvest.vue";
 
 interface Props {
   plant: Plant
