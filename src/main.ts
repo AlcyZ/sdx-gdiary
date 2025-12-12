@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+import type { App as VueApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -39,6 +40,13 @@ async function bootstrap() {
   app.use(router)
   app.use(pinia)
 
+  await provideModules(app)
+  loadErudaLibraryInDevMode()
+
+  app.mount('#app')
+}
+
+async function provideModules(app: VueApp) {
   const db = await getDb()
 
   const plantRepo = PlantRepository.create(db)
@@ -54,8 +62,24 @@ async function bootstrap() {
   app.provide(SERVICE_BACKUP, backupService)
   app.provide(REPO_HARVEST, harvestRepo)
   app.provide(REPO_CONFIG, configRepo)
+}
 
-  app.mount('#app')
+function loadErudaLibraryInDevMode() {
+  if (!import.meta.env.DEV)
+    return
+
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/eruda'
+
+  script.onload = () => {
+    try {
+      // @ts-expect-error dynamic loading of script
+      window.eruda.init()
+    }
+    catch (_) {}
+  }
+
+  document.body.appendChild(script)
 }
 
 try {
