@@ -1,6 +1,8 @@
 <template>
   <LayoutDock>
-    plant listing
+    <div class="bg-amber-100 ">
+      hi :)
+    </div>
   </LayoutDock>
 </template>
 

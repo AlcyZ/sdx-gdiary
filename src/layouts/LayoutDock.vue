@@ -1,6 +1,22 @@
 <template>
-  <div>
-    <slot />
+  <div class="flex flex-col min-h-screen w-full">
+    <div class="flex-1 flex flex-col">
+      <slot />
+    </div>
+
+    <div class="flex border border-subtle bg-white">
+      <RouterLink
+        v-for="(dock, i) in docks"
+        :key="i"
+        class="flex-1 py-sm"
+        :to="dock.to"
+      >
+        <div class="flex flex-col items-center justify-center">
+          <component :is="dock.icon" />
+          <span class="text-xs">{{ dock.label }}</span>
+        </div>
+      </RouterLink>
+    </div>
   </div>
 </template>
 
