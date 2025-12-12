@@ -19,11 +19,11 @@
 </template>
 
 <script lang="ts" setup>
-import SettingsDataExport from '../components/SettingsDataExport.vue'
-import SettingsDataImport from '../components/SettingsDataImport.vue'
-import SettingsDebug from '../components/SettingsDebug.vue'
-import SettingsSeed from '../components/SettingsSeed.vue'
-import SettingsUpdate from '../components/SettingsUpdate.vue'
+import SettingsDataExport from '../componentsBackup/SettingsDataExport.vue'
+import SettingsDataImport from '../componentsBackup/SettingsDataImport.vue'
+import SettingsDebug from '../componentsBackup/SettingsDebug.vue'
+import SettingsSeed from '../componentsBackup/SettingsSeed.vue'
+import SettingsUpdate from '../componentsBackup/SettingsUpdate.vue'
 import LayoutDock from '../layouts/LayoutDock.vue'
 
 interface Props {

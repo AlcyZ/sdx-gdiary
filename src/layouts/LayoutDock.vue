@@ -19,7 +19,7 @@ import {
   Settings as IconSettings,
 } from 'lucide-vue-next'
 import { ref } from 'vue'
-import IDock from '../components/ui/IDock.vue'
+import IDock from '../componentsBackup/ui/IDock.vue'
 
 interface Props {
 

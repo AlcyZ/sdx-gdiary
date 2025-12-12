@@ -33,8 +33,8 @@
 import {
   CircleOff as IconNotFound,
 } from 'lucide-vue-next'
-import IAlert from '../components/ui/IAlert.vue'
-import IBtn from '../components/ui/IBtn.vue'
+import IAlert from '../componentsBackup/ui/IAlert.vue'
+import IBtn from '../componentsBackup/ui/IBtn.vue'
 import LayoutDock from '../layouts/LayoutDock.vue'
 
 interface Props {

@@ -22,8 +22,8 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import TopNavigation from '../components/layout/TopNavigation.vue'
-import PlantHarvest from '../components/PlantHarvest.vue'
+import TopNavigation from '../componentsBackup/layout/TopNavigation.vue'
+import PlantHarvest from '../componentsBackup/PlantHarvest.vue'
 import LayoutForm from '../layouts/LayoutForm.vue'
 import { ROUTE_PLANT_DETAILS } from '../routes.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
