@@ -1,7 +1,13 @@
 <template>
-  <div class="flex flex-col h-screen bg-[#e4e8e6] overflow-x-hidden">
-    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
-      <RouterView />
+  <div class="flex flex-col h-screen bg-[#e4e8e6]">
+    <div class="flex-1 min-h-0 relative overflow-hidden">
+      <RouterView v-slot="{ Component, route }">
+        <Transition name="slide">
+          <div :key="route.fullPath" class="h-full w-full">
+            <component :is="Component" class="h-full overflow-y-auto" />
+          </div>
+        </Transition>
+      </RouterView>
     </div>
 
     <ILayoutDock />
@@ -36,16 +42,14 @@ onMounted(sync)
 <style>
 .slide-enter-active,
 .slide-leave-active {
-  //transition: transform 0.25s ease, opacity 0.25s ease;
+  transition: transform 2.5s ease;
 }
 
 .slide-enter-from {
-  //transform: translateX(100%);
-  //opacity: 0;
+  transform: translateX(100%);
 }
 
 .slide-leave-to {
-  //transform: translateX(-100%);
-  //opacity: 0;
+  transform: translateX(-100%);
 }
 </style>
