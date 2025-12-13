@@ -1,5 +1,5 @@
 <template>
-  <LayoutDock>
+  <div>
     <div class="flex-1 flex flex-col gap-y-6">
       <ICard
         v-for="(plant, i) in plants"
@@ -76,7 +76,7 @@
       :disabled="!isDirty"
       :actions="fabActions"
     />
-  </LayoutDock>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -107,7 +107,6 @@ import { useToast } from '../composables/useToast.ts'
 import { hasBoolKey, hasNumKey } from '../modules/type_guard'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { none, safeParseJson, some } from '../util.ts'
-import LayoutDock from "../layouts/LayoutDock.vue";
 
 interface Props {
 

@@ -1,15 +1,16 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-[#e4e8e6] overflow-x-hidden">
-    <RouterView v-slot="{ Component }">
-      <Transition mode="out-in" name="slide">
-        <component :is="Component" />
-      </Transition>
-    </RouterView>
+  <div class="flex flex-col h-screen bg-[#e4e8e6] overflow-x-hidden">
+    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
+      <RouterView />
+    </div>
+
+    <ILayoutDock />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import ILayoutDock from './components/layout/ILayoutDock.vue'
 import { useConfigurationStore } from './stores/configurationStore.ts'
 import { useFertilizerStore } from './stores/fertilizerStore.ts'
 import { usePlantStore } from './stores/plantStore.ts'

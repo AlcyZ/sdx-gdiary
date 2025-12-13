@@ -76,7 +76,9 @@ function loadErudaLibraryInDevMode() {
       // @ts-expect-error dynamic loading of script
       window.eruda.init()
     }
-    catch (_) {}
+    catch (e) {
+      console.error('Failed loading eruda library:', e)
+    }
   }
 
   document.body.appendChild(script)

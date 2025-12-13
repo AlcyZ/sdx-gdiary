@@ -16,19 +16,19 @@ import {
   ROUTE_SETTINGS,
 } from './routes.ts'
 import Gallery from './viewsBackup/Gallery.vue'
-import NutrientsOverview from './viewsBackup/NutrientsOverview.vue'
-import PlantListing from './viewsBackup/PlantListing.vue'
-import Settings from './viewsBackup/Settings.vue'
 import HarvestPlant from './viewsBackup/HarvestPlant.vue'
 import HarvestPlantEdit from './viewsBackup/HarvestPlantEdit.vue'
 import NotFound from './viewsBackup/NotFound.vue'
 import NutrientsFertilizerAdd from './viewsBackup/NutrientsFertilizerAdd.vue'
+import NutrientsOverview from './viewsBackup/NutrientsOverview.vue'
 import NutrientsSchemaAdd from './viewsBackup/NutrientsSchemaAdd.vue'
 import NutrientsSchemaEdit from './viewsBackup/NutrientsSchemaEdit.vue'
 import PlantAdd from './viewsBackup/PlantAdd.vue'
 import PlantDetails from './viewsBackup/PlantDetails.vue'
 import PlantEdit from './viewsBackup/PlantEdit.vue'
+import PlantListing from './viewsBackup/PlantListing.vue'
 import PlantLogWatering from './viewsBackup/PlantLogWatering.vue'
+import Settings from './viewsBackup/Settings.vue'
 
 const routes = [
   {
