@@ -1,6 +1,10 @@
 <template>
   <div class="flex flex-col min-h-screen bg-[#e4e8e6] overflow-x-hidden">
-    <RouterView />
+    <RouterView v-slot="{ Component }">
+      <Transition mode="out-in" name="slide">
+        <component :is="Component" />
+      </Transition>
+    </RouterView>
   </div>
 </template>
 
@@ -27,3 +31,20 @@ async function sync() {
 
 onMounted(sync)
 </script>
+
+<style>
+.slide-enter-active,
+.slide-leave-active {
+  //transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.slide-enter-from {
+  //transform: translateX(100%);
+  //opacity: 0;
+}
+
+.slide-leave-to {
+  //transform: translateX(-100%);
+  //opacity: 0;
+}
+</style>
