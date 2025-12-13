@@ -1,5 +1,5 @@
 <template>
-  <div class="fab">
+  <div class="fab fixed bottom-5 right-5">
     <div
       ref="fabMainBtn"
       tabindex="0"
