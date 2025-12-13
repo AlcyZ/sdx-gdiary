@@ -1,5 +1,7 @@
 <template>
-  <slot name="default" :src="imgSrc" :is-loading="isLoading" />
+  <div>
+    <slot name="default" :src="imgSrc" :is-loading="isLoading" />
+  </div>
 </template>
 
 <script lang="ts" setup>
