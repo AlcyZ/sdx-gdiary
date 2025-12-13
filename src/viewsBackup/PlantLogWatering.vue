@@ -1,166 +1,168 @@
 <template>
-  <TopNavigation
-    @back="$router.back()"
-  />
-  <div class="flex-1 flex justify-center items-center mt-4">
-    <ICard
-      class="w-full max-w-3xl"
-      class-actions="border-t border-t-base-200 pt-1 mt-2"
-      justify-actions-between
-    >
-      <div class="px-4 py-4 border-b border-base-200">
-        <div class="flex items-center justify-between">
-          <h1 class="text-3xl font-semibold">
-            Neuer Gießeintrag
-          </h1>
+  <div>
+    <TopNavigation
+      @back="$router.back()"
+    />
+    <div class="flex-1 flex justify-center items-center mt-4">
+      <ICard
+        class="w-full max-w-3xl"
+        class-actions="border-t border-t-base-200 pt-1 mt-2"
+        justify-actions-between
+      >
+        <div class="px-4 py-4 border-b border-base-200">
+          <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-semibold">
+              Neuer Gießeintrag
+            </h1>
 
-          <IInputDatetime v-model="date" />
+            <IInputDatetime v-model="date" />
+          </div>
+
+          <div class="flex mt-1">
+            <IBadge
+              variant="primary"
+              class="text-base-100 text-sm py-1 px-2"
+            >
+              {{ plantName }}
+            </IBadge>
+          </div>
         </div>
 
-        <div class="flex mt-1">
-          <IBadge
-            variant="primary"
-            class="text-base-100 text-sm py-1 px-2"
-          >
-            {{ plantName }}
-          </IBadge>
-        </div>
-      </div>
-
-      <div>
-        <h3 class="text-xl font-bold">
-          Gießmenge & Messwerte
-        </h3>
-
-        <IInputNumber
-          v-model="amount"
-          label="Gießmenge (Liter)"
-          :error="errors.amount"
-          class="mt-6 mb-3"
-          full-width
-          size="xl"
-        />
-
-        <IFieldset
-          legend="Zusatzinformationen"
-        >
-          <IInputNumber
-            v-model="ph"
-            label="pH-Wert"
-            :error="errors.ph"
-            class="mt-3"
-            full-width
-            size="sm"
-          />
-
-          <IInputNumber
-            v-model="ec"
-            label="EC-Wert"
-            :error="errors.ec"
-            class="mt-3"
-            full-width
-            size="sm"
-          />
-        </IFieldset>
-      </div>
-
-      <hr class="my-4 text-base-300">
-
-      <div>
-        <div class="flex items-center justify-between mb-1">
+        <div>
           <h3 class="text-xl font-bold">
-            Verwendete Dünger
+            Gießmenge & Messwerte
           </h3>
 
-          <input v-model="useFertilizer" type="checkbox" class="toggle">
+          <IInputNumber
+            v-model="amount"
+            label="Gießmenge (Liter)"
+            :error="errors.amount"
+            class="mt-6 mb-3"
+            full-width
+            size="xl"
+          />
+
+          <IFieldset
+            legend="Zusatzinformationen"
+          >
+            <IInputNumber
+              v-model="ph"
+              label="pH-Wert"
+              :error="errors.ph"
+              class="mt-3"
+              full-width
+              size="sm"
+            />
+
+            <IInputNumber
+              v-model="ec"
+              label="EC-Wert"
+              :error="errors.ec"
+              class="mt-3"
+              full-width
+              size="sm"
+            />
+          </IFieldset>
         </div>
 
-        <!-- fertilizers container -->
-        <div
-          v-if="useFertilizer"
-        >
-          <ICard
-            v-for="(fertilizerData, i) in fertilizersData"
-            :key="i"
-            class="my-2"
+        <hr class="my-4 text-base-300">
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-xl font-bold">
+              Verwendete Dünger
+            </h3>
+
+            <input v-model="useFertilizer" type="checkbox" class="toggle">
+          </div>
+
+          <!-- fertilizers container -->
+          <div
+            v-if="useFertilizer"
           >
-            <div class="flex items-center justify-between">
-              <span class="text-lg font-semibold">{{ fertilizerData.fertilizer.name }}</span>
-
-              <IBtn
-                square
-                outline
-                variant="error"
-                size="lg"
-                @click="removeFertilizer(i)"
-              >
-                <IconRemove />
-              </IBtn>
-            </div>
-
-            <div
-              class="text-xs opacity-60 border-b border-b-base-200"
+            <ICard
+              v-for="(fertilizerData, i) in fertilizersData"
+              :key="i"
+              class="my-2"
             >
-              <span v-if="fertilizerData.recommended">Empfohlene Menge des Schemas: {{ fertilizerData.recommended }}ml/L</span>
-              <span v-else>&nbsp;</span>
-            </div>
+              <div class="flex items-center justify-between">
+                <span class="text-lg font-semibold">{{ fertilizerData.fertilizer.name }}</span>
 
-            <div class="flex items-center ">
-              <input
-                v-model="fertilizerData.amount"
-                type="number"
-                inputmode="decimal"
-                class="input mr-6"
-              >
+                <IBtn
+                  square
+                  outline
+                  variant="error"
+                  size="lg"
+                  @click="removeFertilizer(i)"
+                >
+                  <IconRemove />
+                </IBtn>
+              </div>
 
-              <IBtn
-                v-if="fertilizerData.recommended"
-                outline
-                variant="accent"
-                @click="fertilizerData.amount = formatNumberToNumber(amount * fertilizerData.recommended)"
+              <div
+                class="text-xs opacity-60 border-b border-b-base-200"
               >
-                <IconQuick />
-                {{ formatNumber(amount * fertilizerData.recommended) }}ml/L
-              </IBtn>
-            </div>
-          </ICard>
+                <span v-if="fertilizerData.recommended">Empfohlene Menge des Schemas: {{ fertilizerData.recommended }}ml/L</span>
+                <span v-else>&nbsp;</span>
+              </div>
+
+              <div class="flex items-center ">
+                <input
+                  v-model="fertilizerData.amount"
+                  type="number"
+                  inputmode="decimal"
+                  class="input mr-6"
+                >
+
+                <IBtn
+                  v-if="fertilizerData.recommended"
+                  outline
+                  variant="accent"
+                  @click="fertilizerData.amount = formatNumberToNumber(amount * fertilizerData.recommended)"
+                >
+                  <IconQuick />
+                  {{ formatNumber(amount * fertilizerData.recommended) }}ml/L
+                </IBtn>
+              </div>
+            </ICard>
+
+            <IBtn
+              variant="secondary"
+              class="w-full mt-2"
+              @click="openAddFertilizerModal"
+            >
+              <IconPlus />
+              Weiteren Dünger hinzufügen
+            </IBtn>
+          </div>
+        </div>
+
+        <template #actions>
+          <IBtn
+            class="hidden sm:flex"
+            @click="$router.back()"
+          >
+            <IconBack />
+            Zurück
+          </IBtn>
 
           <IBtn
-            variant="secondary"
-            class="w-full mt-2"
-            @click="openAddFertilizerModal"
+            variant="primary"
+            class="text-base-100 w-full sm:w-auto"
+            @click="save"
           >
-            <IconPlus />
-            Weiteren Dünger hinzufügen
+            <IconSave />
+            Speichern
           </IBtn>
-        </div>
-      </div>
+        </template>
+      </ICard>
 
-      <template #actions>
-        <IBtn
-          class="hidden sm:flex"
-          @click="$router.back()"
-        >
-          <IconBack />
-          Zurück
-        </IBtn>
-
-        <IBtn
-          variant="primary"
-          class="text-base-100 w-full sm:w-auto"
-          @click="save"
-        >
-          <IconSave />
-          Speichern
-        </IBtn>
-      </template>
-    </ICard>
-
-    <IFab
-      :actions="fabActions"
-      class="mb-14"
-      :icon="IconMenu"
-    />
+      <IFab
+        :actions="fabActions"
+        class="mb-14"
+        :icon="IconMenu"
+      />
+    </div>
   </div>
 </template>
 

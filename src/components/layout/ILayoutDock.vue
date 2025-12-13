@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import type { DockItem } from '../../types'
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 import IconGalleryThumbnail from '../../icons/IconGalleryThumbnail.vue'
 import IconLabResearch from '../../icons/IconLabResearch.vue'
 import IconPottedPlant from '../../icons/IconPottedPlant.vue'
@@ -30,22 +30,22 @@ defineEmits<Emits>()
 const docks = ref<Array<DockItem>>([
   {
     label: 'Pflanzen',
-    icon: IconPottedPlant,
+    icon: markRaw(IconPottedPlant),
     to: '/plants',
   },
   {
     label: 'Dünger',
-    icon: IconLabResearch,
+    icon: markRaw(IconLabResearch),
     to: '/nutrients',
   },
   {
     label: 'Galerie',
-    icon: IconGalleryThumbnail,
+    icon: markRaw(IconGalleryThumbnail),
     to: '/gallery',
   },
   {
     label: 'Einstellungen',
-    icon: IconSettings,
+    icon: markRaw(IconSettings),
     to: '/settings',
   },
 ])
