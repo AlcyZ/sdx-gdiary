@@ -1,7 +1,10 @@
 <template>
   <LayoutDock>
-    <div class="bg-amber-100 ">
-      hi :)
+    <div
+      v-for="(_, i) in Array.from({ length: 12 })"
+      class=" my-6"
+    >
+      hi :)<br>
     </div>
   </LayoutDock>
 </template>
