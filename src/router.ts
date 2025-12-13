@@ -15,10 +15,10 @@ import {
   ROUTE_PLANT_LOG_WATERING,
   ROUTE_SETTINGS,
 } from './routes.ts'
-import Gallery from './views/Gallery.vue'
-import NutrientsOverview from './views/NutrientsOverview.vue'
-import PlantListing from './views/PlantListing.vue'
-import Settings from './views/Settings.vue'
+import Gallery from './viewsBackup/Gallery.vue'
+import NutrientsOverview from './viewsBackup/NutrientsOverview.vue'
+import PlantListing from './viewsBackup/PlantListing.vue'
+import Settings from './viewsBackup/Settings.vue'
 import HarvestPlant from './viewsBackup/HarvestPlant.vue'
 import HarvestPlantEdit from './viewsBackup/HarvestPlantEdit.vue'
 import NotFound from './viewsBackup/NotFound.vue'
