@@ -1,3 +1,4 @@
+import type { RouteLocationNormalized, RouteRecordNameGeneric, RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 import {
   ROUTE_404,
@@ -30,7 +31,9 @@ import PlantListing from './viewsBackup/PlantListing.vue'
 import PlantLogWatering from './viewsBackup/PlantLogWatering.vue'
 import Settings from './viewsBackup/Settings.vue'
 
-const routes = [
+const nameToStr = (name: RouteRecordNameGeneric) => typeof name === 'string' ? name : ''
+
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: PlantListing,
@@ -42,6 +45,20 @@ const routes = [
         path: '',
         name: ROUTE_PLANT_LISTING,
         component: PlantListing,
+        meta: {
+          getTransition: (from: RouteLocationNormalized) => {
+            return [
+              ROUTE_PLANT_ADD,
+              ROUTE_PLANT_DETAILS,
+              ROUTE_PLANT_EDIT,
+              ROUTE_PLANT_HARVEST,
+              ROUTE_PLANT_HARVEST_EDIT,
+              ROUTE_PLANT_LOG_WATERING,
+            ].includes(nameToStr(from.name))
+              ? 'slide-down'
+              : 'slide-left'
+          },
+        },
       },
       {
         path: 'add',
@@ -55,6 +72,15 @@ const routes = [
             path: '',
             name: ROUTE_PLANT_DETAILS,
             component: PlantDetails,
+            meta: {
+              getTransition: (from: RouteLocationNormalized) => {
+                return [
+                  ROUTE_PLANT_LISTING,
+                ].includes(nameToStr(from.name))
+                  ? 'slide-down'
+                  : 'slide-up'
+              },
+            },
           },
           {
             path: 'edit',

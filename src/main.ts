@@ -40,13 +40,22 @@ async function bootstrap() {
   app.use(router)
   app.use(pinia)
 
-  await provideModules(app)
+  registerRouterCallbacks()
+  await registerModules(app)
   loadErudaLibraryInDevMode()
 
   app.mount('#app')
 }
 
-async function provideModules(app: VueApp) {
+function registerRouterCallbacks() {
+  router.afterEach((to, from) => {
+    if (typeof to.meta.getTransition === 'function') {
+      to.meta.transition = to.meta.getTransition(from)
+    }
+  })
+}
+
+async function registerModules(app: VueApp) {
   const db = await getDb()
 
   const plantRepo = PlantRepository.create(db)

@@ -2,7 +2,7 @@
   <div class="flex flex-col h-screen bg-[#e4e8e6]">
     <div class="flex-1 min-h-0 relative overflow-hidden">
       <RouterView v-slot="{ Component, route }">
-        <Transition name="slide-right">
+        <Transition :name="route.meta.transition || 'slide-left'">
           <div :key="route.fullPath" class="h-full w-full">
             <component :is="Component" class="h-full overflow-y-auto" />
           </div>
