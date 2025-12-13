@@ -2,21 +2,23 @@
   <div class="flex flex-col h-screen bg-[#e4e8e6]">
     <div class="flex-1 min-h-0 relative overflow-hidden">
       <RouterView v-slot="{ Component, route }">
-        <Transition :name="route.meta.transition || 'slide-left'">
-          <div :key="route.fullPath" class="h-full w-full">
+        <Transition :name="getTransitionName(route)">
+          <div :key="route.fullPath" class="h-full w-full absolute inset-0">
             <component :is="Component" class="h-full overflow-y-auto" />
           </div>
         </Transition>
       </RouterView>
     </div>
 
-    <ILayoutDock />
+    <ILayoutDock v-if="isDockVisible" />
   </div>
 </template>
 
 <script setup lang="ts">
+import type { RouteLocationNormalizedLoadedGeneric } from 'vue-router'
 import { onMounted } from 'vue'
 import ILayoutDock from './components/layout/ILayoutDock.vue'
+import { useLayout } from './composables/useLayout.ts'
 import { useConfigurationStore } from './stores/configurationStore.ts'
 import { useFertilizerStore } from './stores/fertilizerStore.ts'
 import { usePlantStore } from './stores/plantStore.ts'
@@ -27,6 +29,10 @@ const fertilizerStore = useFertilizerStore()
 const wateringSchemaStore = useWateringSchemaStore()
 const configStore = useConfigurationStore()
 
+const {
+  isDockVisible,
+} = useLayout()
+
 async function sync() {
   await Promise.all([
     plantStore.syncPlants(),
@@ -34,6 +40,12 @@ async function sync() {
     wateringSchemaStore.syncWateringSchemas(),
   ])
   configStore.syncPlantListingConfiguration()
+}
+
+function getTransitionName(route: RouteLocationNormalizedLoadedGeneric) {
+  return typeof route.meta.transition === 'string'
+    ? route.meta.transition
+    : 'slide-left'
 }
 
 onMounted(sync)
