@@ -61,7 +61,7 @@ export function usePlant() {
     if (!lastWatering.exist)
       return isNotWateredText
 
-    const lastWateringDate = dayjs(new Date(lastWatering.value.date))
+    const lastWateringDate = dayjs(new Date(lastWatering.value.date)).startOf('day')
     const daysPastSinceWatering = dayjs().diff(lastWateringDate, 'days')
 
     if (daysPastSinceWatering === 0)
