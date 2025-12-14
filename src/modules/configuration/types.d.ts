@@ -1,4 +1,5 @@
 type PlantListingFilter = 'show-all'
+  | 'show-harvested'
   | 'hide-harvested'
 
 type PlantListingSort = 'default'

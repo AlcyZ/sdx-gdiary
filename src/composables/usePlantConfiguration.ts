@@ -7,7 +7,10 @@ export function usePlantConfiguration() {
   const configStore = useConfigurationStore()
 
   function plantListingFilter(plant: Plant): boolean {
-    return configStore.plantListingConfiguration.filter === 'show-all' || !plant.isHarvested
+    if (configStore.plantListingConfiguration.filter === 'show-all')
+      return true
+
+    return configStore.plantListingConfiguration.filter === 'show-harvested' ? plant.isHarvested : !plant.isHarvesting
   }
 
   function plantListingSort(lhs: Plant, rhs: Plant): number {

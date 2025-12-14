@@ -84,6 +84,10 @@ const dropdown = computed((): Array<DropdownMenu> => [
         value: 'show-all',
       },
       {
+        label: 'Geerntete anzeigen',
+        value: 'show-harvested',
+      },
+      {
         label: 'Geerntete verbergen',
         value: 'hide-harvested',
       },

@@ -1,5 +1,5 @@
 export function isPlantListingFilter(value: any): value is PlantListingFilter {
-  return value === 'show-all' || value === 'hide-harvested'
+  return value === 'show-all' || value === 'show-harvested' || value === 'hide-harvested'
 }
 
 export function isPlantListingSort(value: any): value is PlantListingSort {
