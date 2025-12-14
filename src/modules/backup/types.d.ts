@@ -1,16 +1,6 @@
 import type { AsyncResult } from '../../types'
-import type {
-  INDEX_PLANT_ID,
-  INDEX_SORT,
-  TABLE_FERTILIZERS,
-  TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
-  TABLE_PLANT_CONTAINER_LOGS,
-  TABLE_PLANT_IMAGES,
-  TABLE_PLANT_PHASES,
-  TABLE_PLANT_WATERING_LOGS,
-  TABLE_PLANTS,
-  TABLE_WATERING_SCHEMAS,
-} from '../db'
+import type { type INDEX_PLANT_ID, type INDEX_SORT, type TABLE_FERTILIZERS, type TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, type TABLE_PLANT_CONTAINER_LOGS, TABLE_PLANT_HARVEST_LOGS, type TABLE_PLANT_IMAGES, type TABLE_PLANT_PHASES, type TABLE_PLANT_WATERING_LOGS, type TABLE_PLANTS, type TABLE_WATERING_SCHEMAS } from '../db'
+import type { HarvestLogRow } from '../harvest/types'
 import type { FertilizerRow, FertilizerWateringSchemaRow, WateringSchemaRow } from '../nutrients/types'
 import type { PlantContainer } from '../plant_container/types'
 import type { PlantImageRow, PlantPhaseRow, PlantRow, WateringLogRow } from '../plants/types'
@@ -28,6 +18,7 @@ type ImportExportData = {
   [TABLE_PLANT_CONTAINER_LOGS]: Array<PlantContainer>
   [TABLE_FERTILIZERS]: Array<FertilizerRow>
   [TABLE_WATERING_SCHEMAS]: Array<WateringSchemaRow>
+  [TABLE_PLANT_HARVEST_LOGS]: Array<HarvestLogRow>
   [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA]: Array<FertilizerWateringSchemaRow>
 } & WithPlantImageRows
 
@@ -51,6 +42,7 @@ type BackupStoreNames = typeof TABLE_PLANTS
   | typeof TABLE_PLANT_CONTAINER_LOGS
   | typeof TABLE_FERTILIZERS
   | typeof TABLE_WATERING_SCHEMAS
+  | typeof TABLE_PLANT_HARVEST_LOGS
   | typeof TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA
 
 type BackupTxStores = BackupStoreNames[]

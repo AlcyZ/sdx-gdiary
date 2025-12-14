@@ -5,12 +5,14 @@ import {
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_CONTAINER_LOGS,
+  TABLE_PLANT_HARVEST_LOGS,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_WATERING_LOGS,
   TABLE_PLANTS,
   TABLE_WATERING_SCHEMAS,
 } from '../db'
+import { isHarvestLogRow } from '../harvest/guard.ts'
 import { isFertilizerRow, isFertilizerWateringSchemaRow, isWateringSchemaRow } from '../nutrients/guard.ts'
 import { isPlantContainerRow } from '../plant_container/guard.ts'
 import {
@@ -182,6 +184,7 @@ export function validateImportExportData(value: unknown): Result<void, TypeGuard
     [TABLE_PLANT_CONTAINER_LOGS, isPlantContainerRow],
     [TABLE_FERTILIZERS, isFertilizerRow],
     [TABLE_WATERING_SCHEMAS, isWateringSchemaRow],
+    [TABLE_PLANT_HARVEST_LOGS, isHarvestLogRow],
     [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, isFertilizerWateringSchemaRow],
   ]
 

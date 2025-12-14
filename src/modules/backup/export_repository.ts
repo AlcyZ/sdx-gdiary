@@ -8,6 +8,7 @@ import {
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_CONTAINER_LOGS,
+  TABLE_PLANT_HARVEST_LOGS,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_WATERING_LOGS,
@@ -73,6 +74,7 @@ export default class ExportRepository {
         storePlantWateringLogs,
         storeFertilizers,
         storeWateringSchema,
+        storeHarvestLogs,
         storeFertilizerWateringSchema,
       } = this.util.unpackStores(tx)
 
@@ -84,6 +86,7 @@ export default class ExportRepository {
         storePlantWateringLogs.getAll().then(plantWateringLogs => ({ [TABLE_PLANT_WATERING_LOGS]: plantWateringLogs })),
         storeFertilizers.getAll().then(fertilizers => ({ [TABLE_FERTILIZERS]: fertilizers })),
         storeWateringSchema.getAll().then(wateringSchema => ({ [TABLE_WATERING_SCHEMAS]: wateringSchema })),
+        storeHarvestLogs.getAll().then(plantHarvestLogs => ({ [TABLE_PLANT_HARVEST_LOGS]: plantHarvestLogs })),
         storeFertilizerWateringSchema.getAll().then(fertilizerWateringSchema => ({ [TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA]: fertilizerWateringSchema })),
       ])
 

@@ -9,6 +9,7 @@ import {
   TABLE_FERTILIZERS,
   TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA,
   TABLE_PLANT_CONTAINER_LOGS,
+  TABLE_PLANT_HARVEST_LOGS,
   TABLE_PLANT_IMAGES,
   TABLE_PLANT_PHASES,
   TABLE_PLANT_WATERING_LOGS,
@@ -64,6 +65,7 @@ export default class ImportStrategyV02 implements ImportStrategy {
         storePlantWateringLogs,
         storeFertilizers,
         storeWateringSchema,
+        storeHarvestLogs,
         storeFertilizerWateringSchema,
       } = this.util.unpackStores(tx)
 
@@ -75,6 +77,7 @@ export default class ImportStrategyV02 implements ImportStrategy {
         this.helper.addData(TABLE_PLANT_WATERING_LOGS, storePlantWateringLogs, data),
         this.helper.addData(TABLE_FERTILIZERS, storeFertilizers, data),
         this.helper.addData(TABLE_WATERING_SCHEMAS, storeWateringSchema, data),
+        this.helper.addData(TABLE_PLANT_HARVEST_LOGS, storeHarvestLogs, data),
         this.helper.addData(TABLE_PIVOT_FERTILIZER_WATERING_SCHEMA, storeFertilizerWateringSchema, data),
       ])
       await tx.done
