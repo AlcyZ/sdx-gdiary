@@ -7,10 +7,17 @@ export function usePlantConfiguration() {
   const configStore = useConfigurationStore()
 
   function plantListingFilter(plant: Plant): boolean {
-    if (configStore.plantListingConfiguration.filter === 'show-all')
-      return true
-
-    return configStore.plantListingConfiguration.filter === 'show-harvested' ? plant.isHarvested : !plant.isHarvesting
+    switch (configStore.plantListingConfiguration.filter) {
+      case 'show-all':
+        return true
+      case 'show-harvested':
+        return plant.isHarvested
+      case 'hide-harvested':
+        return !plant.isHarvested
+      default:
+        throw new Error(`[usePlantConfiguration.plantListingFilter]:
+          Filter '${configStore.plantListingConfiguration.filter}' is not implemented`)
+    }
   }
 
   function plantListingSort(lhs: Plant, rhs: Plant): number {
