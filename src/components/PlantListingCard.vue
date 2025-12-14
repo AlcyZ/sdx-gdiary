@@ -22,7 +22,6 @@
 
         <IDropdown
           :items="plant.actions"
-          @click.stop
         >
           <IBtn
             square

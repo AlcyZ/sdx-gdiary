@@ -1,6 +1,6 @@
 <template>
   <DropdownMenuRoot>
-    <DropdownMenuTrigger>
+    <DropdownMenuTrigger @click.stop>
       <slot v-if="!!$slots.default" />
       <IBtn
         v-else
