@@ -1,6 +1,6 @@
 <template>
   <div>
-    plant listing
+    harvest plant
   </div>
 </template>
 

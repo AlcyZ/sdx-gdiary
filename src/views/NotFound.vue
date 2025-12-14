@@ -1,6 +1,6 @@
 <template>
   <div>
-    plant listing
+    not found
   </div>
 </template>
 

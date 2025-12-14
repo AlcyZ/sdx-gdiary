@@ -1,6 +1,6 @@
 <template>
   <div>
-    plant listing
+    plant log watering
   </div>
 </template>
 

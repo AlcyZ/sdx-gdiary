@@ -1,6 +1,6 @@
 <template>
   <div>
-    plant listing
+    nutrients schema edit
   </div>
 </template>
 

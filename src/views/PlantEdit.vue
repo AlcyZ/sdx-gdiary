@@ -1,6 +1,6 @@
 <template>
   <div>
-    plant listing
+    plant edit
   </div>
 </template>
 

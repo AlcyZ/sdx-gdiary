@@ -1,6 +1,6 @@
 <template>
   <div>
-    plant listing
+    nutrients fertilizer add
   </div>
 </template>
 

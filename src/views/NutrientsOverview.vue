@@ -1,11 +1,11 @@
 <template>
-  <LayoutDock>
+  <div>
     nutrients overview
-  </LayoutDock>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import LayoutDock from '../layouts/LayoutDock.vue'
+import { useLayout } from '../composables/useLayout.ts'
 
 interface Props {
 
@@ -16,4 +16,9 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
+
+useLayout({
+  dockVisible: true,
+  topNavigationVisible: false,
+})
 </script>
