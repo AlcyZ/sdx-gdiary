@@ -207,6 +207,11 @@ type ParseJsonError = (ParseJsonErrorParse | ParseJsonErrorTypeGuard) & {
   payload?: any
 }
 
+interface TransitionIndex {
+  h: number
+  v: number
+}
+
 // idb util types
 type Transaction<Mode extends IDBTransactionMode = 'readonly'> = IDBPTransaction<any, ArrayLike<string>, Mode>
 

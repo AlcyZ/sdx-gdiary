@@ -1,5 +1,6 @@
-import type { HasContentNoLabel, HasContentOrLabel, HasLabelNoContent } from './types'
+import type { HasContentNoLabel, HasContentOrLabel, HasLabelNoContent, TransitionIndex } from './types'
 import { isVNode } from 'vue'
+import { hasNumKey } from './modules/type_guard'
 
 export function isHasLabelNoContent(value: any): value is HasLabelNoContent {
   if (typeof value !== 'object' || value === null) {
@@ -25,4 +26,11 @@ export function isHasContentNoLabel(value: any): value is HasContentNoLabel {
 
 export function isHasContentOrLabel(value: any): value is HasContentOrLabel {
   return isHasLabelNoContent(value) || isHasContentNoLabel(value)
+}
+
+export function isTransitionIndex(value: any): value is TransitionIndex {
+  if (typeof value !== 'object' || value === null)
+    return false
+
+  return hasNumKey(value, 'h') && hasNumKey(value, 'v')
 }

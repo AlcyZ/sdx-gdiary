@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 
 import type { App as VueApp } from 'vue'
+import type { RouteMeta } from 'vue-router'
+import type { Option, TransitionIndex } from './types'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -12,6 +14,7 @@ import {
   REPO_WATERING_SCHEMA,
   SERVICE_BACKUP,
 } from './di_keys.ts'
+import { isTransitionIndex } from './guard.ts'
 import BackupService from './modules/backup/backup_service.ts'
 import ConfigurationRepository from './modules/configuration/configuration_repository.ts'
 import { getDb } from './modules/db'
@@ -20,6 +23,7 @@ import FertilizerRepository from './modules/nutrients/fertilizer_repository.ts'
 import WateringSchemaRepository from './modules/nutrients/watering_schema_repository.ts'
 import PlantRepository from './modules/plants/plant_repository.ts'
 import { router } from './router.ts'
+import { ensure } from './util.ts'
 import './style.css'
 
 const debug = false
@@ -48,10 +52,29 @@ async function bootstrap() {
 }
 
 function registerRouterCallbacks() {
+  const getTransitionIndex = (meta: RouteMeta): Option<TransitionIndex> => ensure(meta.transitionIndex, isTransitionIndex)
+  const whenBoth = (
+    to: Option<TransitionIndex>,
+    from: Option<TransitionIndex>,
+    then: (to: TransitionIndex, from: TransitionIndex) => any,
+  ) => to.exist && from.exist
+    ? then(to.value, from.value)
+    : undefined
+  const getTransition = (to: TransitionIndex, from: TransitionIndex) => {
+    const dx = to.h - from.h
+    const dy = to.v - from.v
+
+    return dy !== 0
+      ? dy > 0 ? 'slide-up' : 'slide-down'
+      : dx > 0 ? 'slide-left' : 'slide-right'
+  }
+
   router.afterEach((to, from) => {
-    if (typeof to.meta.getTransition === 'function') {
-      to.meta.transition = to.meta.getTransition(from)
-    }
+    whenBoth(
+      getTransitionIndex(to.meta),
+      getTransitionIndex(from.meta),
+      (toIdx, fromIdx) => to.meta.transition = getTransition(toIdx, fromIdx),
+    )
   })
 }
 

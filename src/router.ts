@@ -1,4 +1,4 @@
-import type { RouteLocationNormalized, RouteRecordNameGeneric, RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 import {
   ROUTE_404,
@@ -16,22 +16,20 @@ import {
   ROUTE_PLANT_LOG_WATERING,
   ROUTE_SETTINGS,
 } from './routes.ts'
-import Gallery from './viewsBackup/Gallery.vue'
-import HarvestPlant from './viewsBackup/HarvestPlant.vue'
-import HarvestPlantEdit from './viewsBackup/HarvestPlantEdit.vue'
-import NotFound from './viewsBackup/NotFound.vue'
-import NutrientsFertilizerAdd from './viewsBackup/NutrientsFertilizerAdd.vue'
-import NutrientsOverview from './viewsBackup/NutrientsOverview.vue'
-import NutrientsSchemaAdd from './viewsBackup/NutrientsSchemaAdd.vue'
-import NutrientsSchemaEdit from './viewsBackup/NutrientsSchemaEdit.vue'
-import PlantAdd from './viewsBackup/PlantAdd.vue'
-import PlantDetails from './viewsBackup/PlantDetails.vue'
-import PlantEdit from './viewsBackup/PlantEdit.vue'
-import PlantListing from './viewsBackup/PlantListing.vue'
-import PlantLogWatering from './viewsBackup/PlantLogWatering.vue'
-import Settings from './viewsBackup/Settings.vue'
-
-const nameToStr = (name: RouteRecordNameGeneric) => typeof name === 'string' ? name : ''
+import Gallery from './views/Gallery.vue'
+import HarvestPlant from './views/HarvestPlant.vue'
+import HarvestPlantEdit from './views/HarvestPlantEdit.vue'
+import NotFound from './views/NotFound.vue'
+import NutrientsFertilizerAdd from './views/NutrientsFertilizerAdd.vue'
+import NutrientsOverview from './views/NutrientsOverview.vue'
+import NutrientsSchemaAdd from './views/NutrientsSchemaAdd.vue'
+import NutrientsSchemaEdit from './views/NutrientsSchemaEdit.vue'
+import PlantAdd from './views/PlantAdd.vue'
+import PlantDetails from './views/PlantDetails.vue'
+import PlantEdit from './views/PlantEdit.vue'
+import PlantListing from './views/PlantListing.vue'
+import PlantLogWatering from './views/PlantLogWatering.vue'
+import Settings from './views/Settings.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -46,17 +44,9 @@ const routes: Array<RouteRecordRaw> = [
         name: ROUTE_PLANT_LISTING,
         component: PlantListing,
         meta: {
-          getTransition: (from: RouteLocationNormalized) => {
-            return [
-              ROUTE_PLANT_ADD,
-              ROUTE_PLANT_DETAILS,
-              ROUTE_PLANT_EDIT,
-              ROUTE_PLANT_HARVEST,
-              ROUTE_PLANT_HARVEST_EDIT,
-              ROUTE_PLANT_LOG_WATERING,
-            ].includes(nameToStr(from.name))
-              ? 'slide-down'
-              : 'slide-left'
+          transitionIndex: {
+            h: 1,
+            v: 1,
           },
         },
       },
@@ -64,6 +54,12 @@ const routes: Array<RouteRecordRaw> = [
         path: 'add',
         name: ROUTE_PLANT_ADD,
         component: PlantAdd,
+        meta: {
+          transitionIndex: {
+            h: 1,
+            v: 2,
+          },
+        },
       },
       {
         path: ':plantId',
@@ -73,12 +69,9 @@ const routes: Array<RouteRecordRaw> = [
             name: ROUTE_PLANT_DETAILS,
             component: PlantDetails,
             meta: {
-              getTransition: (from: RouteLocationNormalized) => {
-                return [
-                  ROUTE_PLANT_LISTING,
-                ].includes(nameToStr(from.name))
-                  ? 'slide-down'
-                  : 'slide-up'
+              transitionIndex: {
+                h: 1,
+                v: 2,
               },
             },
           },
@@ -86,6 +79,12 @@ const routes: Array<RouteRecordRaw> = [
             path: 'edit',
             name: ROUTE_PLANT_EDIT,
             component: PlantEdit,
+            meta: {
+              transitionIndex: {
+                h: 1,
+                v: 3,
+              },
+            },
           },
           {
             path: 'harvest',
@@ -94,6 +93,12 @@ const routes: Array<RouteRecordRaw> = [
                 path: '',
                 name: ROUTE_PLANT_HARVEST,
                 component: HarvestPlant,
+                meta: {
+                  transitionIndex: {
+                    h: 1,
+                    v: 3,
+                  },
+                },
               },
               {
                 path: ':harvestId',
@@ -102,6 +107,12 @@ const routes: Array<RouteRecordRaw> = [
                     path: 'edit',
                     name: ROUTE_PLANT_HARVEST_EDIT,
                     component: HarvestPlantEdit,
+                    meta: {
+                      transitionIndex: {
+                        h: 1,
+                        v: 3,
+                      },
+                    },
                   },
                 ],
               },
@@ -114,6 +125,12 @@ const routes: Array<RouteRecordRaw> = [
                 path: 'watering',
                 name: ROUTE_PLANT_LOG_WATERING,
                 component: PlantLogWatering,
+                meta: {
+                  transitionIndex: {
+                    h: 1,
+                    v: 3,
+                  },
+                },
               },
             ],
           },
@@ -128,6 +145,12 @@ const routes: Array<RouteRecordRaw> = [
         path: '',
         name: ROUTE_NUTRIENTS_OVERVIEW,
         component: NutrientsOverview,
+        meta: {
+          transitionIndex: {
+            h: 2,
+            v: 1,
+          },
+        },
       },
       {
         path: 'fertilizer',
@@ -136,6 +159,12 @@ const routes: Array<RouteRecordRaw> = [
             path: 'add',
             name: ROUTE_NUTRIENTS_FERTILIZER_ADD,
             component: NutrientsFertilizerAdd,
+            meta: {
+              transitionIndex: {
+                h: 2,
+                v: 2,
+              },
+            },
           },
         ],
       },
@@ -146,11 +175,23 @@ const routes: Array<RouteRecordRaw> = [
             path: 'add',
             name: ROUTE_NUTRIENTS_SCHEMA_ADD,
             component: NutrientsSchemaAdd,
+            meta: {
+              transitionIndex: {
+                h: 2,
+                v: 2,
+              },
+            },
           },
           {
             path: ':schemaId/edit',
             name: ROUTE_NUTRIENTS_SCHEMA_EDIT,
             component: NutrientsSchemaEdit,
+            meta: {
+              transitionIndex: {
+                h: 2,
+                v: 2,
+              },
+            },
           },
         ],
       },
@@ -160,16 +201,34 @@ const routes: Array<RouteRecordRaw> = [
     path: '/gallery',
     name: ROUTE_GALLERY,
     component: Gallery,
+    meta: {
+      transitionIndex: {
+        h: 3,
+        v: 1,
+      },
+    },
   },
   {
     path: '/settings',
     name: ROUTE_SETTINGS,
     component: Settings,
+    meta: {
+      transitionIndex: {
+        h: 4,
+        v: 1,
+      },
+    },
   },
   {
     path: '/:pathMatch(.*)*',
     name: ROUTE_404,
     component: NotFound,
+    meta: {
+      transitionIndex: {
+        h: 5,
+        v: 1,
+      },
+    },
   },
 ]
 
