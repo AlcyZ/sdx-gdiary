@@ -7,7 +7,12 @@ const topNavigationProps = ref<TopNavigationProps | undefined>()
 export function useLayout() {
   function setLayout({ dock, topNavigation }: LayoutConfig) {
     isDockVisible.value = dock !== undefined && dock
-    topNavigationProps.value = topNavigation
+
+    topNavigationProps.value = topNavigation !== undefined && typeof topNavigation !== 'boolean'
+      ? topNavigation
+      : typeof topNavigation === 'boolean' && topNavigation
+        ? {}
+        : undefined
   }
 
   return {

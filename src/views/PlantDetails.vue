@@ -106,6 +106,7 @@ function selectImageViaInput() {
   inputImage.value?.click()
 }
 
+// @ts-expect-error needs to be refactored
 async function handleImageUpload(event: Event) {
   const errorToast = () => toast('Es ist ein Fehler beim hochladen des Bildes aufgetreten.', 'error')
 

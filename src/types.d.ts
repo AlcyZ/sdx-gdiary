@@ -146,7 +146,7 @@ type TopNavigationAction = DropdownMenu
 
 interface LayoutConfig {
   dock?: boolean
-  topNavigation?: TopNavigationProps
+  topNavigation?: TopNavigationProps | true
 }
 
 type ComponentCssClass = string | Record<string, boolean> | Array<ComponentCssClass>

@@ -15,7 +15,7 @@
       class="text-base-100 font-semibold absolute left-1/2 -translate-x-1/2"
     >{{ title }}</span>
 
-    <IDropdownLegacy
+    <IDropdown
       v-if="actions"
       :items="actions"
       btn-class="rounded-none text-base-100 w-12 h-12"
@@ -30,7 +30,7 @@ import {
   ChevronLeft as IconBack,
 } from 'lucide-vue-next'
 import IBtn from '../ui/IBtn.vue'
-import IDropdownLegacy from '../ui/IDropdownLegacy.vue'
+import IDropdown from '../ui/IDropdown.vue'
 
 interface Props {
   title?: string
