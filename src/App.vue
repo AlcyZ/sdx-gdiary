@@ -12,7 +12,7 @@
           enter-active-class="timing-ease duration-250"
           leave-active-class="timing-ease duration-250"
         >
-          <div :key="route.fullPath" class="h-full w-full absolute inset-0">
+          <div :key="route.fullPath" class="h-full w-full absolute inset-0 view-page">
             <div class="h-full overflow-y-auto">
               <component :is="Component" />
             </div>
@@ -65,6 +65,12 @@ onMounted(sync)
 </script>
 
 <style>
+.view-page {
+  contain: layout paint;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
 .timing-ease {
   transition-timing-function: ease;
 }
