@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen bg-[#e4e8e6]">
+  <div class="flex flex-col h-screen bg-[#e8ebe9]">
     <TopNavigationNext
       v-if="topNavigationProps"
       :props="topNavigationProps"
@@ -13,7 +13,9 @@
           leave-active-class="timing-ease duration-250"
         >
           <div :key="route.fullPath" class="h-full w-full absolute inset-0">
-            <component :is="Component" class="h-full overflow-y-auto" />
+            <div class="h-full overflow-y-auto">
+              <component :is="Component" />
+            </div>
           </div>
         </Transition>
       </RouterView>
