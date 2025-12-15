@@ -1,5 +1,6 @@
 <template>
   <PlantImgAsync
+    :key="image.id"
     :image
   >
     <template #default="{ src }">
