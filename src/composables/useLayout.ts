@@ -1,54 +1,18 @@
+import type { LayoutConfig, TopNavigationProps } from '../types'
 import { ref } from 'vue'
 
 const isDockVisible = ref(true)
-const isTopNavigationVisible = ref(false)
+const topNavigationProps = ref<TopNavigationProps | undefined>()
 
-interface UseLayoutOptions {
-  dockVisible?: boolean
-  topNavigationVisible?: boolean
-}
-
-export function useLayout(opts?: UseLayoutOptions) {
-  const { dockVisible, topNavigationVisible } = opts || {}
-
-  if (dockVisible)
-    isDockVisible.value = dockVisible
-
-  if (topNavigationVisible)
-    isTopNavigationVisible.value = topNavigationVisible
-
-  function showDock() {
-    isDockVisible.value = true
-  }
-
-  function hideDock() {
-    isDockVisible.value = false
-  }
-
-  function toggleDock() {
-    isDockVisible.value = !isDockVisible.value
-  }
-
-  function showTopNavigation() {
-    isTopNavigationVisible.value = true
-  }
-
-  function hideTopNavigation() {
-    isTopNavigationVisible.value = false
-  }
-
-  function toggleTopNavigationVisible() {
-    isTopNavigationVisible.value = !isTopNavigationVisible.value
+export function useLayout() {
+  function setLayout({ dock, topNavigation }: LayoutConfig) {
+    isDockVisible.value = dock !== undefined && dock
+    topNavigationProps.value = topNavigation
   }
 
   return {
     isDockVisible,
-    isTopNavigationVisible,
-    showDock,
-    hideDock,
-    toggleDock,
-    showTopNavigation,
-    hideTopNavigation,
-    toggleTopNavigationVisible,
+    topNavigationProps,
+    setLayout,
   }
 }
