@@ -1,3 +1,4 @@
+import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 import {
   ROUTE_404,
@@ -30,7 +31,7 @@ import PlantListing from './views/PlantListing.vue'
 import PlantLogWatering from './views/PlantLogWatering.vue'
 import Settings from './views/Settings.vue'
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: PlantListing,
@@ -42,11 +43,23 @@ const routes = [
         path: '',
         name: ROUTE_PLANT_LISTING,
         component: PlantListing,
+        meta: {
+          transitionIndex: {
+            h: 1,
+            v: 1,
+          },
+        },
       },
       {
         path: 'add',
         name: ROUTE_PLANT_ADD,
         component: PlantAdd,
+        meta: {
+          transitionIndex: {
+            h: 1,
+            v: 2,
+          },
+        },
       },
       {
         path: ':plantId',
@@ -55,11 +68,23 @@ const routes = [
             path: '',
             name: ROUTE_PLANT_DETAILS,
             component: PlantDetails,
+            meta: {
+              transitionIndex: {
+                h: 1,
+                v: 2,
+              },
+            },
           },
           {
             path: 'edit',
             name: ROUTE_PLANT_EDIT,
             component: PlantEdit,
+            meta: {
+              transitionIndex: {
+                h: 1,
+                v: 3,
+              },
+            },
           },
           {
             path: 'harvest',
@@ -68,6 +93,12 @@ const routes = [
                 path: '',
                 name: ROUTE_PLANT_HARVEST,
                 component: HarvestPlant,
+                meta: {
+                  transitionIndex: {
+                    h: 1,
+                    v: 3,
+                  },
+                },
               },
               {
                 path: ':harvestId',
@@ -76,6 +107,12 @@ const routes = [
                     path: 'edit',
                     name: ROUTE_PLANT_HARVEST_EDIT,
                     component: HarvestPlantEdit,
+                    meta: {
+                      transitionIndex: {
+                        h: 1,
+                        v: 3,
+                      },
+                    },
                   },
                 ],
               },
@@ -88,6 +125,12 @@ const routes = [
                 path: 'watering',
                 name: ROUTE_PLANT_LOG_WATERING,
                 component: PlantLogWatering,
+                meta: {
+                  transitionIndex: {
+                    h: 1,
+                    v: 3,
+                  },
+                },
               },
             ],
           },
@@ -102,6 +145,12 @@ const routes = [
         path: '',
         name: ROUTE_NUTRIENTS_OVERVIEW,
         component: NutrientsOverview,
+        meta: {
+          transitionIndex: {
+            h: 2,
+            v: 1,
+          },
+        },
       },
       {
         path: 'fertilizer',
@@ -110,6 +159,12 @@ const routes = [
             path: 'add',
             name: ROUTE_NUTRIENTS_FERTILIZER_ADD,
             component: NutrientsFertilizerAdd,
+            meta: {
+              transitionIndex: {
+                h: 2,
+                v: 2,
+              },
+            },
           },
         ],
       },
@@ -120,11 +175,23 @@ const routes = [
             path: 'add',
             name: ROUTE_NUTRIENTS_SCHEMA_ADD,
             component: NutrientsSchemaAdd,
+            meta: {
+              transitionIndex: {
+                h: 2,
+                v: 2,
+              },
+            },
           },
           {
             path: ':schemaId/edit',
             name: ROUTE_NUTRIENTS_SCHEMA_EDIT,
             component: NutrientsSchemaEdit,
+            meta: {
+              transitionIndex: {
+                h: 2,
+                v: 2,
+              },
+            },
           },
         ],
       },
@@ -134,16 +201,34 @@ const routes = [
     path: '/gallery',
     name: ROUTE_GALLERY,
     component: Gallery,
+    meta: {
+      transitionIndex: {
+        h: 3,
+        v: 1,
+      },
+    },
   },
   {
     path: '/settings',
     name: ROUTE_SETTINGS,
     component: Settings,
+    meta: {
+      transitionIndex: {
+        h: 4,
+        v: 1,
+      },
+    },
   },
   {
     path: '/:pathMatch(.*)*',
     name: ROUTE_404,
     component: NotFound,
+    meta: {
+      transitionIndex: {
+        h: 5,
+        v: 1,
+      },
+    },
   },
 ]
 

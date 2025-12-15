@@ -257,6 +257,10 @@ export function doThen<T>(value: ResultOrOption<T>, then: (value: T) => any) {
     then(value.value)
 }
 
+export function ensure<T>(value: any, typeGuard: (value: any) => value is T): Option<T> {
+  return typeGuard(value) ? some(value) : none()
+}
+
 export function toOpt<T>(result: Result<T, any>): Option<T> {
   return result.ok ? some(result.value) : none()
 }
