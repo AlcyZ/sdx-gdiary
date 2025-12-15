@@ -57,8 +57,7 @@ const plantName = computed(() => plantStore.plant ? getPlantName(plantStore.plan
 usePageLayout({
   dock: true,
   topNavigation: {
-    title: plantName.value,
-    back: () => router.back(),
+    title: plantName,
     actions: [
       {
         type: 'item',

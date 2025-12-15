@@ -1,10 +1,35 @@
 <template>
-  <div>
-    not found
+  <div class="flex items-center justify-center flex-1">
+    <IAlert
+      variant="warning"
+      class="alert-vertical sm:alert-horizontal"
+      soft
+    >
+      <IconNotFound />
+
+      <div>
+        <h2 class="text-xl font-semibold">
+          404 - Seite nicht gefunden
+        </h2>
+        <p class="text-xs opacity-60">
+          Die Seite, die du suchst, existiert nicht.
+        </p>
+      </div>
+
+      <IBtn
+        class="w-full"
+        ghost
+        @click="$router.back()"
+      >
+        Zurück
+      </IBtn>
+    </IAlert>
   </div>
 </template>
 
 <script lang="ts" setup>
+import IAlert from '../components/ui/IAlert.vue'
+import IBtn from '../components/ui/IBtn.vue'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 
 interface Props {

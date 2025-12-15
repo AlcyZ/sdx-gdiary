@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 flex items-center justify-center py-4">
+  <div class="mt-4">
     <ICard
       class="w-full max-w-2xl"
       class-actions="justify-between"
@@ -37,6 +37,12 @@
         </IBtn>
       </template>
     </ICard>
+
+    <IFab
+      :actions="fabActions"
+      class="mb-14"
+      :icon="IconMenu"
+    />
   </div>
 </template>
 
@@ -45,6 +51,7 @@ import type PlantRepository from '../modules/plants/plant_repository.ts'
 import type { EditPlant } from '../modules/plants/types'
 import dayjs from 'dayjs'
 import {
+  Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'
 import { computed, inject, onMounted, ref } from 'vue'
@@ -52,6 +59,8 @@ import { useRouter } from 'vue-router'
 import PlantForm from '../components/PlantForm.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
+import IFab from '../components/ui/IFab.vue'
+import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlantForm } from '../composables/usePlantForm.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
@@ -68,6 +77,10 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
+
+usePageLayout({
+  topNavigation: true,
+})
 
 const plantRepo = inject(REPO_PLANT) as PlantRepository
 

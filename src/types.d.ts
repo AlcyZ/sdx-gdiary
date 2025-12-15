@@ -1,6 +1,6 @@
 import type { IDBPTransaction } from 'idb'
 import type { CheckedState } from 'radix-vue/dist/Menu/utils'
-import type { Component, SetupContext, VNodeChild } from 'vue'
+import type {Component, Ref, SetupContext, VNodeChild} from 'vue'
 
 /**
  * Represents a result type that can either hold a successful value of type `T` or an error value of type `E`.
@@ -138,7 +138,7 @@ interface FabAction {
 
 interface TopNavigationProps {
   back?: () => any
-  title?: string
+  title?: Ref<string>
   actions?: Array<TopNavigationAction>
 }
 
