@@ -38,7 +38,6 @@
 <script lang="ts" setup>
 import type { DropdownMenu } from '../types'
 import {
-  Funnel as IconFilter,
   Cog as IconMenu,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
@@ -47,7 +46,7 @@ import PlantListingEmpty from '../components/PlantListingEmpty.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import IDropdown from '../components/ui/IDropdown.vue'
 import IFab from '../components/ui/IFab.vue'
-import { useLayout } from '../composables/useLayout.ts'
+import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
 import IconFilterList from '../icons/IconFilterList.vue'
@@ -65,9 +64,8 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-useLayout({
-  dockVisible: true,
-  topNavigationVisible: false,
+usePageLayout({
+  dock: true,
 })
 
 const { fabActions } = usePlantView()
