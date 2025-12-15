@@ -1,5 +1,10 @@
 <template>
   <div class="flex flex-col h-screen bg-[#e4e8e6]">
+    <TopNavigationNext
+      v-if="topNavigationProps"
+      :props="topNavigationProps"
+    />
+
     <div class="flex-1 min-h-0 relative overflow-hidden">
       <RouterView v-slot="{ Component, route }">
         <Transition
@@ -22,6 +27,7 @@
 import type { RouteLocationNormalizedLoadedGeneric } from 'vue-router'
 import { onMounted } from 'vue'
 import NavigationDock from './components/layout/NavigationDock.vue'
+import TopNavigationNext from './components/layout/TopNavigationNext.vue'
 import { useLayout } from './composables/useLayout.ts'
 import { useConfigurationStore } from './stores/configurationStore.ts'
 import { useFertilizerStore } from './stores/fertilizerStore.ts'
@@ -35,6 +41,7 @@ const configStore = useConfigurationStore()
 
 const {
   isDockVisible,
+  topNavigationProps,
 } = useLayout()
 
 async function sync() {

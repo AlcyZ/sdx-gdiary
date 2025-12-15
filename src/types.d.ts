@@ -136,10 +136,17 @@ interface FabAction {
   onClick?: () => unknown
 }
 
-interface TopNavigationAction {
-  icon?: Component
-  label: string
-  onClick?: () => unknown
+interface TopNavigationProps {
+  back?: () => any
+  title?: string
+  actions?: Array<TopNavigationAction>
+}
+
+type TopNavigationAction = DropdownMenu
+
+interface LayoutConfig {
+  dock?: boolean
+  topNavigation?: TopNavigationProps
 }
 
 type ComponentCssClass = string | Record<string, boolean> | Array<ComponentCssClass>
