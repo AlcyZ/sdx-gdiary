@@ -65,10 +65,13 @@ onMounted(sync)
 </script>
 
 <style>
+:root {
+  --transition-transform: 100%;
+}
+
 .view-page {
   contain: layout paint;
   will-change: transform;
-  backface-visibility: hidden;
 }
 
 .timing-ease {
@@ -76,7 +79,7 @@ onMounted(sync)
 }
 
 .slide-left-enter-from {
-  transform: translateX(100%);
+  transform: translateX(var(--transition-transform));
 }
 
 .slide-left-enter-to {
@@ -88,11 +91,11 @@ onMounted(sync)
 }
 
 .slide-left-leave-to {
-  transform: translateX(-100%);
+  transform: translateX(calc(var(--transition-transform) * -1));
 }
 
 .slide-right-enter-from {
-  transform: translateX(-100%);
+  transform: translateX(calc(var(--transition-transform) * -1));
 }
 
 .slide-right-enter-to {
@@ -104,11 +107,11 @@ onMounted(sync)
 }
 
 .slide-right-leave-to {
-  transform: translateX(100%);
+  transform: translateX(var(--transition-transform));
 }
 
 .slide-up-enter-from {
-  transform: translateY(100%);
+  transform: translateY(var(--transition-transform));
 }
 
 .slide-up-enter-to {
@@ -120,11 +123,11 @@ onMounted(sync)
 }
 
 .slide-up-leave-to {
-  transform: translateY(-100%);
+  transform: translateY(calc(var(--transition-transform) * -1));
 }
 
 .slide-down-enter-from {
-  transform: translateY(-100%);
+  transform: translateY(calc(var(--transition-transform) * -1));
 }
 
 .slide-down-enter-to {
@@ -136,6 +139,6 @@ onMounted(sync)
 }
 
 .slide-down-leave-to {
-  transform: translateY(100%);
+  transform: translateY(var(--transition-transform));
 }
 </style>
