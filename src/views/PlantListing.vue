@@ -29,8 +29,9 @@
     <component
       :is="emptyComponent"
       v-else
-      :initial="{ opacity: 0, y: 20 }"
-      :animate="{ opacity: 1, y: 0, transition: { delay: 0.25 } }"
+      :variants="fadeUp"
+      initial="from"
+      animate="to"
     />
 
     <IFab
@@ -59,6 +60,7 @@ import IconFilterList from '../icons/IconFilterList.vue'
 import { isPlantListingFilter, isPlantListingSort } from '../modules/configuration/guard.ts'
 import { useConfigurationStore } from '../stores/configurationStore.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
+import {useContentAnimation} from "../composables/useContentAnimation.ts";
 
 interface Props {
 
@@ -81,6 +83,7 @@ const emptyComponent = motion.create(PlantListingEmpty)
 const plantStore = usePlantStore()
 const configStore = useConfigurationStore()
 const { toast } = useToast()
+const { fadeUp } = useContentAnimation()
 
 const dropdown = computed((): Array<DropdownMenu> => [
   {
