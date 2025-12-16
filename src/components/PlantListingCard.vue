@@ -1,49 +1,58 @@
 <template>
-  <ICard
-    v-for="(plant, i) in plantsList"
-    :key="i"
-    class="w-full max-w-3xl cursor-pointer"
-    no-gap
-    @click="navigateToDetails(plant.id)"
+  <motion.ul
+    class="space-y-5 w-full"
+    :variants="list"
+    initial="hidden"
+    while-in-view="visible"
   >
-    <div class="flex items-center justify-between mb-0.5">
-      <h2 class="font-bold text-xl">
-        {{ plant.name }}
-      </h2>
+    <motion.li
+      v-for="(plant, i) in plantsList"
+      :key="i"
+      :variants="item"
+      class="
+      bg-white shadow rounded-box
+        w-full max-w-3xl p-7 cursor-pointer
+      "
+      @click="navigateToDetails(plant.id)"
+    >
+      <div class="flex items-center justify-between mb-0.5">
+        <h2 class="font-bold text-xl">
+          {{ plant.name }}
+        </h2>
 
-      <div class="flex items-center justify-center">
-        <IBtn
-          square
-          ghost
-          @click.stop="$router.push(`/plants/${plant.id}/log/watering`)"
-        >
-          <IconWatering />
-        </IBtn>
-
-        <IDropdown
-          :items="plant.actions"
-        >
+        <div class="flex items-center justify-center">
           <IBtn
             square
             ghost
+            @click.stop="$router.push(`/plants/${plant.id}/log/watering`)"
           >
-            <IconMore />
+            <IconWatering />
           </IBtn>
-        </IDropdown>
+
+          <IDropdown
+            :items="plant.actions"
+          >
+            <IBtn
+              square
+              ghost
+            >
+              <IconMore />
+            </IBtn>
+          </IDropdown>
+        </div>
       </div>
-    </div>
-    <div class="grid grid-cols-[68px_1fr_1fr] gap-x-2">
-      <div class="flex items-center justify-center">
-        <PlantImgAsync
-          v-if="plant.image"
-          :key="plant.image.id"
-          :image="plant.image"
-        >
-          <template #default="{ src }">
-            <img
-              :src="src"
-              :alt="`image-${plant.name}-${plant.image.id}`"
-              class="
+      <div class="grid grid-cols-[68px_1fr_1fr] gap-x-2">
+        <div class="flex items-center justify-center">
+          <PlantImgAsync
+            v-if="plant.image"
+            :key="plant.image.id"
+            :image="plant.image"
+          >
+            <template #default="{ src }">
+              <img
+                :src="src"
+                :alt="`image-${plant.name}-${plant.image.id}`"
+                class="
                 w-16
                 h-16
                 rounded-full
@@ -51,75 +60,77 @@
                 shadow-md
                 bg-gray-200
               "
-            >
-          </template>
-        </PlantImgAsync>
-        <img
-          v-else
-          :src="PLANT_PLACEHOLDER_IMAGE"
-          :alt="`image-${plant.name}`"
-        >
-      </div>
-
-      <div class="flex flex-col items-center justify-center">
-        <IBadge
-          v-if="plant.isHarvested"
-          variant="success"
-          soft
-          class="mt-0.5 text-xs"
-        >
-          <IconHarvested :size="16" />
-          Geerntet
-        </IBadge>
-        <IBadge
-          v-else-if="plant.isHarvesting"
-          variant="accent"
-          class="mt-0.5 text-xs"
-          soft
-        >
-          <IconHarvesting :size="14" />
-          Am ernten
-        </IBadge>
-        <IBadge
-          v-else
-          class="mt-0.5 text-xs"
-          :class="plant.status.class"
-        >
-          <component
-            :is="plant.status.icon"
-            :size="16"
-          />
-          {{ plant.status.phase }}
-        </IBadge>
-
-        <span class="text-xs opacity-60">
-          <template v-if="plant.status.flowerDay.exist">
-            (Tag {{ plant.status.age }}, Blüte {{ plant.status.flowerDay.value }})
-          </template>
-          <template v-else>
-            (Tag {{ plant.status.age }})
-          </template>
-        </span>
-      </div>
-
-      <div class="text-xs flex flex-col items-center justify-center text-center">
-        <div class="flex items-center">
-          <IconWater :size="14" />
-          <span class="font-semibold opacity-75 ml-0.5">{{ plant.lastWatering }}</span>
+              >
+            </template>
+          </PlantImgAsync>
+          <img
+            v-else
+            :src="PLANT_PLACEHOLDER_IMAGE"
+            :alt="`image-${plant.name}`"
+          >
         </div>
-        <div class="flex items-center opacity-60">
-          <component
-            :is="plant.container.icon"
-            :size="14"
-          />
-          <span>{{ plant.container.label }} | {{ plant.container.size }}</span>
+
+        <div class="flex flex-col items-center justify-center">
+          <IBadge
+            v-if="plant.isHarvested"
+            variant="success"
+            soft
+            class="mt-0.5 text-xs"
+          >
+            <IconHarvested :size="16" />
+            Geerntet
+          </IBadge>
+          <IBadge
+            v-else-if="plant.isHarvesting"
+            variant="accent"
+            class="mt-0.5 text-xs"
+            soft
+          >
+            <IconHarvesting :size="14" />
+            Am ernten
+          </IBadge>
+          <IBadge
+            v-else
+            class="mt-0.5 text-xs"
+            :class="plant.status.class"
+          >
+            <component
+              :is="plant.status.icon"
+              :size="16"
+            />
+            {{ plant.status.phase }}
+          </IBadge>
+
+          <span class="text-xs opacity-60">
+            <template v-if="plant.status.flowerDay.exist">
+              (Tag {{ plant.status.age }}, Blüte {{ plant.status.flowerDay.value }})
+            </template>
+            <template v-else>
+              (Tag {{ plant.status.age }})
+            </template>
+          </span>
+        </div>
+
+        <div class="text-xs flex flex-col items-center justify-center text-center">
+          <div class="flex items-center">
+            <IconWater :size="14" />
+            <span class="font-semibold opacity-75 ml-0.5">{{ plant.lastWatering }}</span>
+          </div>
+          <div class="flex items-center opacity-60">
+            <component
+              :is="plant.container.icon"
+              :size="14"
+            />
+            <span>{{ plant.container.label }} | {{ plant.container.size }}</span>
+          </div>
         </div>
       </div>
-    </div>
-  </ICard>
+    </motion.li>
+  </motion.ul>
 </template>
 
 <script lang="ts" setup>
+import type { MotionProps } from 'motion-v'
 import type { Plant } from '../modules/plants/types'
 import type { DropdownMenu } from '../types'
 import {
@@ -132,6 +143,7 @@ import {
   Droplets as IconWater,
   Droplet as IconWatering,
 } from 'lucide-vue-next'
+import { motion, stagger } from 'motion-v'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDropdown } from '../composables/useDropdown.ts'
@@ -144,7 +156,6 @@ import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import PlantImgAsync from './PlantImgAsync.vue'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
-import ICard from './ui/ICard.vue'
 import IDropdown from './ui/IDropdown.vue'
 
 interface Props {
@@ -156,6 +167,26 @@ interface Emits {
 
 defineProps<Props>()
 defineEmits<Emits>()
+
+const list: MotionProps['variants'] = {
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: stagger(0.1),
+    },
+  },
+  hidden: {
+    opacity: 0,
+    transition: {
+      delayChildren: stagger(0.2),
+    },
+  },
+}
+
+const item = {
+  visible: { opacity: 1, x: 0 },
+  hidden: { opacity: 0, x: -100 },
+}
 
 const plantStore = usePlantStore()
 
