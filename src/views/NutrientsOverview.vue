@@ -1,12 +1,22 @@
 <template>
-  <div class="flex-1 flex items-center justify-center p-4">
-    <NutrientsOverviewEmptyState
+  <div
+    class="flex items-center justify-center my-4"
+    :class="{ 'h-full': isEmpty }"
+  >
+    <component
+      :is="emptyComponent"
       v-if="isEmpty"
+      :variants="fadeUp"
+      initial="from"
+      animate="to"
     />
 
-    <div
+    <motion.div
       v-else
-      class="flex-1"
+      class="w-full px-8"
+      :variants="scale075"
+      initial="from"
+      animate="to"
     >
       <h2 class="text-2xl font-semibold flex items-center justify-between mb-4">
         Bewässerungsschema
@@ -42,11 +52,10 @@
       </h2>
 
       <NutrientsOverviewFertilizerList />
-    </div>
+    </motion.div>
 
     <IFab
       :icon="IconMenu"
-      class="mb-14"
       :actions="fabActions"
     />
   </div>
@@ -57,6 +66,7 @@ import {
   Cog as IconMenu,
   CirclePlus as IconPlus,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { computed } from 'vue'
 import NutrientsOverviewEmptyState from '../components/NutrientsOverviewEmptyState.vue'
 import NutrientsOverviewFertilizerList from '../components/NutrientsOverviewFertilizerList.vue'
@@ -64,6 +74,7 @@ import NutrientsOverviewSchemaEmpty from '../components/NutrientsOverviewSchemaE
 import NutrientsOverviewSchemaList from '../components/NutrientsOverviewSchemaList.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import IFab from '../components/ui/IFab.vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { useFertilizerStore } from '../stores/fertilizerStore.ts'
@@ -87,6 +98,9 @@ const wateringSchemaStore = useWateringSchemaStore()
 const fertilizerStore = useFertilizerStore()
 
 const { fabActions } = useNutrientsView()
+const { fadeUp, fadeLeft, scale075 } = useContentAnimation()
+
+const emptyComponent = motion.create(NutrientsOverviewEmptyState)
 
 const hasSchemas = computed(() => wateringSchemaStore.wateringSchemas.length > 0)
 const hasFertilizers = computed(() => fertilizerStore.fertilizers.length > 0)

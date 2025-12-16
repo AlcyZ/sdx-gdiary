@@ -1,7 +1,10 @@
 <template>
-  <div class="flex-1 flex justify-center items-center p-4">
-    <ICard
-      class="w-full max-w-2xl"
+  <div class="flex justify-center items-center p-4 h-full">
+    <motion.div
+      class="flex flex-col gap-y-2 w-full max-w-2xl bg-white shadow rounded-box py-7 px-5"
+      :variants="fadeUp"
+      initial="from"
+      animate="to"
     >
       <ICardTitle class="text-3xl">
         Düngerschema hinzufügen
@@ -16,7 +19,7 @@
         @submit="saveAndNew"
       />
 
-      <template #actions>
+      <div class="flex flex-col gap-y-2">
         <IBtn
           variant="primary"
           class="w-full text-base-100"
@@ -33,8 +36,8 @@
           <IconSave />
           Speichern
         </IBtn>
-      </template>
-    </ICard>
+      </div>
+    </motion.div>
     <IFab
       :icon="IconMenu"
       class="mb-14"
@@ -53,7 +56,6 @@ import {
 import { inject } from 'vue'
 import { useRouter } from 'vue-router'
 import IBtn from '../components/ui/IBtn.vue'
-import ICard from '../components/ui/ICard.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
 import IFab from '../components/ui/IFab.vue'
 import WateringSchemaForm from '../components/WateringSchemaForm.vue'
@@ -63,6 +65,8 @@ import { useToast } from '../composables/useToast.ts'
 import { useWateringSchemaForm } from '../composables/useWateringSchemaForm.ts'
 import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
+import {useContentAnimation} from "../composables/useContentAnimation.ts";
+import { motion } from "motion-v";
 
 interface Props {
 }
@@ -84,6 +88,7 @@ const wateringSchemaStore = useWateringSchemaStore()
 const router = useRouter()
 const { toast } = useToast()
 const { fabActions } = useNutrientsView()
+const { fadeUp } = useContentAnimation()
 
 const {
   name,

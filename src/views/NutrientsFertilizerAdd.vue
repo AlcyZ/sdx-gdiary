@@ -1,7 +1,10 @@
 <template>
-  <div class="flex-1 flex justify-center items-center p-4">
-    <ICard
-      class="w-full max-w-2xl"
+  <div class="flex justify-center items-center p-4 h-full">
+    <motion.div
+      class="flex flex-col gap-y-2 w-full max-w-2xl bg-white shadow rounded-box py-7 px-5"
+      :variants="fadeUp"
+      initial="from"
+      animate="to"
     >
       <ICardTitle class="text-3xl">
         Neuen Dünger anlegen
@@ -21,7 +24,7 @@
         <input type="submit" class="hidden">
       </form>
 
-      <template #actions>
+      <div class="flex flex-col gap-y-2">
         <IBtn
           variant="primary"
           class="w-full text-base-100"
@@ -38,8 +41,8 @@
           <IconSave />
           Speichern
         </IBtn>
-      </template>
-    </ICard>
+      </div>
+    </motion.div>
     <IFab
       :icon="IconMenu"
       class="mb-14"
@@ -51,6 +54,7 @@
 <script lang="ts" setup>
 import type { ToastVariant } from '../types'
 import { CirclePlus as IconAdd, Cog as IconMenu, Save as IconSave } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import FertilizerForm from '../components/FertilizerForm.vue'
@@ -58,6 +62,7 @@ import IBtn from '../components/ui/IBtn.vue'
 import ICard from '../components/ui/ICard.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
 import IFab from '../components/ui/IFab.vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { useFertilizerForm } from '../composables/useFertilizerForm.ts'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
@@ -86,6 +91,7 @@ const fertilizerStore = useFertilizerStore()
 
 const router = useRouter()
 const { fabActions } = useNutrientsView()
+const { fadeUp } = useContentAnimation()
 const { showToast } = useToast()
 
 const inputFertilizer = ref<InstanceType<typeof FertilizerForm> | null>(null)

@@ -1,6 +1,6 @@
 import type { IDBPTransaction } from 'idb'
 import type { CheckedState } from 'radix-vue/dist/Menu/utils'
-import type {Component, Ref, SetupContext, VNodeChild} from 'vue'
+import type { Component, Ref, SetupContext, VNodeChild } from 'vue'
 
 /**
  * Represents a result type that can either hold a successful value of type `T` or an error value of type `E`.
@@ -226,3 +226,5 @@ type StoreFrom<T extends Transaction<any>> = T['objectStoreNames'][number]
 
 type EnsureStore<Store, Tx extends Transaction<any>>
   = Store extends StoreFrom<Tx> ? Tx : never
+
+type FromToAnimation = 'from' | 'to'

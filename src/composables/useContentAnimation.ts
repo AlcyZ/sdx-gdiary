@@ -1,6 +1,5 @@
 import type { Options, VariantType } from 'motion-v'
-
-type SimpleAnimationStep = 'from' | 'to'
+import type { FromToAnimation } from '../types'
 
 const baseTransition: Options['transition'] = {
   delay: 0.25,
@@ -9,7 +8,7 @@ const baseData: { transition: Options['transition'] } = {
   transition: baseTransition,
 }
 
-function fadeX(from: number): Record<SimpleAnimationStep, VariantType> {
+function fadeX(from: number): Record<FromToAnimation, VariantType> {
   return {
     from: {
       opacity: 0,
@@ -23,7 +22,7 @@ function fadeX(from: number): Record<SimpleAnimationStep, VariantType> {
   }
 }
 
-function fadeY(from: number): Record<SimpleAnimationStep, VariantType> {
+function fadeY(from: number): Record<FromToAnimation, VariantType> {
   return {
     from: {
       opacity: 0,
@@ -37,7 +36,7 @@ function fadeY(from: number): Record<SimpleAnimationStep, VariantType> {
   }
 }
 
-function scale(from: number): Record<SimpleAnimationStep, VariantType> {
+function scale(from: number): Record<FromToAnimation, VariantType> {
   return {
     from: {
       opacity: 0,
@@ -51,10 +50,10 @@ function scale(from: number): Record<SimpleAnimationStep, VariantType> {
   }
 }
 
-const fadeUp: Record<SimpleAnimationStep, VariantType> = fadeY(20)
-const fadeLeft: Record<SimpleAnimationStep, VariantType> = fadeX(50)
+const fadeUp: Record<FromToAnimation, VariantType> = fadeY(20)
+const fadeLeft: Record<FromToAnimation, VariantType> = fadeX(50)
 
-const scale075: Record<SimpleAnimationStep, VariantType> = scale(0.75)
+const scale075: Record<FromToAnimation, VariantType> = scale(0.75)
 
 export function useContentAnimation() {
   return {
