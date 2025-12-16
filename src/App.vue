@@ -13,7 +13,7 @@
           leave-active-class="timing-ease duration-200"
         >
           <div :key="route.fullPath" class="h-full w-full absolute inset-0 view-page">
-            <div class="h-full overflow-y-auto">
+            <div class="h-full overflow-y-auto overflow-x-hidden">
               <component :is="Component" />
             </div>
           </div>
