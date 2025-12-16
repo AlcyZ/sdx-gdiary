@@ -9,8 +9,8 @@
       <RouterView v-slot="{ Component, route }">
         <Transition
           :name="getTransitionName(route)"
-          enter-active-class="timing-ease duration-250"
-          leave-active-class="timing-ease duration-250"
+          enter-active-class="timing-ease duration-200"
+          leave-active-class="timing-ease duration-200"
         >
           <div :key="route.fullPath" class="h-full w-full absolute inset-0 view-page">
             <div class="h-full overflow-y-auto">
