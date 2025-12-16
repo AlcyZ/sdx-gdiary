@@ -1,41 +1,53 @@
 <template>
   <ICard class="w-full">
-    <ICollapse
-      v-for="(group, i) in groups"
-      :key="i"
-      name="fertilizer"
-      arrow
-      closable
-      class="my-2"
+    <motion.ul
+      class="space-y-6"
+      :variants="fadeLeft.list"
+      initial="from"
+      while-in-view="to"
     >
-      <ICollapseTitle
-        class="text-lg font-bold bg-gray-50 border-b border-b-gray-100 flex items-center justify-between"
+      <motion.li
+        v-for="(group, i) in groups"
+        :key="i"
+        :variants="fadeLeft.item"
       >
-        {{ group.title }}
-
-        <slot v-if="!!$slots['header-actions']" name="header-actions" :payload="group.payload" />
-      </ICollapseTitle>
-
-      <ICollapseContent
-        :class="collapseContentClass"
-      >
-        <div
-          v-for="(item, j) in group.items"
-          :key="j"
-          class="border-b py-3 border-b-gray-100"
-          :class="{
-            'border-b-3': j === (group.items.length - 1),
-            [slotContainerClass || '']: true,
-          }"
+        <ICollapse
+          name="fertilizer"
+          arrow
+          closable
         >
-          <slot name="item" :item="item" :payload="group.payload" :index="j" :length="group.items.length" />
-        </div>
-      </ICollapseContent>
-    </ICollapse>
+          <ICollapseTitle
+            class="text-lg font-bold bg-gray-50 border-b border-b-gray-100 flex items-center justify-between"
+          >
+            {{ group.title }}
+
+            <slot v-if="!!$slots['header-actions']" name="header-actions" :payload="group.payload" />
+          </ICollapseTitle>
+
+          <ICollapseContent
+            :class="collapseContentClass"
+          >
+            <div
+              v-for="(item, j) in group.items"
+              :key="j"
+              class="border-b py-3 border-b-gray-100"
+              :class="{
+                'border-b-3': j === (group.items.length - 1),
+                [slotContainerClass || '']: true,
+              }"
+            >
+              <slot name="item" :item="item" :payload="group.payload" :index="j" :length="group.items.length" />
+            </div>
+          </ICollapseContent>
+        </ICollapse>
+      </motion.li>
+    </motion.ul>
   </ICard>
 </template>
 
 <script lang="ts" setup generic="T, P">
+import { motion } from 'motion-v'
+import useStaggerAnimation from '../composables/useStaggerAnimation.ts'
 import ICard from './ui/ICard.vue'
 import ICollapse from './ui/ICollapse.vue'
 import ICollapseContent from './ui/ICollapseContent.vue'
@@ -62,4 +74,10 @@ defineSlots<{
   'header-actions': (props: { payload: P | undefined }) => any
   'item': (props: { item: T, payload: P | undefined, index: number, length: number }) => any
 }>()
+
+const { fadeLeft } = useStaggerAnimation({
+  to: {
+    startDelay: 0.5,
+  },
+})
 </script>
