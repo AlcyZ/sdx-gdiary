@@ -172,7 +172,7 @@ const list: MotionProps['variants'] = {
   visible: {
     opacity: 1,
     transition: {
-      delayChildren: stagger(0.1),
+      delayChildren: stagger(0.1, { startDelay: 0.25 }),
     },
   },
   hidden: {

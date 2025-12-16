@@ -1,5 +1,8 @@
 <template>
-  <div class="w-full flex flex-col items-center gap-y-5 p-4" :class="{ 'flex-1 justify-center': !plantStore.hasPlants }">
+  <div
+    class="w-full flex flex-col items-center gap-y-5 p-4"
+    :class="{ 'h-full justify-center': !plantStore.hasPlants }"
+  >
     <template v-if="plantStore.hasPlants">
       <header class="w-full max-w-3xl flex items-center justify-between">
         <h1 class="text-4xl font-extrabold">
@@ -23,13 +26,15 @@
       <PlantListingCard />
     </template>
 
-    <PlantListingEmpty
+    <component
+      :is="emptyComponent"
       v-else
+      :initial="{ opacity: 0, y: 20 }"
+      :animate="{ opacity: 1, y: 0, transition: { delay: 0.25 } }"
     />
 
     <IFab
       :actions="fabActions"
-      class="mb-14"
       :icon="IconMenu"
     />
   </div>
@@ -40,6 +45,7 @@ import type { DropdownMenu } from '../types'
 import {
   Cog as IconMenu,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { computed } from 'vue'
 import PlantListingCard from '../components/PlantListingCard.vue'
 import PlantListingEmpty from '../components/PlantListingEmpty.vue'
@@ -69,6 +75,8 @@ usePageLayout({
 })
 
 const { fabActions } = usePlantView()
+
+const emptyComponent = motion.create(PlantListingEmpty)
 
 const plantStore = usePlantStore()
 const configStore = useConfigurationStore()
