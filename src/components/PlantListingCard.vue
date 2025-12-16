@@ -1,14 +1,14 @@
 <template>
   <motion.ul
     class="space-y-5 w-full"
-    :variants="list"
-    initial="hidden"
-    while-in-view="visible"
+    :variants="fadeLeft.list"
+    initial="from"
+    while-in-view="to"
   >
     <motion.li
       v-for="(plant, i) in plantsList"
       :key="i"
-      :variants="item"
+      :variants="fadeLeft.item"
       class="
       bg-white shadow rounded-box
         w-full max-w-3xl p-7 cursor-pointer
@@ -130,7 +130,6 @@
 </template>
 
 <script lang="ts" setup>
-import type { MotionProps } from 'motion-v'
 import type { Plant } from '../modules/plants/types'
 import type { DropdownMenu } from '../types'
 import {
@@ -143,7 +142,7 @@ import {
   Droplets as IconWater,
   Droplet as IconWatering,
 } from 'lucide-vue-next'
-import { motion, stagger } from 'motion-v'
+import { motion } from 'motion-v'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDropdown } from '../composables/useDropdown.ts'
@@ -151,6 +150,7 @@ import { usePlant } from '../composables/usePlant.ts'
 import { usePlantConfiguration } from '../composables/usePlantConfiguration.ts'
 import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
+import useStaggerAnimation from '../composables/useStaggerAnimation.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import PlantImgAsync from './PlantImgAsync.vue'
@@ -168,26 +168,6 @@ interface Emits {
 defineProps<Props>()
 defineEmits<Emits>()
 
-const list: MotionProps['variants'] = {
-  visible: {
-    opacity: 1,
-    transition: {
-      delayChildren: stagger(0.1, { startDelay: 0.25 }),
-    },
-  },
-  hidden: {
-    opacity: 0,
-    transition: {
-      delayChildren: stagger(0.2),
-    },
-  },
-}
-
-const item = {
-  visible: { opacity: 1, x: 0 },
-  hidden: { opacity: 0, x: -100 },
-}
-
 const plantStore = usePlantStore()
 
 const router = useRouter()
@@ -196,6 +176,7 @@ const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getContainerIcon, getContainerLabel } = usePlantContainer()
 const { plantListingSort, plantListingFilter } = usePlantConfiguration()
 const { createItem } = useDropdown()
+const { fadeLeft } = useStaggerAnimation()
 
 const plantsList = computed(
   () => plantStore.plants.filter(plantListingFilter)
