@@ -56,11 +56,13 @@ import {
   Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PlantForm from '../components/PlantForm.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import IFab from '../components/ui/IFab.vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlantForm } from '../composables/usePlantForm.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
@@ -69,8 +71,6 @@ import { REPO_PLANT } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { andThen, combineOpts, some, toOpt, wrapOption } from '../util.ts'
-import { motion } from 'motion-v'
-import {useContentAnimation} from "../composables/useContentAnimation.ts";
 
 interface Props {
 }

@@ -3,10 +3,10 @@ import type { WateringSchema } from '../modules/nutrients/types'
 import type { PlantContainerMedium } from '../modules/plant_container/types'
 import type { NewPlantPhase, PlantPhaseType } from '../modules/plants/types'
 import { toTypedSchema } from '@vee-validate/yup'
+import dayjs from 'dayjs'
 import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
 import * as yup from 'yup'
-import dayjs from "dayjs";
 
 const ERR_STRAIN_REQUIRED = 'Die Sorte muss angegeben werden'
 const ERR_STRAIN_MAX = ({ max }: { max: number }) => `Die Sorte dar maximal ${max} Zeichen lang sein`
