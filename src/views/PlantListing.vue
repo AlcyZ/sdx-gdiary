@@ -53,6 +53,7 @@ import PlantListingEmpty from '../components/PlantListingEmpty.vue'
 import IBtn from '../components/ui/IBtn.vue'
 import IDropdown from '../components/ui/IDropdown.vue'
 import IFab from '../components/ui/IFab.vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
 import { useToast } from '../composables/useToast.ts'
@@ -60,7 +61,6 @@ import IconFilterList from '../icons/IconFilterList.vue'
 import { isPlantListingFilter, isPlantListingSort } from '../modules/configuration/guard.ts'
 import { useConfigurationStore } from '../stores/configurationStore.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
-import {useContentAnimation} from "../composables/useContentAnimation.ts";
 
 interface Props {
 

@@ -53,20 +53,20 @@ import {
   Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { inject } from 'vue'
 import { useRouter } from 'vue-router'
 import IBtn from '../components/ui/IBtn.vue'
 import ICardTitle from '../components/ui/ICardTitle.vue'
 import IFab from '../components/ui/IFab.vue'
 import WateringSchemaForm from '../components/WateringSchemaForm.vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { useNutrientsView } from '../composables/useNutrientsView.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { useToast } from '../composables/useToast.ts'
 import { useWateringSchemaForm } from '../composables/useWateringSchemaForm.ts'
 import { REPO_WATERING_SCHEMA } from '../di_keys.ts'
 import { useWateringSchemaStore } from '../stores/wateringSchemaStore.ts'
-import {useContentAnimation} from "../composables/useContentAnimation.ts";
-import { motion } from "motion-v";
 
 interface Props {
 }

@@ -98,7 +98,7 @@ const wateringSchemaStore = useWateringSchemaStore()
 const fertilizerStore = useFertilizerStore()
 
 const { fabActions } = useNutrientsView()
-const { fadeUp, fadeLeft, scale075 } = useContentAnimation()
+const { fadeUp, scale075 } = useContentAnimation()
 
 const emptyComponent = motion.create(NutrientsOverviewEmptyState)
 

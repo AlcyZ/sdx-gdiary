@@ -227,7 +227,6 @@ function getConfig(key: string): Option<StorageConfig> {
 }
 
 function handleChange(event: ChangeEvent, plantId: number) {
-  console.info('handle change?')
   handle(event, plantId)
   isDirty.value = true
 }
