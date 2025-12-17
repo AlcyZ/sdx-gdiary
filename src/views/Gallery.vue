@@ -1,10 +1,25 @@
 <template>
-  <div class="flex-1 flex flex-col gap-y-6">
-    <ICard
+  <div class="h-full flex flex-col items-center gap-y-5 p-4">
+    <header class="w-full max-w-3xl flex items-center justify-between">
+      <h1 class="text-4xl font-extrabold">
+        Pflanzen-Gallery
+      </h1>
+
+      <IDropdown
+        :items="[]"
+        btn-class="btn-lg"
+      />
+    </header>
+
+    <motion.div
       v-for="(plant, i) in plants"
       :key="i"
+      class="bg-white shadow rounded-box px-5 py-7 w-full"
+      :variants="scale075"
+      initial="from"
+      animate="to"
     >
-      <ICardTitle as="div" class="flex items-center justify-between">
+      <div class="flex items-center justify-between">
         <h2 class="text-2xl font-semibold">
           {{ getPlantName(plant) }}
         </h2>
@@ -51,21 +66,17 @@
             <IconShow v-else />
           </IBtn>
         </div>
-      </ICardTitle>
-
-      <div
-        v-if="plant.show"
-        class="mt-4"
-      >
-        <PlantImagesGallery
-          :plant-id="plant.id"
-          :images="plant.images"
-          :cols="plant.cols"
-          :gap="plant.gap"
-          @change="handleChange"
-        />
       </div>
-    </ICard>
+
+      <PlantImagesGallery
+        :show="plant.show"
+        :plant-id="plant.id"
+        :images="plant.images"
+        :cols="plant.cols"
+        :gap="plant.gap"
+        @change="handleChange"
+      />
+    </motion.div>
     <IFab
       ref="fabBtn"
       class="mb-14"
@@ -90,14 +101,15 @@ import {
   ChevronDown as IconShow,
   Undo as IconUndo,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { computed, onMounted, ref, watch } from 'vue'
 import PlantImagesGallery from '../components/PlantImagesGallery.vue'
 import IBtn from '../components/ui/IBtn.vue'
-import ICard from '../components/ui/ICard.vue'
-import ICardTitle from '../components/ui/ICardTitle.vue'
+import IDropdown from '../components/ui/IDropdown.vue'
 import IFab from '../components/ui/IFab.vue'
 import IInputSteps from '../components/ui/IInputSteps.vue'
 import IPopover from '../components/ui/IPopover.vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { useGallerySortHandler } from '../composables/useGallerySortHandler.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlant } from '../composables/usePlant.ts'
@@ -133,6 +145,7 @@ usePageLayout({
 const plantStore = usePlantStore()
 const { getPlantName } = usePlant()
 const { toast } = useToast()
+const { scale075 } = useContentAnimation()
 
 const plants = ref<Array<Plant & Config>>([])
 const isDirty = ref(false)

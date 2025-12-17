@@ -35,7 +35,7 @@ import type { MotionProps } from 'motion-v'
 import type { ChangeEvent, Column, Gap } from '../modules/gallery/types'
 import type { PlantImage } from '../modules/plants/types'
 import { AnimatePresence, motion, stagger } from 'motion-v'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import VueDraggable from 'vuedraggable'
 import PlantImageAsyncSquare from './PlantImageAsyncSquare.vue'
 
@@ -59,25 +59,27 @@ const emit = defineEmits<Emits>()
 
 const imageComponent = motion.create(PlantImageAsyncSquare)
 
-const list: MotionProps['variants'] = {
+const delayAnimation = ref(true)
+const list = computed((): MotionProps['variants'] => ({
   open: {
     height: 'auto',
     opacity: 1,
     transition: {
-      height: { duration: 0.3, ease: 'easeInOut' },
-      delayChildren: stagger(0.1),
+      height: { duration: 0.25, ease: 'easeInOut' },
+      delayChildren: stagger(0.1, { startDelay: delayAnimation.value ? 0.5 : undefined }),
     },
   },
   close: {
     height: 0,
     opacity: 0,
     transition: {
-      height: { duration: 0.3, ease: 'easeInOut' },
+      height: { duration: 0.1, ease: 'easeInOut' },
       when: 'afterChildren',
       delayChildren: stagger(0.1, { from: 'last' }),
     },
   },
-}
+}))
+
 const item: MotionProps['variants'] = {
   open: {
     opacity: 1,
@@ -88,6 +90,10 @@ const item: MotionProps['variants'] = {
     x: -100,
   },
 }
+
+onMounted(() => {
+  setTimeout(() => delayAnimation.value = false, 500)
+})
 
 const gridClass = computed(() => [
   getCol(cols),
