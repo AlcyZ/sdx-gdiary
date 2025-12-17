@@ -1,8 +1,10 @@
 <template>
   <div class="mt-4">
-    <ICard
-      class="w-full max-w-2xl"
-      class-actions="justify-between"
+    <motion.div
+      class="bg-white shadow rounded-box px-5 py-7 w-full h-fit mt-4"
+      :variants="scale075"
+      initial="from"
+      animate="to"
     >
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold">
@@ -25,7 +27,7 @@
         is-edit
       />
 
-      <template #actions>
+      <div class="flex">
         <IBtn
           variant="primary"
           class="w-full text-base-100"
@@ -35,8 +37,8 @@
           <IconSave />
           Speichern
         </IBtn>
-      </template>
-    </ICard>
+      </div>
+    </motion.div>
 
     <IFab
       :actions="fabActions"
@@ -58,7 +60,6 @@ import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PlantForm from '../components/PlantForm.vue'
 import IBtn from '../components/ui/IBtn.vue'
-import ICard from '../components/ui/ICard.vue'
 import IFab from '../components/ui/IFab.vue'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlantForm } from '../composables/usePlantForm.ts'
@@ -68,6 +69,8 @@ import { REPO_PLANT } from '../di_keys.ts'
 import { INDEX_WATERING_SCHEMA_ID } from '../modules/db'
 import { usePlantStore } from '../stores/plantStore.ts'
 import { andThen, combineOpts, some, toOpt, wrapOption } from '../util.ts'
+import { motion } from 'motion-v'
+import {useContentAnimation} from "../composables/useContentAnimation.ts";
 
 interface Props {
 }
@@ -89,6 +92,7 @@ const plantStore = usePlantStore()
 const router = useRouter()
 const { toast } = useToast()
 const { fabActions } = usePlantView()
+const { scale075 } = useContentAnimation()
 
 const loading = ref(false)
 const images = ref<FileList | undefined>()

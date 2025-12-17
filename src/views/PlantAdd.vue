@@ -1,8 +1,10 @@
 <template>
-  <div class="flex-1 flex items-center justify-center py-4">
-    <ICard
-      class="w-full max-w-2xl"
-      class-actions="justify-between"
+  <div class="h-full flex justify-center">
+    <motion.div
+      class="bg-white shadow rounded-box px-5 py-7 w-full h-fit mt-4"
+      :variants="scale075"
+      initial="from"
+      animate="to"
     >
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold">
@@ -24,7 +26,7 @@
         :errors="errors"
       />
 
-      <template #actions>
+      <div class="flex flex-col gap-y-2">
         <IBtn
           variant="primary"
           class="w-full text-base-100"
@@ -43,8 +45,8 @@
           <IconSave />
           Speichern
         </IBtn>
-      </template>
-    </ICard>
+      </div>
+    </motion.div>
     <IFab
       :actions="fabActions"
       class="mb-14"
@@ -62,12 +64,13 @@ import {
   Cog as IconMenu,
   Save as IconSave,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PlantForm from '../components/PlantForm.vue'
 import IBtn from '../components/ui/IBtn.vue'
-import ICard from '../components/ui/ICard.vue'
 import IFab from '../components/ui/IFab.vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlantForm } from '../composables/usePlantForm.ts'
 import { usePlantView } from '../composables/usePlantView.ts'
@@ -98,6 +101,7 @@ const plantStore = usePlantStore()
 const router = useRouter()
 const { showToast } = useToast()
 const { fabActions } = usePlantView()
+const { scale075 } = useContentAnimation()
 
 const loading = ref(false)
 
