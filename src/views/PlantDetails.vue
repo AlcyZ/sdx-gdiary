@@ -8,6 +8,14 @@
       :actions="fabActions"
       :icon="IconMenu"
     />
+    <input
+      ref="inputImage"
+      class="hidden"
+      type="file"
+      multiple
+      accept="image/jpeg, image/png, image/webp"
+      @change="handleImageUpload"
+    >
   </div>
 </template>
 
@@ -105,7 +113,6 @@ function selectImageViaInput() {
   inputImage.value?.click()
 }
 
-// @ts-expect-error needs to be refactored
 async function handleImageUpload(event: Event) {
   const errorToast = () => toast('Es ist ein Fehler beim hochladen des Bildes aufgetreten.', 'error')
 
