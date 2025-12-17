@@ -6,6 +6,7 @@ import { toTypedSchema } from '@vee-validate/yup'
 import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
 import * as yup from 'yup'
+import dayjs from "dayjs";
 
 const ERR_STRAIN_REQUIRED = 'Die Sorte muss angegeben werden'
 const ERR_STRAIN_MAX = ({ max }: { max: number }) => `Die Sorte dar maximal ${max} Zeichen lang sein`
@@ -80,7 +81,7 @@ export function usePlantForm() {
         medium: '',
         volume: 1.5,
         notes: undefined,
-        datetime: '',
+        datetime: dayjs().format('YYYY-MM-DDTHH:mm'),
       },
       phases: [],
     },
