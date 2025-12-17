@@ -101,7 +101,9 @@ import {
   Save as IconSave,
   ClipboardClock as IconSessionForm,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { computed, inject, ref } from 'vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { useHarvestForm } from '../composables/useHarvestForm.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_HARVEST } from '../di_keys.ts'
@@ -109,14 +111,11 @@ import HarvestFinishForm from './HarvestFinishForm.vue'
 import HarvestSessionForm from './HarvestSessionForm.vue'
 import PlantHarvestInfobox from './PlantHarvestInfobox.vue'
 import IBtn from './ui/IBtn.vue'
-import ICard from './ui/ICard.vue'
 import ICardTitle from './ui/ICardTitle.vue'
 import IInputDatetime from './ui/IInputDatetime.vue'
 import ISwap from './ui/ISwap.vue'
 import ISwapOff from './ui/ISwapOff.vue'
 import ISwapOn from './ui/ISwapOn.vue'
-import { motion } from "motion-v";
-import {useContentAnimation} from "../composables/useContentAnimation.ts";
 
 interface Props {
   plant: Plant
