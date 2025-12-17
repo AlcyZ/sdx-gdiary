@@ -1,24 +1,40 @@
 <template>
-  <VueDraggable
-    :model-value="images"
-    item-key="plantImages"
-    class="grid"
-    :class="gridClass"
-    group="plantImages"
-    @change="handleChange"
-  >
-    <template #item="{ element: image }">
-      <PlantImageAsyncSquare
-        :image="image"
-        :class="{ 'rounded-sm': hasGap }"
-      />
-    </template>
-  </VueDraggable>
+  <AnimatePresence>
+    <motion.div
+      v-if="show"
+      class="mt-4 overflow-hidden"
+      style="transition: height 0.3s ease-in-out"
+      :variants="list"
+      initial="close"
+      animate="open"
+      exit="close"
+    >
+      <VueDraggable
+        :model-value="images"
+        item-key="plantImages"
+        class="grid"
+        :class="gridClass"
+        group="plantImages"
+        @change="handleChange"
+      >
+        <template #item="{ element: image }">
+          <component
+            :is="imageComponent"
+            :image="image"
+            :class="{ 'rounded-sm': hasGap }"
+            :variants="item"
+          />
+        </template>
+      </VueDraggable>
+    </motion.div>
+  </AnimatePresence>
 </template>
 
 <script lang="ts" setup>
+import type { MotionProps } from 'motion-v'
 import type { ChangeEvent, Column, Gap } from '../modules/gallery/types'
 import type { PlantImage } from '../modules/plants/types'
+import { AnimatePresence, motion, stagger } from 'motion-v'
 import { computed } from 'vue'
 import VueDraggable from 'vuedraggable'
 import PlantImageAsyncSquare from './PlantImageAsyncSquare.vue'
@@ -26,6 +42,7 @@ import PlantImageAsyncSquare from './PlantImageAsyncSquare.vue'
 interface Props {
   plantId: number
   images: Array<PlantImage>
+  show: boolean
   cols?: Column
   gap?: Gap | undefined
 }
@@ -39,6 +56,38 @@ const {
   plantId,
 } = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+const imageComponent = motion.create(PlantImageAsyncSquare)
+
+const list: MotionProps['variants'] = {
+  open: {
+    height: 'auto',
+    opacity: 1,
+    transition: {
+      height: { duration: 0.3, ease: 'easeInOut' },
+      delayChildren: stagger(0.1),
+    },
+  },
+  close: {
+    height: 0,
+    opacity: 0,
+    transition: {
+      height: { duration: 0.3, ease: 'easeInOut' },
+      when: 'afterChildren',
+      delayChildren: stagger(0.1, { from: 'last' }),
+    },
+  },
+}
+const item: MotionProps['variants'] = {
+  open: {
+    opacity: 1,
+    x: 0,
+  },
+  close: {
+    opacity: 0,
+    x: -100,
+  },
+}
 
 const gridClass = computed(() => [
   getCol(cols),
@@ -105,3 +154,25 @@ function handleChange(event: ChangeEvent) {
   emit('change', event, plantId)
 }
 </script>
+
+<style>
+/* Die Transition-Klassen von Vue */
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.5s ease-in-out;
+  overflow: hidden; /* Wichtig, damit nichts übersteht */
+}
+
+.expand-enter-from,
+.expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+.expand-enter-to,
+.expand-leave-from {
+  /* Wähle einen Wert, der sicher größer ist als dein Inhalt jemals wird */
+  max-height: 1000px;
+  opacity: 1;
+}
+</style>
