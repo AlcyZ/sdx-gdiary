@@ -1,15 +1,18 @@
 <template>
-  <ICard
-    class="w-full max-w-2xl"
-    class-actions="justify-between"
+  <motion.div
+    class="bg-white shadow rounded-box px-5 py-7 w-full max-w-2xl"
+    :variants="scale075"
+    initial="from"
+    animate="to"
   >
-    <div class="flex items-center justify-between">
-      <ICardTitle class="text-3xl">
+    <div class="flex items-center justify-between mb-2">
+      <ICardTitle class="text-2xl">
         Pflanze ernten
       </ICardTitle>
 
       <IInputDatetime
         v-model="date"
+        class="text-sm"
         open-via-label
       />
     </div>
@@ -29,7 +32,7 @@
         </ISwap>
 
         <span
-          class="ml-2 text-gray-500 cursor-pointer"
+          class="text-sm ml-2 text-gray-500 cursor-pointer"
           @click="isSessionForm = !isSessionForm"
         >
           Jetzt im Modus: "<span class="font-semibold">{{ textMode }}</span>"
@@ -73,7 +76,7 @@
       class="my-4"
     />
 
-    <template #actions>
+    <div>
       <IBtn
         variant="neutral"
         class="w-full"
@@ -85,8 +88,8 @@
         <IconSave />
         Speichern
       </IBtn>
-    </template>
-  </ICard>
+    </div>
+  </motion.div>
 </template>
 
 <script lang="ts" setup>
@@ -112,6 +115,8 @@ import IInputDatetime from './ui/IInputDatetime.vue'
 import ISwap from './ui/ISwap.vue'
 import ISwapOff from './ui/ISwapOff.vue'
 import ISwapOn from './ui/ISwapOn.vue'
+import { motion } from "motion-v";
+import {useContentAnimation} from "../composables/useContentAnimation.ts";
 
 interface Props {
   plant: Plant
@@ -139,6 +144,7 @@ const {
 } = useHarvestForm()
 
 const { toast } = useToast()
+const { scale075 } = useContentAnimation()
 
 const TEXT_MODE_SESSION = 'Session protokollieren'
 const TEXT_MODE_FINISH = 'Ernte abschließen'

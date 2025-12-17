@@ -17,6 +17,7 @@
       >
         <PlantImageAsync
           :image="image"
+          class="w-full h-full overflow-hidden"
           size-class="w-full h-full"
         />
 

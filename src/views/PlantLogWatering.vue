@@ -1,9 +1,10 @@
 <template>
-  <div class="mt-4">
-    <ICard
-      class="w-full max-w-3xl"
-      class-actions="border-t border-t-base-200 pt-1 mt-2"
-      justify-actions-between
+  <div class="mt-4 px-2">
+    <motion.div
+      class="bg-white rounded-box shadow px-5 py-7"
+      :variants="scale075"
+      initial="from"
+      animate="to"
     >
       <div class="px-4 py-4 border-b border-base-200">
         <div class="flex items-center justify-between">
@@ -133,7 +134,7 @@
         </div>
       </div>
 
-      <template #actions>
+      <div class="flex flex-col">
         <IBtn
           class="hidden sm:flex"
           @click="$router.back()"
@@ -150,8 +151,8 @@
           <IconSave />
           Speichern
         </IBtn>
-      </template>
-    </ICard>
+      </div>
+    </motion.div>
 
     <IFab
       :actions="fabActions"
@@ -172,6 +173,7 @@ import {
   Trash as IconRemove,
   Check as IconSave,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PlantLogWateringModal from '../components/PlantLogWateringModal.vue'
@@ -182,6 +184,7 @@ import IFab from '../components/ui/IFab.vue'
 import IFieldset from '../components/ui/IFieldset.vue'
 import IInputDatetime from '../components/ui/IInputDatetime.vue'
 import IInputNumber from '../components/ui/IInputNumber.vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { useModal } from '../composables/useModal.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlant } from '../composables/usePlant.ts'
@@ -212,6 +215,7 @@ usePageLayout({
 const plantStore = usePlantStore()
 const fertilizerStore = useFertilizerStore()
 const { getPlantName } = usePlant()
+const { scale075 } = useContentAnimation()
 
 const { showModal } = useModal()
 const { toast } = useToast()

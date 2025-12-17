@@ -1,16 +1,19 @@
 <template>
-  <ICard
-    class="w-full max-w-2xl"
-    class-actions="justify-between"
+  <motion.div
+    class="bg-white shadow rounded-box px-5 py-7 w-full max-w-2xl"
+    :variants="scale075"
+    initial="from"
+    animate="to"
   >
-    <div class="flex items-center justify-between">
-      <ICardTitle class="text-3xl">
+    <div class="flex items-center justify-between mb-2">
+      <div class="text-2xl font-semibold">
         Ernte bearbeiten
-      </ICardTitle>
+      </div>
 
       <IInputDatetime
         v-model="date"
         open-via-label
+        class="text-sm"
       />
     </div>
 
@@ -41,7 +44,7 @@
       class="my-4"
     />
 
-    <template #actions>
+    <div>
       <IBtn
         variant="neutral"
         class="w-full"
@@ -53,8 +56,8 @@
         <IconSave />
         Bearbeiten
       </IBtn>
-    </template>
-  </ICard>
+    </div>
+  </motion.div>
 </template>
 
 <script lang="ts" setup>
@@ -66,15 +69,15 @@ import dayjs from 'dayjs'
 import {
   Save as IconSave,
 } from 'lucide-vue-next'
+import { motion } from 'motion-v'
 import { inject, onMounted, ref } from 'vue'
+import { useContentAnimation } from '../composables/useContentAnimation.ts'
 import { useHarvestForm } from '../composables/useHarvestForm.ts'
 import { useToast } from '../composables/useToast.ts'
 import { REPO_HARVEST } from '../di_keys.ts'
 import HarvestFinishForm from './HarvestFinishForm.vue'
 import HarvestSessionForm from './HarvestSessionForm.vue'
 import IBtn from './ui/IBtn.vue'
-import ICard from './ui/ICard.vue'
-import ICardTitle from './ui/ICardTitle.vue'
 import IInputDatetime from './ui/IInputDatetime.vue'
 
 interface Props {
@@ -102,6 +105,7 @@ const {
   validate,
   resetForm,
 } = useHarvestForm()
+const { scale075 } = useContentAnimation()
 
 const { resultToast, toast } = useToast()
 

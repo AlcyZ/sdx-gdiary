@@ -1,12 +1,11 @@
 <template>
-  <div class="w-full flex flex-col items-center gap-y-5 mt-4">
+  <div>
     <PlantDetailsCards
       v-if="plantStore.plant"
       :plant="plantStore.plant"
     />
     <IFab
       :actions="fabActions"
-      class="mb-14"
       :icon="IconMenu"
     />
   </div>

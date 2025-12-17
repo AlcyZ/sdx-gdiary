@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center py-4">
+  <div class="flex justify-center py-4 px-2">
     <PlantHarvestEdit
       v-if="plantStore.plant && harvest"
       :plant="plantStore.plant"
