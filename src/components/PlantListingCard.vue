@@ -145,14 +145,13 @@ import {
 import { motion } from 'motion-v'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDropdown } from '../composables/useDropdown.ts'
 import { usePlant } from '../composables/usePlant.ts'
 import { usePlantConfiguration } from '../composables/usePlantConfiguration.ts'
 import { usePlantContainer } from '../composables/usePlantContainer.ts'
 import { usePlantPhase } from '../composables/usePlantPhase.ts'
 import useStaggerAnimation from '../composables/useStaggerAnimation.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
-import { PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
+import { createDropdownItem, PLANT_PLACEHOLDER_IMAGE } from '../util.ts'
 import PlantImgAsync from './PlantImgAsync.vue'
 import IBadge from './ui/IBadge.vue'
 import IBtn from './ui/IBtn.vue'
@@ -175,7 +174,6 @@ const { getPlantAge, getFlowerDay, getPlantName, getLastWateringText, showDelete
 const { getPhaseLabel, getPhaseIcon, getPhaseColor } = usePlantPhase()
 const { getContainerIcon, getContainerLabel } = usePlantContainer()
 const { plantListingSort, plantListingFilter } = usePlantConfiguration()
-const { createItem } = useDropdown()
 const { fadeLeft } = useStaggerAnimation()
 
 const plantsList = computed(
@@ -203,17 +201,17 @@ const plantsList = computed(
       actions: [
         {
           type: 'item',
-          content: createItem('Details', IconShow),
+          content: createDropdownItem('Details', IconShow),
           onClick: () => router.push(`/plants/${plant.id}`),
         },
         {
           type: 'item',
-          content: createItem('Bearbeiten', IconEdit),
+          content: createDropdownItem('Bearbeiten', IconEdit),
           onClick: () => router.push(`/plants/${plant.id}/edit`),
         },
         {
           type: 'item',
-          content: createItem('Löschen', IconTrash),
+          content: createDropdownItem('Löschen', IconTrash),
           onClick: () => showDeleteConfirmationModal(plant),
         },
       ] as Array<DropdownMenu>,

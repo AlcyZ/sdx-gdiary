@@ -27,7 +27,6 @@ import { useRouter } from 'vue-router'
 import PlantDetailsCards from '../components/PlantDetailsCards.vue'
 import PlantDetailsModalContainer from '../components/PlantDetailsModalContainer.vue'
 import IFab from '../components/ui/IFab.vue'
-import { useDropdown } from '../composables/useDropdown.ts'
 import { useModal } from '../composables/useModal.ts'
 import { usePageLayout } from '../composables/usePageLayout.ts'
 import { usePlant } from '../composables/usePlant.ts'
@@ -38,7 +37,7 @@ import IconEditSquare from '../icons/IconEditSquare.vue'
 import IconPhotoCamera from '../icons/IconPhotoCamera.vue'
 import IconSpa from '../icons/IconSpa.vue'
 import { usePlantStore } from '../stores/plantStore.ts'
-import { getUploadedFiles } from '../util.ts'
+import { createDropdownItem, getUploadedFiles } from '../util.ts'
 
 interface Props {
 
@@ -57,7 +56,6 @@ const { fabActions } = usePlantView()
 const { getPlantName, showDeleteConfirmationModal } = usePlant()
 const { toast } = useToast()
 const { showModal } = useModal()
-const { createItem } = useDropdown()
 
 const plantName = computed(() => plantStore.plant ? getPlantName(plantStore.plant) : '')
 
@@ -68,17 +66,17 @@ usePageLayout({
     actions: [
       {
         type: 'item',
-        content: createItem('Bild hinzufügen', IconPhotoCamera),
+        content: createDropdownItem('Bild hinzufügen', IconPhotoCamera),
         onClick: selectImageViaInput,
       },
       {
         type: 'item',
-        content: createItem('Bearbeiten', IconEditSquare),
+        content: createDropdownItem('Bearbeiten', IconEditSquare),
         onClick: () => router.push(`/plants/${plantStore.plant?.id}/edit`),
       },
       {
         type: 'item',
-        content: createItem('Löschen', IconDelete),
+        content: createDropdownItem('Löschen', IconDelete),
         onClick: () => {
           if (plantStore.plant)
             showDeleteConfirmationModal(plantStore.plant, () => router.push('/plants'))
@@ -86,7 +84,7 @@ usePageLayout({
       },
       {
         type: 'item',
-        content: createItem('Behälter ändern', IconSpa),
+        content: createDropdownItem('Behälter ändern', IconSpa),
         onClick: async () => await showPlantContainerModal(),
       },
     ],

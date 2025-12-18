@@ -51,11 +51,11 @@ import {
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDropdown } from '../composables/useDropdown.ts'
 import { useModal } from '../composables/useModal.ts'
 import { useToast } from '../composables/useToast.ts'
 import { ROUTE_PLANT_HARVEST_EDIT } from '../routes.ts'
 import { usePlantStore } from '../stores/plantStore.ts'
+import { createDropdownItem } from '../util.ts'
 import PlantDetailsCardHarvestFinish from './PlantDetailsCardHarvestFinish.vue'
 import PlantDetailsCardHarvestSession from './PlantDetailsCardHarvestSession.vue'
 import PlantDetailsLogCard from './PlantDetailsLogCard.vue'
@@ -76,7 +76,6 @@ defineEmits<Emits>()
 const plantStore = usePlantStore()
 
 const router = useRouter()
-const { createItem } = useDropdown()
 const { showConfirmationModal } = useModal()
 const { resultToast } = useToast()
 
@@ -115,7 +114,7 @@ const sortedHarvests = computed(
       actions: [
         {
           type: 'item',
-          content: createItem('Bearbeiten', IconEdit),
+          content: createDropdownItem('Bearbeiten', IconEdit),
           onClick: () => router.push({
             name: ROUTE_PLANT_HARVEST_EDIT,
             params: { plantId: plant.id, harvestId: log.id },
@@ -123,7 +122,7 @@ const sortedHarvests = computed(
         },
         {
           type: 'item',
-          content: createItem('Löschen', IconDelete),
+          content: createDropdownItem('Löschen', IconDelete),
           onClick: () => showDeleteConfirmationModal(log),
         },
       ] as Array<DropdownMenu>,
