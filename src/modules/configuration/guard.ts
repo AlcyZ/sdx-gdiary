@@ -7,6 +7,8 @@ export function isPlantListingSort(value: any): value is PlantListingSort {
     || value === 'created-desc'
     || value === 'planted-asc'
     || value === 'planted-desc'
+    || value === 'watered-asc'
+    || value === 'watered-desc'
 }
 
 export function isPlantListingConfig(value: any): value is PlantListingConfig {

@@ -135,6 +135,14 @@ const dropdown = computed((): Array<DropdownMenu> => [
         label: 'Gepflanzt absteigend',
         value: 'planted-desc',
       },
+      {
+        label: 'Zuletzt gegossen',
+        value: 'watered-desc',
+      },
+      {
+        label: 'Zuerst gegossen',
+        value: 'watered-asc',
+      },
     ],
   },
 ])
