@@ -61,7 +61,7 @@ interface HasLabelNoContent {
 }
 
 interface HasContentNoLabel {
-  label?: string
+  label?: never
   content: VNodeChild
 }
 
