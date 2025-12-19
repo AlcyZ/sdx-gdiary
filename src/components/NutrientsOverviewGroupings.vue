@@ -11,7 +11,7 @@
         :key="i"
         :variants="fadeLeft.item"
       >
-        <ICollapse
+        <ICollapseLegacy
           name="fertilizer"
           arrow
           closable
@@ -39,7 +39,7 @@
               <slot name="item" :item="item" :payload="group.payload" :index="j" :length="group.items.length" />
             </div>
           </ICollapseContent>
-        </ICollapse>
+        </ICollapseLegacy>
       </motion.li>
     </motion.ul>
   </ICard>
@@ -49,7 +49,7 @@
 import { motion } from 'motion-v'
 import useStaggerAnimation from '../composables/useStaggerAnimation.ts'
 import ICard from './ui/ICard.vue'
-import ICollapse from './ui/ICollapse.vue'
+import ICollapseLegacy from './ui/ICollapseLegacy.vue'
 import ICollapseContent from './ui/ICollapseContent.vue'
 import ICollapseTitle from './ui/ICollapseTitle.vue'
 
