@@ -37,3 +37,9 @@
 
     /* dock */
 }
+
+@layer components {
+    .iCard {
+        @apply bg-white shadow rounded-box px-5 py-7;
+    }
+}
