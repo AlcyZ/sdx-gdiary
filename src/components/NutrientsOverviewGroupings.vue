@@ -49,8 +49,8 @@
 import { motion } from 'motion-v'
 import useStaggerAnimation from '../composables/useStaggerAnimation.ts'
 import ICard from './ui/ICard.vue'
-import ICollapseLegacy from './ui/ICollapseLegacy.vue'
 import ICollapseContent from './ui/ICollapseContent.vue'
+import ICollapseLegacy from './ui/ICollapseLegacy.vue'
 import ICollapseTitle from './ui/ICollapseTitle.vue'
 
 interface NutrientsOverviewGroupItem {
